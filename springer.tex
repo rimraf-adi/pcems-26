@@ -1,0 +1,90 @@
+\documentclass[runningheads]{llncs}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{url}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% --- Devanagari support for XeLaTeX ---
+\usepackage{fontspec}
+\usepackage{ucharclasses}
+\newfontfamily\devanagarifont{Devanagari Sangam MN}[Script=Devanagari]
+\setTransitionsForDevanagari{\devanagarifont}{\normalfont}
+
+\begin{document}
+
+\title{Multi-Dialect Marathi Text Normalization via LLM-Driven Synthetic Augmentation and Neural Sequence-to-Sequence Benchmarking}
+\titlerunning{Multi-Dialect Marathi Text Normalization}
+
+\author{Aditya Kinjawadekar \and
+Surender Kannaiyan \and
+Saugata Sinha}
+
+\authorrunning{A. Kinjawadekar et al.}
+
+\institute{Visvesvaraya National Institute of Technology, Nagpur, India\\
+\email{kinjawadekaradi112@gmail.com}}
+
+\maketitle
+
+% --- Include universal paper content (Abstract, Keywords, Sections 1-5) ---
+\input{content.tex}
+
+% --- Springer LNCS Bibliography Style ---
+\begin{thebibliography}{99}
+
+\bibitem{dabre2022indicbart}
+Dabre, R., Shrotriya, H., Kunchukuttan, A., Puduppully, R., Khapra, M.M., Kumar, P.: IndicBART: A pre-trained model for Indic natural language generation. In: Findings of ACL 2022, pp. 1849--1863 (2022)
+
+\bibitem{gala2023indictrans2}
+Gala, J., Chitale, P.A., AK, R., Gumma, V., Doddapaneni, S., Kumar, A., Nawale, J., Sujatha, A., Puduppully, R., Raghavan, V., Kumar, P., Khapra, M.M., Dabre, R., Kunchukuttan, A.: IndicTrans2: Towards high-quality and accessible machine translation models for all 22 scheduled Indian languages. Trans. Mach. Learn. Res. (TMLR) (2023)
+
+\bibitem{gemma2024}
+Google DeepMind Gemma Team: Gemma 2: Improving open language models at a practical size. arXiv preprint arXiv:2408.00118 (2024)
+
+\bibitem{gulati2020conformer}
+Gulati, A., Qin, J., Chiu, C.C., Parmar, N., Zhang, Y., Yu, J., Han, W., Wang, S., Zhang, Z., Wu, Y., Pang, R.: Conformer: Convolution-augmented Transformer for speech recognition. In: Proc. Interspeech 2020, pp. 5036--5040 (2020)
+
+\bibitem{habash2012coda}
+Habash, N., Diab, M., Rambow, O.: Conventional orthography for dialectal Arabic. In: Proc. LREC 2012, pp. 711--718 (2012)
+
+\bibitem{jain2024indicconformer}
+Jain, R., Diwan, T., Khare, S., Jyothi, P.: AI4Bharat IndicConformer: Multilingual speech recognition for Indian languages. AI4Bharat, IIT Madras (2024)
+
+\bibitem{joshi2022l3cube}
+Joshi, R., Goel, P., Joshi, R.: L3Cube-MahaNLP: Marathi natural language processing datasets, models, and library. In: Proc. WILDRE-6 (LREC 2022), pp. 10--17 (2022)
+
+\bibitem{lewis2020bart}
+Lewis, M., Liu, Y., Goyal, N., Ghazvininejad, M., Mohamed, A., Levy, O., Stoyanov, V., Zettlemoyer, L.: BART: Denoising sequence-to-sequence pre-training for natural language generation, translation, and comprehension. In: Proc. ACL 2020, pp. 7871--7880 (2020)
+
+\bibitem{post2018sacrebleu}
+Post, M.: A call for clarity in reporting BLEU scores. In: Proc. WMT 2018, pp. 186--191 (2018)
+
+\bibitem{raffel2020exploring}
+Raffel, C., Shazeer, N., Roberts, A., Lee, K., Narang, S., Matena, M., Zhou, Y., Li, W., Liu, P.J.: Exploring the limits of transfer learning with a unified text-to-text transformer. J. Mach. Learn. Res. 21(140), 1--67 (2020)
+
+\bibitem{singh2024respin}
+Singh, S., Rajan, M.A., Prasanna, S.R.M.: RESPIN-S1.0: A large-scale dialect-rich read speech corpus for nine Indian languages. In: NeurIPS 2024 Datasets and Benchmarks Track (2024)
+
+\bibitem{vaswani2017attention}
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, {\L}., Polosukhin, I.: Attention is all you need. In: Adv. Neural Inf. Process. Syst. (NeurIPS 2017), pp. 5998--6008 (2017)
+
+\bibitem{xue2021mt5}
+Xue, L., Constant, N., Roberts, A., Kale, M., Al-Rfou, R., Siddhant, A., Barua, A., Raffel, C.: mT5: A massively multilingual pre-trained text-to-text transformer. In: Proc. NAACL-HLT 2021, pp. 483--498 (2021)
+
+\end{thebibliography}
+
+\end{document}
