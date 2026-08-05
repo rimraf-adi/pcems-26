@@ -2,7 +2,7 @@
 % UNIFIED PAPER CONTENT (Shared between all template drivers)
 % ===================================================================
 
-\color{blue}
+\color{black}
 
 \begin{abstract}
 Low-resource regional dialects pose severe challenges for Natural Language Processing (NLP) systems due to significant morpho-syntactic variation, non-standard orthography, and extreme scarcity of annotated parallel corpora. In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: Malvani (D1), Ahirani (D2), and Varhadi (D4). To overcome severe data scarcity, we introduce an automated synthetic parallel data expansion pipeline combining large language model (LLM) generation using Gemma-2 (9B/27B) with a multi-tier verification engine (rule-based script filtering and LLM semantic auditing), effectively doubling the clean parallel training corpus from 16,163 to 32,335 verified pairs across agriculture and finance domains. We conduct a rigorous empirical evaluation of state-of-the-art multilingual sequence-to-sequence transformer architectures---google/mT5-small (300M), IndicBART (244M), and AI4Bharat IndicTrans2 (320M)---under an 85/15 stratified test split with 5-fold cross-validation across 8 dataset configurations. Empirical results demonstrate that mT5-small achieves state-of-the-art performance with 69.51 BLEU and 84.58 chrF++ on the 32k combined multi-dialect dataset (+12.39 BLEU over IndicBART), with individual dialect performance reaching 80.99 BLEU and 91.21 chrF++ on Varhadi (D4). We present detailed architectural comparisons, data scaling ablation studies, and qualitative subword morphological error analyses, establishing a benchmark for Indic dialect text normalization.
@@ -143,31 +143,26 @@ To address data scarcity, we developed an automated synthetic parallel data gene
 
 Below is the self-contained System Prompt template deployed for Gemma-2 synthetic parallel data generation:
 
+\begin{center}
+\begin{tcolorbox}[colback=gray!5!white,colframe=gray!75!black,title=\textbf{SYSTEM PROMPT (Gemma-2 Dialect Normalization Teacher)}]
 \begin{small}
-\begin{verbatim}
-SYSTEM PROMPT (Gemma-2 Dialect Normalization Teacher):
-You are an expert Marathi Computational Linguist specializing in regional sub-dialects 
-of Maharashtra (Malvani, Ahirani, Varhadi).
-YOUR TASK: Normalize the given dialectal Marathi input into grammatically perfect, 
-pure Standard Marathi (मानक मराठी).
-
-STRICT RULES:
-1. Preserve 100% of the original sentence meaning. DO NOT add, remove, or alter facts.
-2. Maintain all domain-specific terminology (Agriculture/Banking/Finance).
-3. Do NOT substitute Marathi words with Hindi or English equivalents.
-4. Output ONLY valid Devanagari text string in Standard Marathi.
-
-FEW-SHOT EXAMPLES:
-[Input Dialect]: मका आज बँकेंत जावचा हा.
-[Standard Output]: मला आज बँकेत जायचे आहे.
-
-[Input Dialect]: मना पोराले शेतीमा काम करणा शे.
-[Standard Output]: माझ्या मुलाला शेतीत काम करायचे आहे.
-
-INPUT SENTENCE: {dialect_sentence}
-STANDARD MARATHI TRANSLATION:
-\end{verbatim}
+\texttt{You are an expert Marathi Computational Linguist specializing in regional sub-dialects of Maharashtra (Malvani, Ahirani, Varhadi).}\\[4pt]
+\texttt{\textbf{YOUR TASK}: Normalize the given dialectal Marathi input into grammatically perfect, pure Standard Marathi (\emph{मानक मराठी}).}\\[6pt]
+\texttt{\textbf{STRICT RULES}:}\\
+\texttt{1. Preserve 100\% of original sentence meaning. DO NOT add, remove, or alter facts.}\\
+\texttt{2. Maintain all domain-specific terminology (Agriculture/Banking/Finance).}\\
+\texttt{3. Do NOT substitute Marathi words with Hindi or English equivalents.}\\
+\texttt{4. Output ONLY valid Devanagari text string in Standard Marathi.}\\[6pt]
+\texttt{\textbf{FEW-SHOT EXAMPLES}:}\\
+\texttt{[Input Dialect]: मका आज बँकेंत जावचा हा.}\\
+\texttt{[Standard Output]: मला आज बँकेत जायचे आहे.}\\[4pt]
+\texttt{[Input Dialect]: मना पोराले शेतीमा काम करणा शे.}\\
+\texttt{[Standard Output]: माझ्या मुलाला शेतीत काम करायचे आहे.}\\[6pt]
+\texttt{\textbf{INPUT SENTENCE}: \{dialect\_sentence\}}\\
+\texttt{\textbf{STANDARD MARATHI TRANSLATION}:}
 \end{small}
+\end{tcolorbox}
+\end{center}
 
 \subsection{\textcolor{black}{Multi-Tier Verification and Quality Filtering}}
 
@@ -223,26 +218,18 @@ To achieve robust real-world speech processing for non-standard Marathi dialects
 \begin{figure}[h!]
 \centering
 \begin{small}
-\begin{verbatim}
-+-------------------------------------------------------------------------------+
-|                        CASCADED SPEECH-TO-TEXT NORMALIZATION                  |
-+-------------------------------------------------------------------------------+
-| [Dialectal Audio Input] (Malvani D1 / Ahirani D2 / Varhadi D4)               |
-|                           |                                                   |
-|                           v                                                   |
-| [Stage 1: ASR System] ---> ai4bharat/indic-conformer-600m-multilingual (RNN-T)|
-|                           | (Baseline ASR Output WER: 23.71%)                 |
-|                           v                                                   |
-| [Stage 2: Raw Transcript] (Phonetic dialectal text with non-standard suffixes) |
-|                           |                                                   |
-|                           v                                                   |
-| [Stage 3: Normalizer] ---> google/mT5-small (300M, 250k Vocab, Fine-Tuned)     |
-|                           | (Post-Normalization Output WER: 16.58%)           |
-|                           v                                                   |
-| [Standard Output] -------> Normative Standard Written Marathi (मानक मराठी)       |
-|                            (Overall Rel. WER Reduction: -30.07% vs ASR)       |
-+-------------------------------------------------------------------------------+
-\end{verbatim}
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=\textbf{CASCADED SPEECH-TO-TEXT NORMALIZATION PIPELINE}]
+\centering
+\textbf{[Dialectal Audio Input]} \textit{(Malvani D1 / Ahirani D2 / Varhadi D4)}\\[4pt]
+$\Downarrow$\\[4pt]
+\textbf{[Stage 1: ASR System]} $\longrightarrow$ \texttt{ai4bharat/indic-conformer-600m-multilingual} \textit{(RNN-T, Baseline WER: 23.71\%)}\\[4pt]
+$\Downarrow$\\[4pt]
+\textbf{[Stage 2: Raw Transcript]} \textit{(Phonetic dialectal text with non-standard suffixes)}\\[4pt]
+$\Downarrow$\\[4pt]
+\textbf{[Stage 3: Normalizer]} $\longrightarrow$ \texttt{google/mT5-small} \textit{(300M, 250k Vocab, Fine-Tuned, Output WER: 16.58\%)}\\[4pt]
+$\Downarrow$\\[4pt]
+\textbf{[Standard Output]} $\longrightarrow$ Normative Standard Written Marathi (\emph{मानक मराठी}) \textit{(Rel. WER Drop: $-$30.07\% vs ASR)}
+\end{tcolorbox}
 \end{small}
 \caption{\textcolor{black}{Cascaded Architecture: Linking Acoustic ASR Transcriptions with Sequence-to-Sequence Text Normalization.}}
 \label{fig:cascaded_architecture}
