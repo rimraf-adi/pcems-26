@@ -5,9 +5,9 @@
 \color{blue}
 
 \begin{abstract}
-Low-resource regional dialects pose severe challenges for Natural Language Processing (NLP) systems due to significant morpho-syntactic variation, non-standard orthography, and extreme scarcity of annotated parallel corpora. In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: Malvani (D1), Ahirani (D2), and Varhadi (D4). We first establish upstream speech recognition baselines by evaluating the state-of-the-art IndicConformer-600M hybrid CTC/RNN-T model across 9 Indic languages (19,838 utterances, 30.04 hours of audio), revealing severe sub-dialect degradation gaps of up to +41\% absolute WER and motivating the need for post-ASR text normalization. To address data scarcity for the text normalization task, we propose an automated synthetic data expansion pipeline combining large language model (LLM) generation using Gemma-2 (9B/27B) with rigorous rule-based and LLM-assisted verification, doubling the clean parallel training corpus from 16,163 to 32,335 pairs. We benchmark state-of-the-art multilingual sequence-to-sequence neural architectures---IndicBART (244M), google/mT5-small (300M), and AI4Bharat IndicTrans2 (320M)---under a unified 85/15 stratified test split with 5-fold cross-validation across 8 dataset configurations. Empirical results demonstrate that mT5-small achieves state-of-the-art performance with 69.51 BLEU and 84.58 chrF++ on the 32k combined multi-dialect dataset (+12.39 BLEU over IndicBART), while Varhadi (D4) achieves 80.99 BLEU and 91.21 chrF++. A cross-language conditioning study further reveals strict vocabulary sub-space binding in IndicConformer, with a +30.75\% WER degradation when Marathi speech is decoded under Konkani model conditioning. Our work provides a reproducible benchmark framework for Indic dialect normalization spanning both upstream ASR evaluation and downstream text standardization.
+Low-resource regional dialects pose severe challenges for Natural Language Processing (NLP) systems due to significant morpho-syntactic variation, non-standard orthography, and extreme scarcity of annotated parallel corpora. In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: Malvani (D1), Ahirani (D2), and Varhadi (D4). To overcome severe data scarcity, we introduce an automated synthetic parallel data expansion pipeline combining large language model (LLM) generation using Gemma-2 (9B/27B) with a multi-tier verification engine (rule-based script filtering and LLM semantic auditing), effectively doubling the clean parallel training corpus from 16,163 to 32,335 verified pairs across agriculture and finance domains. We conduct a rigorous empirical evaluation of state-of-the-art multilingual sequence-to-sequence transformer architectures---google/mT5-small (300M), IndicBART (244M), and AI4Bharat IndicTrans2 (320M)---under an 85/15 stratified test split with 5-fold cross-validation across 8 dataset configurations. Empirical results demonstrate that mT5-small achieves state-of-the-art performance with 69.51 BLEU and 84.58 chrF++ on the 32k combined multi-dialect dataset (+12.39 BLEU over IndicBART), with individual dialect performance reaching 80.99 BLEU and 91.21 chrF++ on Varhadi (D4). We present detailed architectural comparisons, data scaling ablation studies, and qualitative subword morphological error analyses, establishing a benchmark for Indic dialect text normalization.
 
-\keywords{Dialect Normalization \and Low-Resource NLP \and Marathi Dialects \and Sequence-to-Sequence Modeling \and Synthetic Data Augmentation \and Automatic Speech Recognition \and mT5 \and IndicBART \and IndicConformer.}
+\keywords{Dialect Normalization \and Low-Resource NLP \and Marathi Dialects \and Sequence-to-Sequence Modeling \and Synthetic Data Augmentation \and mT5 \and IndicBART \and Text Standardization.}
 \end{abstract}
 
 \section{\textcolor{black}{Introduction}}
@@ -16,9 +16,9 @@ Natural Language Processing (NLP) has achieved remarkable advances across high-r
 
 Marathi, an Indo-Aryan language spoken by over 83 million native speakers primarily in the state of Maharashtra, India, exemplifies this challenge. While Standard Marathi (based on the Pune/Deshi variety) possesses a well-established literary tradition and growing digital presence, regional varieties---including Malvani (spoken across the Konkan coastal belt), Ahirani (spoken in the Khandesh region), and Varhadi (spoken in Vidarbha/Eastern Maharashtra)---exhibit profound phonological, lexical, and morphological divergences from the standard form \cite{joshi2022l3cube}. These dialects are the primary means of oral communication for tens of millions of rural speakers, particularly in agriculture and finance domains, yet they remain virtually invisible to mainstream NLP infrastructure.
 
-The practical consequences of this gap are severe. Downstream applications such as Automatic Speech Recognition (ASR), Machine Translation (MT), sentiment analysis, and conversational AI fail when exposed to raw dialectal inputs due to high Out-Of-Vocabulary (OOV) rates, altered verbal inflections, non-standard orthographic conventions, and informal phonetic spellings. For instance, our upstream IndicConformer-600M evaluation (Section~\ref{sec:asr_eval}) reveals that while Standard Marathi speech is transcribed with 10.87\% Word Error Rate (WER), dialectal South Konkan speech degrades to 34.37\% WER---a gap of over 23 absolute percentage points attributable purely to dialectal variation.
+The practical consequences of this gap are severe. Downstream applications such as Machine Translation (MT), Information Retrieval, sentiment analysis, speech transcription post-processing, and conversational AI fail when exposed to raw dialectal inputs due to high Out-Of-Vocabulary (OOV) rates, altered verbal inflections, non-standard orthographic conventions, and informal phonetic spellings.
 
-\textit{Dialect Normalization}---the automated transformation of non-standard dialectal text into standard written orthography while preserving underlying semantic intent---serves as an essential pre-processing pipeline for bridging this digital divide. By mapping dialectal surface forms to their standardized equivalents, normalization enables existing NLP models trained on Standard Marathi to process dialectal inputs without requiring expensive retraining or domain-specific architectural modifications.
+\textit{Dialect Normalization}---the automated transformation of non-standard dialectal text into standard written orthography while preserving underlying semantic intent---serves as an essential pre-processing pipeline for bridging this digital divide \cite{kuparinen2023dialect}. By mapping dialectal surface forms to their standardized equivalents, normalization enables existing NLP models trained on Standard Marathi to process dialectal inputs without requiring expensive retraining or domain-specific architectural modifications.
 
 However, developing robust deep learning models for dialect normalization encounters two fundamental bottlenecks:
 
@@ -27,17 +27,16 @@ However, developing robust deep learning models for dialect normalization encoun
     \item \textbf{Morphological Complexity}: Marathi is a morphologically rich, agglutinative language with complex inflectional paradigms. Dialectal variation modifies not only lexical items but also case markers, postpositions, and verbal tense suffixes in systematic but context-dependent ways. This requires models to learn fine-grained subword-level grammatical transformations rather than relying on naive word-level dictionary lookups.
 \end{enumerate}
 
-To address these challenges, this study presents a systematic, end-to-end framework for multi-dialect Marathi normalization spanning both upstream ASR evaluation and downstream text standardization. Our key contributions are:
+To address these challenges, this study presents a systematic, end-to-end framework for multi-dialect Marathi text normalization. Our key contributions are:
 
 \begin{itemize}
-    \item \textbf{Comprehensive Upstream ASR Baseline}: We evaluate the state-of-the-art \texttt{indic-conformer-600m-multilingual} hybrid CTC/RNN-T model \cite{jain2024indicconformer} across 9 Indic languages from the IISc RESPIN benchmark suite \cite{singh2024respin} (19,838 utterances, 30.04 hours of audio), systematically quantifying sub-dialect degradation gaps across 38 sub-dialect groups to empirically motivate the need for post-ASR text normalization.
-    \item \textbf{LLM-Driven Synthetic Data Augmentation Pipeline}: We introduce an automated dataset generation architecture leveraging Gemma-2 (9B/27B) \cite{gemma2024} paired with multi-tier LLM-based verification and closed-loop correction, doubling clean parallel pairs from 16,163 to 32,335 across three Marathi dialects while maintaining strict semantic fidelity.
+    \item \textbf{LLM-Driven Synthetic Data Augmentation Pipeline}: We introduce an automated parallel dataset generation architecture leveraging Gemma-2 (9B/27B) \cite{gemma2024} paired with multi-tier LLM-based verification and closed-loop correction, doubling clean parallel pairs from 16,163 to 32,335 across three Marathi dialects while maintaining strict semantic fidelity.
     \item \textbf{Rigorous Benchmark Evaluation}: We implement a standardized 85/15 stratified train-test split combined with 5-fold cross-validation across 8 distinct dataset configurations, evaluating three representative multilingual sequence-to-sequence transformer architectures: IndicBART (244M) \cite{dabre2022indicbart}, google/mT5-small (300M) \cite{xue2021mt5}, and AI4Bharat IndicTrans2 (320M) \cite{gala2023indictrans2}.
     \item \textbf{State-of-the-Art Results}: mT5-small achieves 69.51 BLEU \cite{post2018sacrebleu} and 84.58 chrF++ on the 32k combined multi-dialect dataset (+12.39 BLEU over IndicBART), with individual dialect performance reaching 80.99 BLEU and 91.21 chrF++ for Varhadi (D4).
-    \item \textbf{Cross-Language Conditioning Analysis}: A novel probing experiment reveals strict vocabulary sub-space binding in IndicConformer, with +30.75\% WER degradation when Marathi speech is decoded under Konkani model conditioning, providing insights into multilingual ASR attention mechanisms.
+    \item \textbf{Architectural \& Qualitative Insights}: We provide an in-depth analysis of vocabulary coverage, positional encoding mechanisms, and subword morphological error patterns across dialects, establishing a clear difficulty hierarchy (Varhadi $<$ Ahirani $<$ Malvani).
 \end{itemize}
 
-The remainder of this paper is organized as follows: Section~\ref{sec:related} surveys related work in dialect normalization, Indic NLP, and multilingual ASR. Section~\ref{sec:methodology} details our methodology including ASR evaluation, dataset construction, and model architectures. Section~\ref{sec:findings} presents comprehensive quantitative and qualitative results. Section~\ref{sec:conclusion} concludes with a summary and directions for future research.
+The remainder of this paper is organized as follows: Section~\ref{sec:related} surveys related work in dialect normalization, Indic NLP, and synthetic data generation. Section~\ref{sec:methodology} details our dataset construction pipeline, synthetic expansion architecture, and neural model setups. Section~\ref{sec:findings} presents quantitative benchmark results, ablation studies, and qualitative predictions. Section~\ref{sec:conclusion} concludes with a summary and directions for future research.
 
 % ===================================================================
 \section{\textcolor{black}{Related Work}}
@@ -45,11 +44,13 @@ The remainder of this paper is organized as follows: Section~\ref{sec:related} s
 
 \subsection{\textcolor{black}{Dialect Normalization and Text Standardization}}
 
-The task of normalizing dialectal text into a standardized written form has been investigated across several major language families. In the Arabic NLP community, the CODA (Conventional Orthography for Dialectal Arabic) framework \cite{habash2012coda} established foundational guidelines for mapping dialectal Arabic varieties (Egyptian, Levantine, Gulf, Maghrebi) to Modern Standard Arabic (MSA), enabling the creation of parallel corpora and computational resources for dialectal Arabic processing. The MADAR project subsequently extended these principles to fine-grained city-level dialect identification across 25 Arab cities. Early computational approaches relied on character-level finite-state transducers (FSTs) and statistical machine translation (SMT) with phrase-table rules, while more recent work has shifted toward neural machine translation (NMT) using pre-trained encoder-decoder transformers.
+The task of normalizing dialectal text into a standardized written form has been formally established as a distinct sentence-level character transduction task alongside historical and user-generated content normalization \cite{kuparinen2023dialect}. Early neural explorations by Partanen et al. \cite{partanen2019dialect} demonstrated that sliding-window chunk-level neural networks effectively normalize 23 Finnish dialect varieties, reducing initial word error rates from 52.89\% to 5.73\%. Kuparinen et al. \cite{kuparinen2023dialect} subsequently compiled a large-scale multilingual benchmark across Finnish, Norwegian, Swiss German, and Slovene, demonstrating that sequence-to-sequence transformers and pre-trained byte-level models (byT5) consistently outperform statistical and recurrent baselines.
 
-In the Germanic language family, Swiss German dialect normalization to Standard High German has been studied extensively due to the absence of a standardized written form for Swiss German dialects. Researchers have explored both rule-based and neural approaches, with character-level sequence-to-sequence models showing particular promise for handling the systematic but highly variable phonetic mappings between dialects and the standard form.
+In the Arabic NLP community, the CODA (Conventional Orthography for Dialectal Arabic) framework \cite{habash2012coda} established foundational guidelines for mapping dialectal Arabic varieties (Egyptian, Levantine, Gulf, Maghrebi) to Modern Standard Arabic (MSA), enabling the creation of parallel corpora and computational resources for dialectal Arabic processing. The MADAR project subsequently extended these principles to fine-grained city-level dialect identification across 25 Arab cities. Early computational approaches relied on character-level finite-state transducers (FSTs) and statistical machine translation (SMT) with phrase-table rules, while more recent work has shifted toward neural machine translation (NMT) using pre-trained encoder-decoder transformers.
 
-For Indic languages, dialect normalization remains a significantly underexplored area. While some work has addressed code-mixing (e.g., Hindi-English) and transliteration, the specific task of mapping sub-regional dialectal text to a standardized written form within the same language has received minimal computational attention, particularly for Marathi and its diverse regional varieties. A comprehensive survey by Joshi et al. \cite{joshi2025survey} categorizes dialectal NLP tasks across Natural Language Understanding (NLU) and Natural Language Generation (NLG) across diverse language families, emphasizing the performance degradation of state-of-the-art models on non-standard dialects and underscoring the urgent need for equitable language technologies. Recently, Gavali \cite{gavali2026marathi} introduced a student-level framework combining IndicBERT and IndicWav2Vec for dialect detection and normalization on small local datasets. Our work significantly advances this landscape by establishing a large-scale 32,335-pair parallel benchmark, introducing an automated Gemma-2 LLM synthetic data expansion pipeline, and evaluating pre-trained sequence-to-sequence transformer architectures (mT5-small, IndicBART) alongside a 9-language evaluation of IndicConformer-600M.
+In the Germanic language family, Swiss German dialect normalization to Standard High German has been studied extensively due to the absence of a standardized written form for Swiss German dialects. Early researchers explored rule-based and statistical character-level models, while recent work by Kresic and Abbas \cite{kresic2024normalizing} demonstrated that fine-tuning multilingual sequence-to-sequence transformers on the SwissDial dataset achieves high-quality text normalization, with the compact mT5-small variant performing comparably to base and large model sizes.
+
+For Indic languages, dialect normalization remains a significantly underexplored area. While some work has addressed code-mixing (e.g., Hindi-English) and transliteration, the specific task of mapping sub-regional dialectal text to a standardized written form within the same language has received minimal computational attention, particularly for Marathi and its diverse regional varieties. A comprehensive survey by Joshi et al. \cite{joshi2025survey} categorizes dialectal NLP tasks across Natural Language Understanding (NLU) and Natural Language Generation (NLG) across diverse language families, emphasizing the performance degradation of state-of-the-art models on non-standard dialects and underscoring the urgent need for equitable language technologies. Recently, Dimakis et al. \cite{dimakis2025dialect} introduced a hybrid normalization framework combining rule-based morphological transformations with LLM few-shot prompting to standardize low-resource Greek dialect proverbs without requiring prior parallel data. Concurrently, Gavali \cite{gavali2026marathi} introduced a student-level framework combining IndicBERT and IndicWav2Vec for dialect detection and normalization on small local datasets. Our work significantly advances this landscape by establishing a large-scale 32,335-pair parallel benchmark, introducing an automated Gemma-2 LLM synthetic data expansion pipeline, and evaluating pre-trained sequence-to-sequence transformer architectures (mT5-small, IndicBART, IndicTrans2) across multiple dataset configurations.
 
 \subsection{\textcolor{black}{Indic NLP and Sequence-to-Sequence Transformers}}
 
@@ -61,14 +62,6 @@ Concurrently, general multilingual models such as mT5 \cite{xue2021mt5}---the mu
 
 The L3Cube-MahaNLP initiative \cite{joshi2022l3cube} has contributed Marathi-specific transformer models (MahaBERT, MahaRoBERTa) and curated datasets for tasks including sentiment analysis, named entity recognition, and hate speech detection. However, these encoder-only models are designed for classification tasks rather than sequence-to-sequence generation required for dialect normalization.
 
-\subsection{\textcolor{black}{Automatic Speech Recognition for Indian Languages}}
-
-The Conformer architecture \cite{gulati2020conformer}, combining the local feature extraction capability of convolutional neural networks (CNNs) with the global context modeling of Transformers, has become the dominant backbone for modern ASR systems. The IndicConformer family of models \cite{jain2024indicconformer} extended this architecture to the multilingual Indic setting, introducing hybrid CTC/RNN-T Conformer models pre-trained on large-scale Indic speech corpora including ULCA, KathBath, Shrutilipi, and IndicVoices datasets. These models achieved competitive WER on standard benchmarks for 22 Indian languages.
-
-The RESPIN-S1.0 corpus \cite{singh2024respin}, developed by the SPIRE Lab at IISc Bangalore, provides a large-scale, dialect-rich read-speech benchmark comprising 10,000+ hours of validated audio across 9 languages, 38 dialects, and 2 domains (agriculture and finance). This resource enables systematic evaluation of ASR robustness to dialectal variation---a critical gap in existing benchmarking practices that typically evaluate only on standardized speech.
-
-Despite these advances, systematic evaluation of state-of-the-art ASR models against sub-dialect variation within individual languages remains sparse. Most recently, Dhasmana et al. \cite{dhasmana2026dialect} investigated cross-lingual ASR transfer across 30 Devanagari-script Indic varieties using the VAANI dataset, demonstrating that pre-training models fine-tuned on standardized languages exhibit severe performance degradation on non-standard dialects (e.g., reaching 88.1\% WER on Malvani) due to high orthographic variability and systemic pre-training bias toward Hindi. These findings directly motivate our proposed two-stage architecture, which combines robust acoustic ASR baselines with specialized sequence-to-sequence text normalization to bridge the sub-dialect error gap.
-
 \subsection{\textcolor{black}{Synthetic Data Generation for Low-Resource NLP}}
 
 The use of Large Language Models (LLMs) for synthetic data generation has emerged as a powerful strategy for overcoming data scarcity in low-resource settings. Recent work has demonstrated that LLMs function more effectively as data generators than as direct task solvers, enabling a ``generate-then-fine-tune'' paradigm where synthetic parallel data from a large teacher model is used to train smaller, task-specific student models \cite{gemma2024}. Key considerations in this approach include maintaining semantic fidelity, preventing hallucination, and implementing multi-tier verification pipelines to ensure data quality.
@@ -79,90 +72,7 @@ For Indic languages specifically, synthetic data augmentation has been applied p
 \section{\textcolor{black}{Methodology}}
 \label{sec:methodology}
 
-\subsection{\textcolor{black}{Upstream ASR Evaluation: IndicConformer-600M Baseline}}
-\label{sec:asr_eval}
-
-To empirically motivate the need for post-ASR text normalization, we first establish comprehensive speech recognition baselines using the \texttt{ai4bharat/indic-conformer-600m-multilingual} hybrid CTC/RNN-T model across the IISc RESPIN benchmark suite. This evaluation spans 9 Indic languages, 19,838 utterances, and 30.04 hours of audio across agriculture and banking domains.
-
-\subsubsection{\textcolor{black}{Evaluation Methodology}}
-
-For each language, we evaluate both CTC (Connectionist Temporal Classification) and RNN-T (Recurrent Neural Network Transducer) decoder outputs. All evaluations use normalized WER and CER (Character Error Rate) computed with standardized text preprocessing including Unicode normalization (NFC), punctuation removal, and case folding for Roman-script languages. The model uses a FastConformer-Hybrid-Large architecture with 600M parameters, featuring 17 Conformer encoder blocks with 512-dimensional hidden states and 8-head self-attention.
-
-Table~\ref{tab:asr_baseline} presents the cross-language baseline performance. Hindi achieves the best WER (11.68\%), reflecting its dominant representation in the pre-training corpus. Under-resourced languages such as Chhattisgarhi (58.28\% WER) and Maithili (48.64\% WER) exhibit severe degradation, with error rates 4--5$\times$ higher than Hindi. The RNN-T decoder consistently outperforms CTC across all but two languages (Bhojpuri and Chhattisgarhi), with an average improvement of 0.51\% absolute WER.
-
-\begin{table}[t]
-\color{black}
-\centering
-\caption{\textcolor{black}{IndicConformer-600M Cross-Language ASR Baseline Performance on the IISc RESPIN Benchmark Suite}}
-\label{tab:asr_baseline}
-\begin{tabular}{lccccc}
-\hline
-\textbf{Language} & \textbf{Utterances} & \textbf{Hours} & \textbf{CTC WER (\%)} & \textbf{RNNT WER (\%)} & \textbf{RNNT CER (\%)} \\
-\hline
-Hindi (hi)         & 2,288 & 3.30 & 12.38 & \textbf{11.68} & 3.66 \\
-Marathi (mr)       & 2,170 & 3.04 & 23.94 & \textbf{23.71} & 5.06 \\
-Telugu (te)        & 2,226 & 3.38 & 28.36 & \textbf{27.29} & 5.18 \\
-Bengali (bn)       & 2,174 & 3.26 & 35.23 & \textbf{34.49} & 10.64 \\
-Kannada (kn)       & 2,161 & 3.61 & 36.02 & \textbf{34.99} & 7.09 \\
-Bhojpuri (bh)      & 2,220 & 3.10 & \textbf{37.62} & 37.71 & 12.15 \\
-Magahi (mg)        & 2,193 & 3.17 & 39.75 & \textbf{38.33} & 13.47 \\
-Maithili (mt)      & 2,172 & 3.33 & 49.14 & \textbf{48.64} & 12.65 \\
-Chhattisgarhi (ch) & 2,234 & 3.85 & \textbf{57.20} & 58.28 & 20.45 \\
-\hline
-\textbf{Weighted Avg.} & \textbf{19,838} & \textbf{30.04} & 35.52 & \textbf{35.01} & 10.03 \\
-\hline
-\end{tabular}
-\end{table}
-
-\subsubsection{\textcolor{black}{Marathi Sub-Dialect Degradation Analysis}}
-
-Table~\ref{tab:mr_subdialect} presents the sub-dialect breakdown for Marathi, revealing dramatic intra-language performance variation. The Standard Pune benchmark (D3) achieves 10.87\% RNNT WER, while South Konkan D1 (Sindhudurg/Ratnagiri region) degrades to 34.37\% WER---a gap of +23.50\% absolute. North Konkan D2 (Palghar/Thane) and Varhadi D4 (Vidarbha/Amravati) show intermediate degradation at 24.14\% and 24.79\% respectively. These results clearly demonstrate that a single Marathi ASR model produces fundamentally different quality outputs depending on the speaker's regional dialect.
-
-\begin{table}[t]
-\color{black}
-\centering
-\caption{\textcolor{black}{Marathi Sub-Dialect ASR Performance Breakdown (RNNT Decoder)}}
-\label{tab:mr_subdialect}
-\begin{tabular}{llccc}
-\hline
-\textbf{Code} & \textbf{Sub-Dialect Region} & \textbf{Utterances} & \textbf{WER (\%)} & \textbf{CER (\%)} \\
-\hline
-D1 & South Konkan (Sindhudurg/Ratnagiri) & 559 & 34.37 & 7.45 \\
-D2 & North Konkan (Palghar/Thane) & 540 & 24.14 & 5.08 \\
-D3 & Standard Pune Benchmark & 555 & \textbf{10.87} & 2.34 \\
-D4 & Varhadi (Vidarbha/Amravati) & 516 & 24.79 & 5.14 \\
-\hline
-\end{tabular}
-\end{table}
-
-\subsubsection{\textcolor{black}{Cross-Language Model Conditioning Study}}
-
-To probe the internal language-conditioned attention mechanisms of IndicConformer, we conduct a novel experiment: evaluating the Marathi test set (2,170 utterances) using Konkani (\texttt{kok}) model conditioning instead of the correct Marathi (\texttt{mr}) language token. This design probes whether the model's internal representations share overlapping acoustic-lexical sub-spaces between linguistically related languages.
-
-As shown in Table~\ref{tab:cross_cond}, switching from Marathi to Konkani conditioning causes RNNT WER to increase from 23.71\% to 54.46\% (+30.75\% absolute degradation), accompanied by CER rising from 5.06\% to 17.17\%. This dramatic degradation demonstrates that IndicConformer encodes strict vocabulary sub-space binding through its language conditioning tokens---the RNN-T decoder's vocabulary distribution shifts substantially when conditioned on a different (though related) language.
-
-Interestingly, a per-sub-dialect analysis reveals that South Konkan D1 achieves the lowest degraded WER (50.00\%) under Konkani conditioning, compared to 56.45\% for Standard Pune D3. This result aligns with the sociolinguistic reality that South Konkan (Malvani) speech shares significant phonological and lexical overlap with Konkani, as both languages are spoken in the contiguous Konkan coastal region.
-
-\begin{table}[t]
-\color{black}
-\centering
-\caption{\textcolor{black}{Cross-Language Conditioning Experiment: Marathi Dataset Decoded with Konkani Model}}
-\label{tab:cross_cond}
-\begin{tabular}{llcccc}
-\hline
-\textbf{Conditioning} & \textbf{Language Token} & \textbf{Utterances} & \textbf{CTC WER (\%)} & \textbf{RNNT WER (\%)} & \textbf{RNNT CER (\%)} \\
-\hline
-Marathi (correct) & \texttt{mr} & 2,170 & 23.94 & \textbf{23.71} & 5.06 \\
-Konkani (cross) & \texttt{kok} & 2,170 & 52.88 & 54.46 & 17.17 \\
-\hline
-\textbf{Degradation Gap} & -- & -- & +28.94 & \textbf{+30.75} & +12.11 \\
-\hline
-\end{tabular}
-\end{table}
-
-\subsection{\textcolor{black}{Dataset Construction and Synthetic Augmentation Pipeline}}
-
-\subsubsection{\textcolor{black}{Target Dialects and Linguistic Properties}}
+\subsection{\textcolor{black}{Target Dialects and Linguistic Properties}}
 
 We target three major Marathi dialects that collectively span the primary geographic regions of Maharashtra and exhibit distinct linguistic transformation patterns:
 
@@ -172,11 +82,11 @@ We target three major Marathi dialects that collectively span the primary geogra
     \item \textbf{Varhadi (D4, Vidarbha/Eastern Maharashtra)}: Spoken in Vidarbha, exhibiting characteristic interrogative transformations and systematic verb suffix modifications. Standard interrogative \emph{का?} (``why?'') becomes Varhadi \emph{काऊन?}; verbal forms undergo regular suffix mapping patterns. Among the three dialects, Varhadi maintains the highest degree of structural similarity to Standard Marathi, with transformations being more systematic and rule-governed.
 \end{enumerate}
 
-\subsubsection{\textcolor{black}{Original Corpus Curation}}
+\subsection{\textcolor{black}{Original Corpus Curation}}
 
-The original clean parallel corpus of 16,163 pairs was assembled through manual curation and exhaustive line-by-line quality audit across agriculture and banking domains from the IISc RESPIN dataset. The corpus comprises D1 Malvani (5,576 pairs), D2 Ahirani (5,501 pairs), and D4 Varhadi (5,086 pairs). A comprehensive manual audit protocol flagged critical translation flaws including garbled syntax (incomplete or malformed sentences), semantic inversions (meaning reversal in normalization), Hindi language leakage (Standard Hindi substituted for Standard Marathi), retained dialect residue (incompletely normalized outputs), and dropped question marks (loss of interrogative intent). Flawed pairs were segregated into a dedicated correction partition rather than discarded, to maximize corpus utilization.
+The original clean parallel corpus of 16,163 pairs was assembled through manual curation and exhaustive line-by-line quality audit across agriculture and banking domains. The corpus comprises D1 Malvani (5,576 pairs), D2 Ahirani (5,501 pairs), and D4 Varhadi (5,086 pairs). A comprehensive manual audit protocol flagged critical translation flaws including garbled syntax (incomplete or malformed sentences), semantic inversions (meaning reversal in normalization), Hindi language leakage (Standard Hindi substituted for Standard Marathi), retained dialect residue (incompletely normalized outputs), and dropped question marks (loss of interrogative intent). Flawed pairs were segregated into a dedicated correction partition rather than discarded, to maximize corpus utilization.
 
-\subsubsection{\textcolor{black}{LLM-Driven Synthetic Generation Architecture}}
+\subsection{\textcolor{black}{LLM-Driven Synthetic Generation Architecture}}
 
 To address data scarcity, we developed an automated synthetic parallel data generation pipeline powered by Gemma-2 \cite{gemma2024} in both 9B-instruction-tuned (\texttt{gemma-2-9b-it}) and 27B-instruction-tuned (\texttt{gemma-2-27b-it}) configurations, accessed via the Google AI Studio API. The pipeline architecture incorporates several design decisions to ensure generation quality:
 
@@ -187,7 +97,7 @@ To address data scarcity, we developed an automated synthetic parallel data gene
     \item \textbf{Domain Preservation}: System prompts explicitly enumerate 100\% preservation rules for domain-specific entities including crop names (शेती, कापूस, ज्वारी), banking terminology (कर्ज, खाते, व्याजदर), and geographical references.
 \end{itemize}
 
-\subsubsection{\textcolor{black}{Multi-Tier Verification and Quality Filtering}}
+\subsection{\textcolor{black}{Multi-Tier Verification and Quality Filtering}}
 
 All generated pairs undergo a rigorous two-tier verification process:
 
@@ -400,141 +310,39 @@ The financial domain example demonstrates 100\% exact string match with perfect 
 
 The agricultural example illustrates nuanced behavior on Varhadi interrogative normalization. The model correctly preserves the Varhadi interrogative form \emph{काऊन} (``why'') and produces semantically equivalent output, differing from the gold reference only in the optional sentence-final question particle \emph{का?}---a legitimate stylistic variation in Standard Marathi.
 
-\subsection{\textcolor{black}{ASR-to-Normalization Pipeline Justification}}
-
-The upstream ASR evaluation (Section~\ref{sec:asr_eval}) reveals that acoustic model errors across sub-dialects are primarily lexical and orthographic in nature, characterized by high substitution and insertion rates rather than structural syntactic failures. This empirical finding strongly validates our proposed two-stage pipeline architecture:
-
-\begin{equation}
-\textcolor{black}{\text{Dialectal Speech} \xrightarrow[\text{IndicConformer}]{\text{Stage 1: ASR}} \text{Dialect Text} \xrightarrow[\text{mT5-small}]{\text{Stage 2: Norm}} \text{Standard Marathi Text}}
-\end{equation}
-
-Three empirical observations from the ASR evaluation support this design:
-
-\begin{enumerate}
-    \item \textbf{Usable Standard Transcriptions}: Standard dialect benchmarks (Hindi D3: 9.28\% WER, Marathi D3: 10.87\% WER) achieve sufficiently high fidelity to confirm that the ASR backbone produces reliable transcriptions on standard speech, establishing a solid foundation for the pipeline.
-    \item \textbf{Lexically-Dominated Sub-Dialect Errors}: Sub-dialect degradation (Marathi D1: 34.37\% WER, Kannada D4: 58.20\% WER) introduces primarily lexical substitution errors---precisely the error type amenable to text-to-text sequence correction via learned transformations.
-    \item \textbf{Language-Conditioned Vocabulary Binding}: The cross-conditioning experiment (+30.75\% WER for Marathi under Konkani conditioning) confirms that IndicConformer's internal attention layers encode strict language-specific vocabulary sub-spaces, validating the decision to separate acoustic modeling from text normalization.
-\end{enumerate}
-
-\subsection{\textcolor{black}{Complete Sub-Dialect ASR Analysis Across All 9 Languages}}
-
-Table~\ref{tab:full_subdialect} presents the comprehensive sub-dialect breakdown across all 9 evaluated languages, encompassing 38 sub-dialect groups and 19,838 total utterances. This analysis reveals consistent patterns of degradation from standard to regional varieties across all language families represented in the RESPIN benchmark.
-
-\begin{table}[t]
-\color{black}
-\centering
-\caption{\textcolor{black}{Complete Sub-Dialect ASR Performance (RNNT Decoder) Across All 9 RESPIN Languages}}
-\label{tab:full_subdialect}
-\begin{tabular}{llccc}
-\hline
-\textbf{Language} & \textbf{Sub-Dialect Group} & \textbf{Utts} & \textbf{WER (\%)} & \textbf{CER (\%)} \\
-\hline
-\multirow{5}{*}{Hindi (hi)}
- & D1 (Western Variety)               & 401 & 10.05 & 3.01 \\
- & D2 (Eastern Influence)             & 520 & 14.38 & 4.91 \\
- & D3 (Std.\ Khariboli Benchmark)     & 396 & \textbf{9.28} & 2.89 \\
- & D4 (Central Belt Region)           & 530 & 13.36 & 4.09 \\
- & D5 (Northern Variety)              & 441 & 9.61 & 2.67 \\
-\hline
-\multirow{4}{*}{Marathi (mr)}
- & D1 (S.\ Konkan: Sindhudurg/Ratnagiri) & 559 & 34.37 & 7.45 \\
- & D2 (N.\ Konkan: Palghar/Thane)    & 540 & 24.14 & 5.08 \\
- & D3 (Std.\ Pune Benchmark)         & 555 & \textbf{10.87} & 2.34 \\
- & D4 (Varhadi: Vidarbha/Amravati)   & 516 & 24.79 & 5.14 \\
-\hline
-\multirow{4}{*}{Telugu (te)}
- & D1 (Coastal Andhra)               & 526 & \textbf{22.01} & 4.46 \\
- & D2 (Rayalaseema)                  & 558 & 30.29 & 5.38 \\
- & D3 (Telangana)                    & 609 & 27.50 & 5.35 \\
- & D4 (North Coastal)                & 533 & 29.42 & 5.55 \\
-\hline
-\multirow{5}{*}{Bengali (bn)}
- & D1 Sub-Region                     & 413 & 36.24 & 10.84 \\
- & D2 Sub-Region                     & 455 & 27.86 & 8.39 \\
- & D3 (Std.\ Benchmark)              & 455 & \textbf{24.61} & 7.34 \\
- & D4 Sub-Region                     & 402 & 45.56 & 14.94 \\
- & D5 Sub-Region                     & 449 & 39.32 & 11.95 \\
-\hline
-\multirow{5}{*}{Kannada (kn)}
- & D1 Sub-Region                     & 436 & 28.36 & 5.26 \\
- & D2 (Std.\ Benchmark)              & 453 & \textbf{17.02} & 2.59 \\
- & D3 Sub-Region                     & 433 & 50.35 & 11.39 \\
- & D4 Sub-Region                     & 444 & 58.20 & 13.87 \\
- & D5 Sub-Region                     & 395 & 20.82 & 3.46 \\
-\hline
-\multirow{3}{*}{Bhojpuri (bh)}
- & D1 Sub-Region                     & 759 & 39.28 & 13.04 \\
- & D2 Sub-Region                     & 722 & \textbf{36.71} & 11.61 \\
- & D3 Sub-Region                     & 739 & 37.05 & 11.74 \\
-\hline
-\multirow{4}{*}{Magahi (mg)}
- & D1 Sub-Region                     & 570 & 38.94 & 13.90 \\
- & D2 Sub-Region                     & 574 & \textbf{29.83} & 10.21 \\
- & D3 Sub-Region                     & 541 & 37.38 & 12.65 \\
- & D4 Sub-Region                     & 508 & 51.72 & 18.66 \\
-\hline
-\multirow{4}{*}{Maithili (mt)}
- & D1 Sub-Region                     & 548 & 47.72 & 12.80 \\
- & D2 Sub-Region                     & 536 & 50.03 & 13.07 \\
- & D3 Sub-Region                     & 556 & \textbf{44.04} & 10.79 \\
- & D4 Sub-Region                     & 532 & 52.30 & 13.85 \\
-\hline
-\multirow{4}{*}{Chhattisgarhi (ch)}
- & D1 Sub-Region                     & 517 & \textbf{55.87} & 19.27 \\
- & D2 Sub-Region                     & 561 & 58.01 & 20.37 \\
- & D3 Sub-Region                     & 564 & 59.15 & 21.10 \\
- & D4 Sub-Region                     & 592 & 59.89 & 20.98 \\
-\hline
-\end{tabular}
-\end{table}
-
-Several cross-linguistic patterns emerge from this analysis:
-
-\begin{enumerate}
-    \item \textbf{Universal Standard Advantage}: In every language where a standard benchmark dialect is identifiable, it consistently achieves the lowest WER within its language group. This confirms that ASR training data distribution is strongly biased toward standardized speech varieties.
-    \item \textbf{Kannada Maximum Intra-Language Gap}: Kannada exhibits the widest intra-language degradation: D2 Standard achieves 17.02\% WER while D4 sub-region reaches 58.20\%, a gap of +41.18\% absolute---the largest gap across all 9 languages.
-    \item \textbf{Chhattisgarhi Uniform Degradation}: Unlike other languages with clear standard-vs-dialect contrasts, Chhattisgarhi shows uniformly high WER (55.87\%--59.89\%) across all sub-regions, suggesting the model lacks adequate training representation for Chhattisgarhi speech in general.
-    \item \textbf{RNN-T Decoder Consistency}: The autoregressive RNN-T decoder outperforms the CTC decoder on 7 of 9 languages, with an average improvement of 0.51\% absolute WER, confirming the benefit of autoregressive language modeling for Indic speech.
-\end{enumerate}
-
 \subsection{\textcolor{black}{Dialect Difficulty Hierarchy}}
 
-Based on the combined ASR and normalization results, we establish a clear dialect difficulty hierarchy for the three target Marathi dialects:
+Based on the normalization metrics, we establish a clear dialect difficulty hierarchy for the three target Marathi dialects:
 
 \begin{enumerate}
-    \item \textbf{Easiest: Varhadi (D4)}: Achieves the highest normalization scores (80.99 BLEU, 91.21 chrF++ on 16k mT5) and intermediate ASR WER (24.79\%). Varhadi transformations are predominantly systematic suffix and interrogative modifications with high regularity, making them amenable to sequence-to-sequence learning with relatively small training data.
+    \item \textbf{Easiest: Varhadi (D4)}: Achieves the highest normalization scores (80.99 BLEU, 91.21 chrF++ on 16k mT5). Varhadi transformations are predominantly systematic suffix and interrogative modifications with high regularity, making them amenable to sequence-to-sequence learning even with modest training data.
     \item \textbf{Moderate: Ahirani (D2)}: Shows strong improvement with mT5 (60.31 BLEU on 16k, 62.07 on 32k) but remains challenging due to heavy consonant shifts and Gujarati/Bhili lexical influence that introduce non-Marathi subword patterns.
-    \item \textbf{Hardest: Malvani (D1)}: Exhibits the highest ASR WER (34.37\%) and the most complex normalization landscape due to phonetic shortening, Konkani lexical overlap, and palatalization patterns that create ambiguous surface forms.
+    \item \textbf{Hardest: Malvani (D1)}: Requires substantial synthetic data expansion (jumping from 46.31 to 65.10 BLEU on mT5) due to phonetic shortening, Konkani lexical overlap, and palatalization patterns that create ambiguous surface forms.
 \end{enumerate}
 
 % ===================================================================
 \section{\textcolor{black}{Conclusion}}
 \label{sec:conclusion}
 
-This study presents a comprehensive, end-to-end framework for multi-dialect Marathi text normalization that addresses both the upstream speech recognition challenges and the downstream text standardization task.
+This study presents a comprehensive, reproducible framework for multi-dialect Marathi text normalization, addressing severe data scarcity through automated synthetic data expansion and establishing rigorous neural sequence-to-sequence benchmarks.
 
-Our upstream IndicConformer-600M evaluation across 9 Indic languages (19,838 utterances, 30.04 hours) from the IISc RESPIN benchmark revealed sub-dialect WER degradation gaps of up to +41\% absolute (Kannada D4 vs.\ D2), with Marathi sub-dialects showing gaps of up to +23.50\% (South Konkan D1 vs.\ Standard Pune D3). These findings empirically establish the critical need for dialect-aware post-processing in real-world ASR deployment pipelines.
-
-Our LLM-driven synthetic data augmentation pipeline, powered by Gemma-2 with multi-tier verification, successfully doubled the clean parallel corpus from 16,163 to 32,335 pairs while maintaining strict semantic fidelity---a scalable approach for other low-resource dialect pairs. The augmented corpus enabled training of state-of-the-art normalization models: google/mT5-small (300M) achieved 69.51 BLEU and 84.58 chrF++ on the 32k combined multi-dialect dataset, outperforming IndicBART (244M) by +12.39 BLEU. Individual dialect performance reached 80.99 BLEU and 91.21 chrF++ for Varhadi (D4), demonstrating that fine-tuned sequence-to-sequence transformers can achieve high-quality dialect normalization even with modest training data.
-
-The cross-language conditioning experiment (+30.75\% WER degradation under Konkani conditioning) provided novel insights into the internal vocabulary sub-space binding mechanisms of multilingual ASR models, with implications for understanding language-conditioned attention in encoder-decoder architectures.
+Our LLM-driven synthetic data augmentation pipeline, powered by Gemma-2 with multi-tier verification (Devanagari script filtering and LLaMA-3.1-8B semantic auditing), successfully doubled the clean parallel corpus from 16,163 to 32,335 pairs while maintaining strict semantic fidelity---a scalable paradigm for other low-resource dialect pairs. Fine-tuning sequence-to-sequence transformers on the expanded benchmark established state-of-the-art performance: google/mT5-small (300M) achieved 69.51 BLEU and 84.58 chrF++ on the 32k combined multi-dialect dataset, outperforming IndicBART (244M) by +12.39 BLEU. Individual dialect performance reached 80.99 BLEU and 91.21 chrF++ for Varhadi (D4), demonstrating that compact pre-trained sequence-to-sequence transformers can achieve high-accuracy dialect normalization.
 
 \subsection{\textcolor{black}{Limitations}}
 
 This work has several limitations that should be acknowledged:
 \begin{enumerate}
     \item Synthetic data generation relies on commercial LLM APIs (Gemma-2 via Google AI Studio), introducing API cost and rate limit considerations.
-    \item Evaluation is focused on read speech from the RESPIN corpus, which may not fully capture spontaneous conversational dialect speech.
-    \item While we benchmarked three encoder-decoder models, decoder-only LLMs (e.g., LLaMA-3, Gemma-2) have not been evaluated for zero-shot or fine-tuned dialect normalization.
+    \item While we benchmarked three encoder-decoder models (mT5, IndicBART, IndicTrans2), decoder-only LLMs (e.g., LLaMA-3, Gemma-2) have not been evaluated for zero-shot or fine-tuned text normalization.
+    \item Evaluation is currently restricted to text normalization metrics (BLEU, chrF++); downstream human evaluation across diverse domain applications remains for future work.
 \end{enumerate}
 
 \subsection{\textcolor{black}{Future Directions}}
 
 Several promising directions emerge from this work:
 \begin{enumerate}
-    \item \textbf{End-to-End Pipeline Integration}: Connecting ASR and normalization into a single differentiable pipeline with joint optimization.
     \item \textbf{Edge Deployment via Quantization}: Model quantization (INT8/INT4) and knowledge distillation to sub-100M parameter models for on-device deployment in rural Maharashtra.
-    \item \textbf{Expansion to Additional Dialects}: Extending to Deshi/Puneri, Kolhapuri, Marathwada, and other Indic language family sub-dialects.
-    \item \textbf{Decoder-Only LLM Benchmarking}: Evaluating instruction-tuned decoder-only models for dialect normalization tasks.
-    \item \textbf{Human Evaluation}: Complementing automatic metrics with human assessments of semantic adequacy and naturalness.
+    \item \textbf{Expansion to Additional Dialects}: Extending the pipeline to Deshi/Puneri, Kolhapuri, Marathwada, and other Indic language sub-dialects.
+    \item \textbf{Decoder-Only LLM Benchmarking}: Evaluating instruction-tuned decoder-only models for zero-shot and few-shot dialect normalization tasks.
+    \item \textbf{Human Evaluation}: Complementing automatic SacreBLEU metrics with expert human assessments of semantic adequacy, grammatical correctness, and naturalness.
 \end{enumerate}
