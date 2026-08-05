@@ -617,31 +617,6 @@ Long Sentences & $> 25$ tokens & 344 & 68.42 & 83.90 & 19.85\% \\
 
 Short dialectal sentences ($< 10$ tokens) achieve the highest accuracy (78.12 BLEU, 13.80\% WER) due to isolated phrase structures. Performance degrades gracefully for long multi-clause sentences ($> 25$ tokens) down to 68.42 BLEU, primarily driven by cumulative error propagation across multiple sub-clause boundary inflections.
 
-\subsection{\textcolor{black}{Inference Latency and Decoding Search Ablation}}
-
-To evaluate real-time deployment viability, Table~\ref{tab:latency_beam} compares inference latency (milliseconds per sentence) and throughput (tokens per second) across decoding search strategies (Greedy vs.\ Beam Search $k=3, 5$) on both GPU (NVIDIA T4, batch size 16) and CPU (Intel Core i7-1185G7 @ 3.0GHz, single thread) hardware environments.
-
-\begin{table}[t]
-\color{black}
-\centering
-\caption{\textcolor{black}{Inference Latency and Decoding Search Strategy Ablation (mT5-Small 32k)}}
-\label{tab:latency_beam}
-\begin{tabularx}{\textwidth}{llcccc}
-\hline
-\textbf{Decoding Mode} & \textbf{Hardware} & \textbf{Latency (ms/sent)} & \textbf{Throughput (tok/s)} & \textbf{BLEU} & \textbf{chrF++} \\
-\hline
-Greedy ($k=1$) & GPU (NVIDIA T4) & \textbf{14.2 ms} & \textbf{412 tok/s} & 72.85 & 87.10 \\
-Beam Search ($k=3$) & GPU (NVIDIA T4) & 28.5 ms & 210 tok/s & \textbf{73.48} & \textbf{87.70} \\
-Beam Search ($k=5$) & GPU (NVIDIA T4) & 42.1 ms & 142 tok/s & 73.52 & 87.74 \\
-\hline
-Greedy ($k=1$) & CPU (Intel i7) & \textbf{84.6 ms} & \textbf{68 tok/s} & 72.85 & 87.10 \\
-Beam Search ($k=3$) & CPU (Intel i7) & 192.4 ms & 30 tok/s & 73.48 & 87.70 \\
-\hline
-\end{tabularx}
-\end{table}
-
-Greedy decoding ($k=1$) achieves a \textbf{2.0$\times$ speedup} on GPU (14.2 ms/sentence) with negligible BLEU drop ($-$0.63 BLEU vs.\ Beam 3), establishing an optimal low-latency configuration for real-time mobile voice assistant integration.
-
 \subsection{\textcolor{black}{Blind Human Evaluation and Qualitative Rubric}}
 
 To complement automatic n-gram metrics, three native Marathi linguists conducted a double-blind human evaluation on 100 randomly sampled test outputs from fine-tuned mT5-small (32k). Evaluators scored outputs on a 1--5 Likert scale across three dimensions:
