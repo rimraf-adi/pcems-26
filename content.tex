@@ -20,6 +20,17 @@ The practical consequences of this gap are severe. Downstream applications such 
 
 \textit{Dialect Normalization}---the automated transformation of non-standard dialectal text into standard written orthography while preserving underlying semantic intent---serves as an essential pre-processing pipeline for bridging this digital divide \cite{kuparinen2023dialect}. By mapping dialectal surface forms to their standardized equivalents, normalization enables existing NLP models trained on Standard Marathi to process dialectal inputs without requiring expensive retraining or domain-specific architectural modifications.
 
+\subsection{\textcolor{black}{Linguistic Background and Devanagari Orthographic Heterogeneity}}
+
+Devanagari, an abugida writing system used for Marathi, Hindi, and Sanskrit, exhibits inherent orthographic complexities. While Standard Marathi possesses formal orthographic rules codified by the \emph{Maharashtra Sahitya Parishad} (governing rules for \emph{anusvara} nasalization, \emph{hrasva-dirgha} vowel length, and consonant cluster representation), regional dialects operate almost exclusively in oral modalities. When speakers express dialectal forms in written digital media (e.g., social messaging, user queries, transcription post-processing), they use informal phonetic spellings. This introduces several distinct layers of orthographic heterogeneity:
+
+\begin{itemize}
+    \item \textbf{Vocalic Length & Diphthong Alternations}: Informal dialectal text frequently conflates short (\emph{hrasva}) and long (\emph{dirgha}) vowels (e.g., \emph{इ/ई} and \emph{उ/ऊ}), or substitutes monophthongs for diphthongs (e.g., Standard \emph{होता} $\rightarrow$ Malvani \emph{हतो}).
+    \item \textbf{Nasalization & Anusvara Variations}: Standard Marathi strictly regulates \emph{anusvara} placement for nasal consonants and grammatical inflections. Dialectal text frequently omits \emph{anusvaras} or converts them to explicit nasal consonants (\emph{न, म, ङ}).
+    \item \textbf{Nukta & Retroflex Consonant Shifts}: Dialects like Ahirani systematically simplify retroflex consonants (\emph{ळ} $\rightarrow$ \emph{ल} or \emph{य}) and alter dental-palatal fricative conventions (\emph{श/ष} $\rightarrow$ \emph{स}), leading to extreme out-of-vocabulary (OOV) rates in standard tokenizers.
+    \item \textbf{Agglutinative Postposition Merging}: Standard Marathi attaches case markers (\emph{ला, ने, ची, त}) directly to modified stem nouns (\emph{सामान्यरूप}). Dialects modify the stem in non-standard ways (e.g., Standard \emph{मुलाला} $\rightarrow$ Ahirani \emph{पोराले}, Malvani \emph{चेडवाक}).
+\end{itemize}
+
 However, developing robust deep learning models for dialect normalization encounters two fundamental bottlenecks:
 
 \begin{enumerate}
@@ -44,13 +55,21 @@ The remainder of this paper is organized as follows: Section~\ref{sec:related} s
 
 \subsection{\textcolor{black}{Dialect Normalization and Text Standardization}}
 
-The task of normalizing dialectal text into a standardized written form has been formally established as a distinct sentence-level character transduction task alongside historical and user-generated content normalization \cite{kuparinen2023dialect}. Early neural explorations by Partanen et al. \cite{partanen2019dialect} demonstrated that sliding-window chunk-level neural networks effectively normalize 23 Finnish dialect varieties, reducing initial word error rates from 52.89\% to 5.73\%. Kuparinen et al. \cite{kuparinen2023dialect} subsequently compiled a large-scale multilingual benchmark across Finnish, Norwegian, Swiss German, and Slovene, demonstrating that sequence-to-sequence transformers and pre-trained byte-level models (byT5) consistently outperform statistical and recurrent baselines.
+The task of normalizing dialectal text into a standardized written form has been formally established as a distinct sentence-level character transduction task alongside historical and user-generated content normalization \cite{kuparinen2023dialect}. Early neural explorations by Partanen et al. \cite{partanen2019dialect} evaluated sequence transduction across 23 Finnish dialect varieties, demonstrating that sliding-window chunk-level neural architectures (LSTMs and character Transformers) effectively normalize non-standard dialectal forms into normative Standard Finnish, drastically reducing word error rates from an initial 52.89\% down to 5.73\%. Kuparinen et al. \cite{kuparinen2023dialect} extended this paradigm to a large-scale multilingual benchmark covering four distinct language families (Finnish, Norwegian, Swiss German, and Slovene), showing that fine-tuned sequence-to-sequence transformers and pre-trained byte-level architectures (byT5) consistently surpass character-level statistical machine translation (SMT) and recurrent baselines across diverse dialectal corpora.
 
-In the Arabic NLP community, the CODA (Conventional Orthography for Dialectal Arabic) framework \cite{habash2012coda} established foundational guidelines for mapping dialectal Arabic varieties (Egyptian, Levantine, Gulf, Maghrebi) to Modern Standard Arabic (MSA), enabling the creation of parallel corpora and computational resources for dialectal Arabic processing. The MADAR project subsequently extended these principles to fine-grained city-level dialect identification across 25 Arab cities. Early computational approaches relied on character-level finite-state transducers (FSTs) and statistical machine translation (SMT) with phrase-table rules, while more recent work has shifted toward neural machine translation (NMT) using pre-trained encoder-decoder transformers.
+In the Arabic NLP community, the Conventional Orthography for Dialectal Arabic (CODA) framework \cite{habash2012coda} established foundational orthographic guidelines for mapping diverse regional Arabic varieties (Egyptian, Levantine, Gulf, Maghrebi) to Modern Standard Arabic (MSA), providing the linguistic substrate for parallel corpus creation and computational Arabic dialect processing. The MADAR project subsequently extended these principles to fine-grained city-level dialect identification and translation across 25 Arab cities. While early computational approaches relied on character-level finite-state transducers (FSTs) and phrase-based SMT rules, contemporary work predominantly leverages pre-trained multilingual encoder-decoder transformers.
 
-In the Germanic language family, Swiss German dialect normalization to Standard High German has been studied extensively due to the absence of a standardized written form for Swiss German dialects. Early researchers explored rule-based and statistical character-level models, while recent work by Kresic and Abbas \cite{kresic2024normalizing} demonstrated that fine-tuning multilingual sequence-to-sequence transformers on the SwissDial dataset achieves high-quality text normalization, with the compact mT5-small variant performing comparably to base and large model sizes.
+In Germanic languages, Swiss German dialect normalization to Standard High German has been investigated extensively due to the total absence of a single standardized orthography for Swiss German dialects. Early studies explored character-level statistical rules, while recent work by Kresic and Abbas \cite{kresic2024normalizing} demonstrated that fine-tuning multilingual sequence-to-sequence transformers on the SwissDial corpus yields high-quality text normalization, with the compact \texttt{mT5-small} model achieving competitive performance against significantly larger base and large transformer variants.
 
-For Indic languages, dialect normalization remains a significantly underexplored area. While some work has addressed code-mixing (e.g., Hindi-English) and transliteration, the specific task of mapping sub-regional dialectal text to a standardized written form within the same language has received minimal computational attention, particularly for Marathi and its diverse regional varieties. A comprehensive survey by Joshi et al. \cite{joshi2025survey} categorizes dialectal NLP tasks across Natural Language Understanding (NLU) and Natural Language Generation (NLG) across diverse language families, emphasizing the performance degradation of state-of-the-art models on non-standard dialects and underscoring the urgent need for equitable language technologies. Recently, Dimakis et al. \cite{dimakis2025dialect} introduced a hybrid normalization framework combining rule-based morphological transformations with LLM few-shot prompting to standardize low-resource Greek dialect proverbs without requiring prior parallel data. Concurrently, Mulla and Kumar \cite{mulla2022text} explored spectro-temporal feature extraction for text-independent Marathi dialect recognition across LDC-IL audio corpora, Amartyaveer et al. \cite{amartyaveer2025improving} developed multimodal ASR and RoBERTa embeddings for dialect identification across Indian languages (including Marathi) under the RESPIN initiative, Gaikwad et al. \cite{gaikwad2025marathi} explored Retrieval-Augmented Generation (RAG) prompting via the Gemini API for zero-shot Marathi dialect translation, Pawar et al. \cite{pawar2026automatic} investigated acoustic dialect classification (Ahirani, Varhadi, Standard Marathi) using MFCC feature extraction and CNNs in noisy environments, Vyavhare et al. \cite{vyavhare2026marathi} proposed a hybrid rule-based and neural translation framework for regional Marathi dialects, and Gavali \cite{gavali2026marathi} introduced a student-level framework combining IndicBERT and IndicWav2Vec for dialect detection and normalization on small local datasets. Our work significantly advances this landscape by establishing a large-scale 32,335-pair parallel benchmark, introducing an automated Gemma-2 LLM synthetic data expansion pipeline, and evaluating pre-trained sequence-to-sequence transformer architectures (mT5-small, IndicBART, IndicTrans2) across multiple dataset configurations.
+For Indic languages, dialect normalization remains a critically underexplored area. While prior literature has addressed code-mixing (e.g., Hindi-English) and script transliteration, mapping regional dialectal text to a standardized written form within the same language has received minimal computational attention. A comprehensive global survey by Joshi et al. \cite{joshi2025survey} categorizes dialectal NLP tasks across Natural Language Understanding (NLU) and Natural Language Generation (NLG) across diverse language families, emphasizing the acute performance degradation of state-of-the-art models on non-standard dialects and calling for equitable language technologies. Recently, Dimakis et al. \cite{dimakis2025dialect} introduced a hybrid normalization framework combining rule-based morphological transformations with LLM few-shot prompting to standardize low-resource Greek dialect proverbs without requiring prior parallel training data.
+
+In the specific context of Marathi language dialect processing, research has historically concentrated on speech, acoustic classification, or localized applications:
+\begin{itemize}
+    \item \textbf{Acoustic Speech Classification & Recognition}: Mulla and Kumar \cite{mulla2022text} explored spectro-temporal feature extraction (15 parameters including chromagram, spectral centroid, and MFCCs) with Chi-Square/ANOVA feature selection on 7,555 speech recordings from the LDC-IL Marathi raw speech corpus across four dialects (Goa-based, Vidarbha, Marathwada, Puneri), achieving 84.24\% accuracy with Ridge Classifiers. Pawar et al. \cite{pawar2026automatic} investigated acoustic dialect identification across Ahirani, Varhadi, and Standard Marathi audio using MFCC features and Convolutional Neural Networks (CNNs) under clean and artificially generated Gaussian noise conditions (SNR 1.78--9.74 dB), achieving up to 93.65\% accuracy in clean environments and 87.29\% under noisy conditions. Amartyaveer et al. \cite{amartyaveer2025improving} at IISc Bangalore introduced a multimodal architecture combining IndicWav2Vec audio representations with RoBERTa text embeddings derived from ASR hypotheses across 8 Indian languages (including 4 Marathi dialects) under the Gates Foundation RESPIN initiative, achieving 79.81\% dialect identification accuracy.
+    \item \textbf{Text-Level Dialect Processing & Translation}: Gaikwad et al. \cite{gaikwad2025marathi} explored zero-shot prompting via the commercial Gemini API within a Retrieval-Augmented Generation (RAG) framework using Sentence Transformers and FAISS to translate Konkani (Devanagari) dialect queries into Standard Marathi for document Q\&A. Vyavhare et al. \cite{vyavhare2026marathi} proposed a hybrid rule-based dictionary and neural translation web interface for regional Marathi dialects. Gavali \cite{gavali2026marathi} introduced a student-level framework combining IndicBERT and IndicWav2Vec for dialect detection and normalization on small local datasets.
+\end{itemize}
+
+Our work significantly advances this landscape: while prior studies focused either on speech/acoustic classification or API-dependent zero-shot prompting without releasing parallel datasets, we establish the first large-scale 32,335-pair parallel text benchmark, introduce an automated Gemma-2 LLM synthetic data expansion engine with multi-tier verification, and conduct rigorous 5-fold cross-validated fine-tuning of open-weights sequence-to-sequence transformers (\texttt{mT5-small}, IndicBART, IndicTrans2) for local, reproducible inference.
 
 \subsection{\textcolor{black}{Indic NLP and Sequence-to-Sequence Transformers}}
 
@@ -64,7 +83,7 @@ The L3Cube-MahaNLP initiative \cite{joshi2022l3cube} has contributed Marathi-spe
 
 \subsection{\textcolor{black}{Synthetic Data Generation for Low-Resource NLP}}
 
-The use of Large Language Models (LLMs) for synthetic data generation has emerged as a powerful strategy for overcoming data scarcity in low-resource settings. Recent work has demonstrated that LLMs function more effectively as data generators than as direct task solvers, enabling a ``generate-then-fine-tune'' paradigm where synthetic parallel data from a large teacher model is used to train smaller, task-specific student models \cite{gemma2024}. Key considerations in this approach include maintaining semantic fidelity, preventing hallucination, and implementing multi-tier verification pipelines to ensure data quality.
+The use of Large Language Models (LLMs) for synthetic data generation has emerged as a powerful strategy for overcoming data scarcity in low-resource settings. Recent work has demonstrated that LLMs function more effectively as data generators than as direct task solvers, enabling a ``generate-then-fine-tune'' paradigm where synthetic parallel data from a large teacher model is used to train smaller, task-specific student models \cite{gemma2024}. Key considerations in this approach include maintaining semantic fidelity, preventing hallucination, and implementing multi-tier verification pipelines to ensure data quality \cite{ansary2024unicode}.
 
 For Indic languages specifically, synthetic data augmentation has been applied primarily to machine translation tasks, with back-translation and pivoting through high-resource languages serving as common strategies. Our work extends this paradigm specifically to the dialect normalization task, introducing domain-aware generation templates and multi-stage LLM verification protocols tailored to the morphological properties of Marathi dialects.
 
@@ -82,6 +101,29 @@ We target three major Marathi dialects mapped in social dialectology and compara
     \item \textbf{Varhadi (D4, Vidarbha/Eastern Maharashtra)}: Spoken in Vidarbha, exhibiting characteristic interrogative transformations and systematic verb suffix modifications. Standard interrogative \emph{का?} (``why?'') becomes Varhadi \emph{काऊन?}; verbal forms undergo regular suffix mapping patterns. Among the three dialects, Varhadi maintains the highest degree of structural similarity to Standard Marathi, with transformations being more systematic and rule-governed.
 \end{enumerate}
 
+Table~\ref{tab:dialect_linguistic_profiles} provides a detailed comparative linguistic breakdown of representative sentences across the three target dialects alongside Standard Marathi, highlighting phonological, morphological, and lexical transformation paradigms.
+
+\begin{table}[t]
+\color{black}
+\centering
+\caption{\textcolor{black}{Comparative Linguistic Profile & Sample Transformations Across Marathi Sub-Dialects}}
+\label{tab:dialect_linguistic_profiles}
+\begin{tabularx}{\textwidth}{lXXX}
+\hline
+\textbf{Dialect Region} & \textbf{Dialectal Input} & \textbf{Standard Marathi Output} & \textbf{Transformation Type} \\
+\hline
+\textbf{D1: Malvani} & मका आज बँकेंत जावचा हा. & मला आज बँकेत जायचे आहे. & Dative pronoun (\emph{मका} $\rightarrow$ \emph{मला}), Infinitival verb (\emph{जावचा} $\rightarrow$ \emph{जायचे}), Auxiliary (\emph{हा} $\rightarrow$ \emph{आहे}). \\
+\textbf{D1: Malvani} & तुमी खय चाललात? & तुम्ही कुठे चालला आहात? & Interrogative (\emph{खय} $\rightarrow$ \emph{कुठे}), Plural verb suffix (\emph{चाललात} $\rightarrow$ \emph{चालला आहात}). \\
+\hline
+\textbf{D2: Ahirani} & मना पोराले शेतीमा काम करणा शे. & माझ्या मुलाला शेतीत काम करायचे आहे. & Genitive pronoun (\emph{मना} $\rightarrow$ \emph{माझ्या}), Noun (\emph{पोराले} $\rightarrow$ \emph{मुलाला}), Locative (\emph{मा} $\rightarrow$ \emph{त}), Auxiliary (\emph{शे} $\rightarrow$ \emph{आहे}). \\
+\textbf{D2: Ahirani} & तुम्ही कशाले इतला राग करताय? & तुम्ही कशाला एवढा राग करता? & Interrogative (\emph{कशाले} $\rightarrow$ \emph{कशाला}), Demonstrative (\emph{इतला} $\rightarrow$ \emph{एवढा}). \\
+\hline
+\textbf{D4: Varhadi} & तू काऊन बँकेंत गेला नव्हता? & तू का बँकेत गेला नव्हतास? & Interrogative (\emph{काऊन} $\rightarrow$ \emph{का}), Verbal person marker (\emph{नव्हता} $\rightarrow$ \emph{नव्हतास}). \\
+\textbf{D4: Varhadi} & शेतात पाणी हाय का नाही जी? & शेतात पाणी आहे की नाही? & Auxiliary (\emph{हाय} $\rightarrow$ \emph{आहे}), Disjunctive particle (\emph{का} $\rightarrow$ \emph{की}), Honorific residue (\emph{जी}). \\
+\hline
+\end{tabularx}
+\end{table}
+
 \subsection{\textcolor{black}{Original Corpus Curation}}
 
 The original clean parallel corpus of 16,163 pairs was assembled through manual curation and exhaustive line-by-line quality audit across agriculture and banking domains. The corpus comprises D1 Malvani (5,576 pairs), D2 Ahirani (5,501 pairs), and D4 Varhadi (5,086 pairs). A comprehensive manual audit protocol flagged critical translation flaws including garbled syntax (incomplete or malformed sentences), semantic inversions (meaning reversal in normalization), Hindi language leakage (Standard Hindi substituted for Standard Marathi), retained dialect residue (incompletely normalized outputs), and dropped question marks (loss of interrogative intent). Flawed pairs were segregated into a dedicated correction partition rather than discarded, to maximize corpus utilization.
@@ -97,15 +139,49 @@ To address data scarcity, we developed an automated synthetic parallel data gene
     \item \textbf{Domain Preservation}: System prompts explicitly enumerate 100\% preservation rules for domain-specific entities including crop names (शेती, कापूस, ज्वारी), banking terminology (कर्ज, खाते, व्याजदर), and geographical references.
 \end{itemize}
 
+Below is the self-contained System Prompt template deployed for Gemma-2 synthetic parallel data generation:
+
+\begin{small}
+\begin{verbatim}
+SYSTEM PROMPT (Gemma-2 Dialect Normalization Teacher):
+You are an expert Marathi Computational Linguist specializing in regional sub-dialects 
+of Maharashtra (Malvani, Ahirani, Varhadi).
+YOUR TASK: Normalize the given dialectal Marathi input into grammatically perfect, 
+pure Standard Marathi (मानक मराठी).
+
+STRICT RULES:
+1. Preserve 100% of the original sentence meaning. DO NOT add, remove, or alter facts.
+2. Maintain all domain-specific terminology (Agriculture/Banking/Finance).
+3. Do NOT substitute Marathi words with Hindi or English equivalents.
+4. Output ONLY valid Devanagari text string in Standard Marathi.
+
+FEW-SHOT EXAMPLES:
+[Input Dialect]: मका आज बँकेंत जावचा हा.
+[Standard Output]: मला आज बँकेत जायचे आहे.
+
+[Input Dialect]: मना पोराले शेतीमा काम करणा शे.
+[Standard Output]: माझ्या मुलाला शेतीत काम करायचे आहे.
+
+INPUT SENTENCE: {dialect_sentence}
+STANDARD MARATHI TRANSLATION:
+\end{verbatim}
+\end{small}
+
 \subsection{\textcolor{black}{Multi-Tier Verification and Quality Filtering}}
 
-All generated pairs undergo a rigorous two-tier verification process:
+All generated pairs undergo a rigorous three-tier verification and correction pipeline:
 
-\textbf{Tier 1: Rule-Based Syntactic Filter.} Automated validation checks implement Indic Abugida script normalization principles \cite{ansary2024unicode}, including: (a) Devanagari script integrity---both source and target must contain $>$90\% Devanagari Unicode characters within the \texttt{U+0900--U+097F} range while resolving broken nuktas, broken diacritics, and invalid halant connectors; (b) length ratio constraint---$0.5 \le |S_{\text{dialect}}| / |S_{\text{standard}}| \le 2.0$ to prevent hallucinated expansions or truncations; (c) non-identity constraint---$S_{\text{dialect}} \neq S_{\text{standard}}$ to exclude trivially identical pairs; and (d) minimum token count---both source and target must contain $\ge$ 3 whitespace-separated tokens.
-
-\textbf{Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} (accessed via Groq API with key rotation pool and NVIDIA NIM fallback for rate limit resilience) performs semantic equivalence verification. The verifier is prompted to assess whether each generated Standard Marathi translation: (a) preserves exact semantic meaning of the dialectal input; (b) contains no hallucinated facts, entities, or claims absent from the source; (c) uses exclusively Marathi vocabulary without Hindi, English, or other language contamination; and (d) correctly normalizes all dialect-specific morphological features.
-
-\textbf{Closed-Loop Correction Engine.} Pairs flagged by either verification tier enter a two-step correction loop: Step~1 generates corrected candidate translations using feedback-aware prompts that specifically address identified flaws; Step~2 (QA Auditor) re-verifies corrected candidates, with pairs failing re-verification undergoing a second correction pass before final accept/reject classification.
+\begin{enumerate}
+    \item \textbf{Tier 1: Rule-Based Syntactic Filter.} Automated validation checks implement Indic Abugida script normalization principles \cite{ansary2024unicode}, including:
+    \begin{itemize}
+        \item \emph{Devanagari Script Integrity}: Both source and target must contain $>$90\% Devanagari Unicode characters within the \texttt{U+0900--U+097F} range, automatically normalizing broken nuktas (\texttt{U+093C}), invalid halants (\texttt{U+094D}), and orphan matras.
+        \item \emph{Length Ratio Constraint}: $0.5 \le |S_{\text{dialect}}| / |S_{\text{standard}}| \le 2.0$ to eliminate hallucinated sentence expansions or accidental truncations.
+        \item \emph{Non-Identity Constraint}: $S_{\text{dialect}} \neq S_{\text{standard}}$ to exclude trivially un-normalized identical string copies.
+        \item \emph{Minimum Token Count}: Both source and target must contain $\ge 3$ whitespace-separated tokens.
+    \end{itemize}
+    \item \textbf{Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} (accessed via Groq API with key rotation pool and NVIDIA NIM fallback for rate limit resilience) performs semantic equivalence verification. The verifier rates candidates on a 1--5 score scale assessing: (a) exact semantic preservation; (b) absence of hallucinated entities; (c) absence of Hindi/English contamination; and (d) complete normalization of dialectal inflections. Pairs scoring $< 4.0$ are rejected or routed to correction.
+    \item \textbf{Closed-Loop Correction Engine.} Pairs flagged by Tier 1 or Tier 2 enter a two-step correction loop: Step~1 generates corrected candidate translations using feedback-aware prompts highlighting the specific failure reason (e.g., ``Hindi leakage detected'' or ``Incomplete normalization''); Step~2 (QA Auditor) re-verifies corrected candidates, discarding pairs that fail a second audit pass.
+\end{enumerate}
 
 \begin{table}[t]
 \color{black}
