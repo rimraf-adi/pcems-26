@@ -67,7 +67,7 @@ The Conformer architecture \cite{gulati2020conformer}, combining the local featu
 
 The RESPIN-S1.0 corpus \cite{singh2024respin}, developed by the SPIRE Lab at IISc Bangalore, provides a large-scale, dialect-rich read-speech benchmark comprising 10,000+ hours of validated audio across 9 languages, 38 dialects, and 2 domains (agriculture and finance). This resource enables systematic evaluation of ASR robustness to dialectal variation---a critical gap in existing benchmarking practices that typically evaluate only on standardized speech.
 
-Despite these advances, systematic evaluation of state-of-the-art ASR models against sub-dialect variation within individual languages remains sparse, leaving a gap in understanding the real-world robustness of these systems when deployed across linguistically diverse communities.
+Despite these advances, systematic evaluation of state-of-the-art ASR models against sub-dialect variation within individual languages remains sparse. Most recently, Dhasmana et al. \cite{dhasmana2026dialect} investigated cross-lingual ASR transfer across 30 Devanagari-script Indic varieties using the VAANI dataset, demonstrating that pre-training models fine-tuned on standardized languages exhibit severe performance degradation on non-standard dialects (e.g., reaching 88.1\% WER on Malvani) due to high orthographic variability and systemic pre-training bias toward Hindi. These findings directly motivate our proposed two-stage architecture, which combines robust acoustic ASR baselines with specialized sequence-to-sequence text normalization to bridge the sub-dialect error gap.
 
 \subsection{\textcolor{black}{Synthetic Data Generation for Low-Resource NLP}}
 
