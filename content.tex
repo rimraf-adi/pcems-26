@@ -335,8 +335,8 @@ D4 Varhadi (32k) & Fine-Tuned & 516 & 67.97 & 25.43\% & \textbf{76.90} & \textbf
 Key observations from Table~\ref{tab:respin_comprehensive} include:
 \begin{enumerate}
     \item \textbf{Failure of Zero-Shot Base Models}: Non-finetuned base models (\texttt{IndicBART} and \texttt{mT5-small}) fail completely in zero-shot mode, exhibiting severe repetitive token hallucination and producing degenerate outputs ($>500\%$ WER, BLEU $< 3.5$). Supervised fine-tuning is strictly required for task alignment.
-    \item \textbf{mT5-Small Consistency}: The 32k fine-tuned \texttt{mT5-small} model achieves 73.48 BLEU, 16.58\% WER, and 87.70 chrF++ on the combined multi-dialect test set. On Standard Marathi (D3), mT5-small achieves near-perfect exact alignment with **97.39 BLEU** and **1.37\% WER**.
-    \item \textbf{IndicBART Scaling}: Fine-tuning IndicBART on the 32k combined corpus reduces its WER from 30.13\% (16k) to **16.23\%** (32k) with **76.50 BLEU**, demonstrating that synthetic data expansion activates latent capacity in mBART-50 architectures.
+    \item \textbf{mT5-Small Consistency}: The 32k fine-tuned \texttt{mT5-small} model achieves 73.48 BLEU, 16.58\% WER, and 87.70 chrF++ on the combined multi-dialect test set. On Standard Marathi (D3), mT5-small achieves near-perfect exact alignment with \textbf{97.39 BLEU} and \textbf{1.37\% WER}.
+    \item \textbf{IndicBART Scaling}: Fine-tuning IndicBART on the 32k combined corpus reduces its WER from 30.13\% (16k) to \textbf{16.23\%} (32k) with \textbf{76.50 BLEU}, demonstrating that synthetic data expansion activates latent capacity in mBART-50 architectures.
 \end{enumerate}
 
 \subsection{\textcolor{black}{Dialectwise Relative WER Reductions vs.\ ASR Baseline and Raw Input}}
@@ -364,10 +364,10 @@ D4 (Varhadi) & 24.79\% & 23.93\% & \textbf{14.19\%} & 76.90 & \textbf{$-$42.76\%
 
 Our fine-tuned text normalizer achieves dramatic relative WER reductions over initial ASR output:
 \begin{itemize}
-    \item \textbf{Ahirani (D2)}: Reduces WER from 24.14\% (ASR) / 42.35\% (Raw Text) down to **12.61\%**, representing a **$-$47.76\% relative WER reduction** over ASR and **$-$70.22\%** over raw un-normalized text.
-    \item \textbf{Varhadi (D4)}: Reduces WER from 24.79\% (ASR) down to **14.19\%** (**$-$42.76\% relative reduction**).
-    \item \textbf{Standard Marathi (D3)}: Reduces WER from 10.87\% (ASR) down to **1.37\%** (**$-$87.40\% relative reduction**), maintaining near-zero error degradation.
-    \item \textbf{Overall Combined}: Reduces overall multi-dialect WER from 23.71\% (ASR) / 40.00\% (Raw Text) down to **16.58\%** (**$-$30.07\% relative reduction** vs.\ ASR and **$-$58.55\%** vs.\ raw text).
+    \item \textbf{Ahirani (D2)}: Reduces WER from 24.14\% (ASR) / 42.35\% (Raw Text) down to \textbf{12.61\%}, representing a \textbf{$-$47.76\% relative WER reduction} over ASR and \textbf{$-$70.22\%} over raw un-normalized text.
+    \item \textbf{Varhadi (D4)}: Reduces WER from 24.79\% (ASR) down to \textbf{14.19\%} (\textbf{$-$42.76\% relative reduction}).
+    \item \textbf{Standard Marathi (D3)}: Reduces WER from 10.87\% (ASR) down to \textbf{1.37\%} (\textbf{$-$87.40\% relative reduction}), maintaining near-zero error degradation.
+    \item \textbf{Overall Combined}: Reduces overall multi-dialect WER from 23.71\% (ASR) / 40.00\% (Raw Text) down to \textbf{16.58\%} (\textbf{$-$30.07\% relative reduction} vs.\ ASR and \textbf{$-$58.55\%} vs.\ raw text).
 \end{itemize}
 
 \subsection{\textcolor{black}{Benchmark Results on 16k Original Datasets (16,163 Parallel Pairs)}}
@@ -394,7 +394,7 @@ D124 Comb. & 16,163 & 2,424 & 48.17 & \textbf{63.29} & +15.12 & 68.58 & \textbf{
 
 \subsection{\textcolor{black}{Benchmark Results on 32k Expanded Datasets (32,335 Parallel Pairs)}}
 
-Table~\ref{tab:results_32k} presents the performance matrix on 32k single-suite benchmarks. Single-dialect fine-tuned mT5 models achieve **65.10 BLEU** on D1 Malvani 32k (+17.85 over IndicBART) and **62.07 BLEU** on D2 Ahirani 32k (+21.56 over IndicBART).
+Table~\ref{tab:results_32k} presents the performance matrix on 32k single-suite benchmarks. Single-dialect fine-tuned mT5 models achieve \textbf{65.10 BLEU} on D1 Malvani 32k (+17.85 over IndicBART) and \textbf{62.07 BLEU} on D2 Ahirani 32k (+21.56 over IndicBART).
 
 \begin{table}[t]
 \color{black}
