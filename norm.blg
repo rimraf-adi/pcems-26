@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2025)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: norm.aux
+The style file: apalike.bst
+Database file #1: references.bib
+Warning--empty booktitle in gavali2026marathi
+Warning--can't use both volume and number fields in gavali2026marathi
+You've used 24 entries,
+            1935 wiz_defined-function locations,
+            619 strings with 10005 characters,
+and the built_in function-call counts, 13802 in all, are:
+= -- 1366
+> -- 692
+< -- 23
++ -- 251
+- -- 249
+* -- 1151
+:= -- 2217
+add.period$ -- 78
+call.type$ -- 24
+change.case$ -- 244
+chr.to.int$ -- 24
+cite$ -- 26
+duplicate$ -- 537
+empty$ -- 897
+format.name$ -- 279
+if$ -- 2831
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 24
+newline$ -- 123
+num.names$ -- 74
+pop$ -- 274
+preamble$ -- 1
+purify$ -- 244
+quote$ -- 0
+skip$ -- 426
+stack$ -- 0
+substring$ -- 987
+swap$ -- 168
+text.length$ -- 16
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 144
+warning$ -- 2
+while$ -- 110
+width$ -- 0
+write$ -- 319
+(There were 2 warnings)

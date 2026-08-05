@@ -1,0 +1,165 @@
+\begin{thebibliography}{}
+
+\bibitem[Amartyaveer et~al., 2025]{amartyaveer2025improving}
+Amartyaveer, Kumar, S., Sharma, S., Udupa, S., Badiger, S., Singh, A., G, D.,
+  Bandekar, J., Murthy, S., and Ghosh, P.~K. (2025).
+\newblock Improving dialect identification in indian languages using multimodal
+  features from dialect informed asr.
+\newblock In {\em IEEE International Conference on Acoustics, Speech and Signal
+  Processing (ICASSP)}, pages 1--5. IEEE.
+
+\bibitem[Ansary et~al., 2024]{ansary2024unicode}
+Ansary, N., Adib, Q. A.~R., Reasat, T., Sushmit, A.~S., Humayun, A.~I., Mehnaz,
+  S., Fatema, K., Or~Rashid, M.~M., and Sadeque, F. (2024).
+\newblock Unicode normalization and grapheme parsing of indic languages.
+\newblock In {\em Proceedings of the 2024 Joint International Conference on
+  Computational Linguistics, Language Resources and Evaluation (LREC-COLING
+  2024)}, pages 17019--17030. ELRA Language Resource Association.
+
+\bibitem[Dabre et~al., 2022]{dabre2022indicbart}
+Dabre, R., Shrotriya, H., Kunchukuttan, A., Puduppully, R., Khapra, M.~M., and
+  Kumar, P. (2022).
+\newblock Indicbart: A pre-trained model for indic natural language generation.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  ACL 2022}, pages 1849--1863.
+
+\bibitem[Dimakis et~al., 2025]{dimakis2025dialect}
+Dimakis, A., Pavlopoulos, J., and Anastasopoulos, A. (2025).
+\newblock Dialect normalization using large language models and morphological
+  rules.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  ACL 2025}, pages 23696--23714. Association for Computational Linguistics.
+
+\bibitem[Gaikwad et~al., 2025]{gaikwad2025marathi}
+Gaikwad, G., Panchal, D., Deshmukh, O., and Patil, S. (2025).
+\newblock Marathi dialect to pure marathi using rag \& ai.
+\newblock {\em International Research Journal of Engineering and Technology
+  (IRJET)}, 12(11):787--791.
+
+\bibitem[Gavali, 2026]{gavali2026marathi}
+Gavali, P.~S. (2026).
+\newblock Marathi dialect detector: Text and speech normalization to standard
+  marathi and hindi.
+\newblock volume~5, pages 116--121.
+
+\bibitem[{Google DeepMind Gemma Team}, 2024]{gemma2024}
+{Google DeepMind Gemma Team} (2024).
+\newblock Gemma 2: Improving open language models at a practical size.
+\newblock {\em arXiv preprint arXiv:2408.00118}.
+
+\bibitem[Habash et~al., 2012]{habash2012coda}
+Habash, N., Diab, M., and Rambow, O. (2012).
+\newblock Conventional orthography for dialectal arabic.
+\newblock In {\em Proceedings of the Eighth International Conference on
+  Language Resources and Evaluation (LREC '12)}, pages 711--718.
+
+\bibitem[Joshi et~al., 2025]{joshi2025survey}
+Joshi, A., Dabre, R., Kanojia, D., Li, Z., Zhan, H., Haffari, G., and Dippold,
+  D. (2025).
+\newblock Natural language processing for dialects of a language: A survey.
+\newblock {\em ACM Computing Surveys}, 57(6):1--37.
+
+\bibitem[Joshi et~al., 2022]{joshi2022l3cube}
+Joshi, R., Goel, P., and Joshi, R. (2022).
+\newblock L3cube-mahanlp: Marathi natural language processing datasets, models,
+  and library.
+\newblock In {\em Proceedings of the WILDRE-6 Workshop, LREC 2022}, pages
+  10--17.
+
+\bibitem[Kresic and Abbas, 2024]{kresic2024normalizing}
+Kresic, M. and Abbas, N. (2024).
+\newblock Normalizing swiss german dialects with the power of large language
+  models.
+\newblock {\em Procedia Computer Science}, 244:287--295.
+
+\bibitem[Kulkarni-Joshi, 2023]{kulkarni2023variation}
+Kulkarni-Joshi, S. (2023).
+\newblock Variation and change in dialects of marathi: A social-dialectological
+  approach.
+\newblock In Chandra, P., editor, {\em Variation in South Asian Languages: From
+  Macro to Micro-Differences}, pages 207--236. Springer.
+
+\bibitem[Kumar et~al., 2025]{kumar2025respin}
+Kumar, S., Singh, A., G, D., Amartyaveer, Bandekar, J., Murthy, S., Sharma, S.,
+  Badiger, S., Udupa, S., Nagireddi, A., Raghavan, S. K.~M., Saxena, R.,
+  Nanavati, J., Nanavati, R., Sridharan, J., Mehta, A., Khuraishi, A. K.~S.,
+  Mora, S. P.~R., Venkataramakrishnan, P., Date, G., P, K., and Ghosh, P.~K.
+  (2025).
+\newblock {RESPIN-S1.0}: A read speech corpus of 10000+ hours in dialects of
+  nine indian languages.
+\newblock In {\em Advances in Neural Information Processing Systems (NeurIPS
+  2025) Track on Datasets and Benchmarks}, pages 1--13.
+
+\bibitem[Kuparinen et~al., 2023]{kuparinen2023dialect}
+Kuparinen, O., Mileti{\'c}, A., and Scherrer, Y. (2023).
+\newblock Dialect-to-standard normalization: A large-scale multilingual
+  evaluation.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  EMNLP 2023}, pages 13814--13828. Association for Computational Linguistics.
+
+\bibitem[Lewis et~al., 2020]{lewis2020bart}
+Lewis, M., Liu, Y., Goyal, N., Ghazvininejad, M., Mohamed, A., Levy, O.,
+  Stoyanov, V., and Zettlemoyer, L. (2020).
+\newblock Bart: Denoising sequence-to-sequence pre-training for natural
+  language generation, translation, and comprehension.
+\newblock In {\em Proceedings of ACL 2020}, pages 7871--7880.
+
+\bibitem[Mulla and Kumar, 2022]{mulla2022text}
+Mulla, R. and Kumar, B.~S. (2022).
+\newblock Text-independent automatic dialect recognition of marathi language
+  using spectro-temporal characteristics of voice.
+\newblock {\em International Journal on Recent and Innovation Trends in
+  Computing and Communication (IJRITCC)}, 10(2s):313--321.
+
+\bibitem[Partanen et~al., 2019]{partanen2019dialect}
+Partanen, N., H{\"a}m{\"a}l{\"a}inen, M., and Alnajjar, K. (2019).
+\newblock Dialect text normalization to normative standard finnish.
+\newblock In {\em Proceedings of the 5th Workshop on Noisy User-generated Text
+  (W-NUT @ EMNLP 2019)}, pages 141--146. Association for Computational
+  Linguistics.
+
+\bibitem[Pawar et~al., 2026]{pawar2026automatic}
+Pawar, P.~S., Saini, J.~R., and Vaidya, S. (2026).
+\newblock Automatic marathi dialect classification in noisy and non-noisy
+  environments.
+\newblock {\em Procedia Computer Science}, 282:288--303.
+
+\bibitem[Post, 2018]{post2018sacrebleu}
+Post, M. (2018).
+\newblock A call for clarity in reporting bleu scores.
+\newblock In {\em Proceedings of WMT 2018}, pages 186--191.
+
+\bibitem[Raffel et~al., 2020]{raffel2020exploring}
+Raffel, C., Shazeer, N., Roberts, A., Lee, K., Narang, S., Matena, M., Zhou,
+  Y., Li, W., and Liu, P.~J. (2020).
+\newblock Exploring the limits of transfer learning with a unified text-to-text
+  transformer.
+\newblock {\em Journal of Machine Learning Research}, 21(140):1--67.
+
+\bibitem[Tarfe and Bagul, 2024]{tarfe2024comparative}
+Tarfe, O.~S. and Bagul, M. (2024).
+\newblock Comparative study of dialect (words) of marathi in konkan region
+  (ratnagiri \& malvan).
+\newblock {\em Iconic Research and Engineering Journals (IRE Journals)},
+  7(10):101--105.
+
+\bibitem[Vaswani et~al., 2017]{vaswani2017attention}
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.~N.,
+  Kaiser, {\L}., and Polosukhin, I. (2017).
+\newblock Attention is all you need.
+\newblock In {\em Advances in Neural Information Processing Systems (NeurIPS
+  2017)}, pages 5998--6008.
+
+\bibitem[Vyavhare et~al., 2026]{vyavhare2026marathi}
+Vyavhare, V.~A., Divekar, S.~N., Pawar, H., Kale, K., and Jagtap, S. (2026).
+\newblock Marathi dialect translator.
+\newblock {\em International Journal of Scientific Research in Science,
+  Engineering and Technology (IJSRSET)}, 13(3):254--261.
+
+\bibitem[Xue et~al., 2021]{xue2021mt5}
+Xue, L., Constant, N., Roberts, A., Kale, M., Al-Rfou, R., Siddhant, A., Barua,
+  A., and Raffel, C. (2021).
+\newblock mt5: A massively multilingual pre-trained text-to-text transformer.
+\newblock In {\em Proceedings of NAACL-HLT 2021}, pages 483--498.
+
+\end{thebibliography}
