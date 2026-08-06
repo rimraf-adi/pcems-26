@@ -14,13 +14,9 @@ bibtex springer > /dev/null 2>&1
 xelatex -interaction=nonstopmode springer.tex > /dev/null 2>&1
 xelatex -interaction=nonstopmode springer.tex > /dev/null 2>&1
 
-echo "Building Document 3 (Literature Introductions): paper/intro.pdf..."
-xelatex -interaction=nonstopmode intro.tex > /dev/null 2>&1
-xelatex -interaction=nonstopmode intro.tex > /dev/null 2>&1
-
 echo "Cleaning up auxiliary compilation files..."
 rm -f *.aux *.log *.out *.toc *.fls *.fdb_latexmk *.synctex.gz *.bbl *.blg missfont.log
 
 echo "Build complete!"
 echo "Generated PDFs:"
-ls -lh norm.pdf springer.pdf intro.pdf
+ls -lh norm.pdf springer.pdf
