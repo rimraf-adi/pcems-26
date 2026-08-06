@@ -1,11 +1,14 @@
 #!/bin/bash
-echo "Building Template 1 (Custom Single-Column Arial): norm.pdf..."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/paper"
+
+echo "Building Template 1 (Custom Single-Column Arial): paper/norm.pdf..."
 xelatex -interaction=nonstopmode norm.tex > /dev/null 2>&1
 bibtex norm > /dev/null 2>&1
 xelatex -interaction=nonstopmode norm.tex > /dev/null 2>&1
 xelatex -interaction=nonstopmode norm.tex > /dev/null 2>&1
 
-echo "Building Template 2 (Springer LNCS): springer.pdf..."
+echo "Building Template 2 (Springer LNCS): paper/springer.pdf..."
 xelatex -interaction=nonstopmode springer.tex > /dev/null 2>&1
 bibtex springer > /dev/null 2>&1
 xelatex -interaction=nonstopmode springer.tex > /dev/null 2>&1
