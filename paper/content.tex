@@ -5,29 +5,30 @@
 \color{black}
 
 \begin{abstract}
-Low-resource regional dialects pose severe challenges for Natural Language Processing (NLP) systems due to significant morpho-syntactic variation, non-standard orthography, and extreme scarcity of annotated parallel corpora.
-In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: Malvani (D1), Ahirani (D2), and Varhadi (D4).
-To overcome severe data scarcity, we introduce an automated synthetic parallel data expansion pipeline combining large language model (LLM) generation using Gemma-2 (9B/27B) with a multi-tier verification engine (rule-based script filtering and LLM semantic auditing), effectively doubling the clean parallel training corpus from 16,163 to 32,335 verified pairs across agriculture and finance domains.
-We conduct a rigorous empirical evaluation of state-of-the-art multilingual sequence-to-sequence transformer architectures---google/mT5-small (300M) and IndicBART (244M)---under an 85/15 stratified test split with 5-fold cross-validation across 8 dataset configurations.
-Empirical results demonstrate that mT5-small achieves state-of-the-art performance with 69.51 BLEU and 84.58 chrF++ on the 32k combined multi-dialect dataset (+12.39 BLEU over IndicBART), with individual dialect performance reaching 80.99 BLEU and 91.21 chrF++ on Varhadi (D4).
-We present detailed architectural comparisons, data scaling ablation studies, and qualitative subword morphological error analyses, establishing a benchmark for Indic dialect text normalization.
+% Low-resource regional dialects pose severe challenges for Natural Language Processing (NLP) systems due to significant morpho-syntactic variation, non-standard orthography, and extreme scarcity of annotated parallel corpora.
+% In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: Malvani (D1), Ahirani (D2), and Varhadi (D4).
+% To overcome severe data scarcity, we introduce an automated synthetic parallel data expansion pipeline combining large language model (LLM) generation using Gemma-2 (9B/27B) with a multi-tier verification engine (rule-based script filtering and LLM semantic auditing), effectively doubling the clean parallel training corpus from 16,163 to 32,335 verified pairs across agriculture and finance domains.
+% We conduct a rigorous empirical evaluation of state-of-the-art multilingual sequence-to-sequence transformer architectures---google/mT5-small (300M) and IndicBART (244M)---under an 85/15 stratified test split with 5-fold cross-validation across 8 dataset configurations.
+% Empirical results demonstrate that mT5-small achieves state-of-the-art performance with 69.51 BLEU and 84.58 chrF++ on the 32k combined multi-dialect dataset (+12.39 BLEU over IndicBART), with individual dialect performance reaching 80.99 BLEU and 91.21 chrF++ on Varhadi (D4).
+% We present detailed architectural comparisons, data scaling ablation studies, and qualitative subword morphological error analyses, establishing a benchmark for Indic dialect text normalization.
 
 \keywords{Dialect Normalization \and Low-Resource NLP \and Marathi Dialects \and Sequence-to-Sequence Modeling \and Synthetic Data Augmentation \and mT5 \and IndicBART \and Text Standardization.}
 \end{abstract}
 
 \section{\textcolor{black}{Introduction}}
-Natural Language Processing (NLP) has achieved significant advances in recent years, enabling computational systems to analyze, interpret, and generate human language.
-Modern NLP architectures, across both Natural Language Understanding (NLU) and Natural Language Generation (NLG), are predominantly anchored in Transformer-based pre-trained models \cite{vaswani2017attention,raffel2020exploring}.
-Decoder-only Large Language Models (LLMs) have driven widespread adoption of generative AI across diverse real-world domains, including healthcare, finance, and legal infrastructure.
-While contemporary LLMs continuously scale parameter capacities to boost task benchmarks, they function largely as opaque systems trained on web-scale corpora of unverified linguistic composition.
-Consequently, severe performance disparities emerge when these models encounter unrepresented linguistic variations within training and evaluation datasets—most notably across non-standard regional dialects of a language \cite{joshi2025survey}.
+Natural Language Processing (NLP) has achieved significant advances in recent years, allowing computers to analyze, interpret, and generate human language.
+Modern architectures for both, understanding and generation of natural language are based on models built upon Transformers architecture \cite{vaswani2017attention,raffel2020exploring}.
+Large Language Models (LLMs) built upon this architecture had been adpoted for various NLP tasks across diverse real-world problems in healthcare, finance, and legal infrastructure \cite{dubey2024llama3,gemma2024}.
 
-However, a significant digital divide persists: the vast majority of the world's 7,000+ languages remain critically underserved in computational resources, annotated datasets, and pre-trained model coverage.
-Among these, regional dialects of major languages present a particularly nuanced challenge---they are spoken by millions of people in everyday communication but are rarely represented in formal written corpora, standardized digital lexicons, or training data for downstream NLP applications.
+NLP has historically struggled to accommodate low-resource language variants, including regional geographic dialects of higher-resource standardized languages \cite{joshi2020state,joshi2025survey}.
+Surveys among native dialect communities reveal that proper analysis and understanding of dialectal text remains a high priority; for instance, Blaschke et al. \cite{blaschke2024what} report that 61\% of surveyed dialect speakers prefer systems that transcribe regional dialects directly into the standardized written form.
+This highlights the need for converting non-standard dialect text into a standard written form while keeping the original meaning intact \cite{kuparinen2023dialect}.
+Advancing NLP methods have made it possible to design pipelines to seamlessly link previously inaccessible low-resource regional dialects.
 
-In South Asia, this challenge is especially acute.
-India is home to 22 constitutionally recognized scheduled languages and hundreds of regional dialects spoken by over 1.4 billion people.
-While state-level standard languages (such as Standard Hindi, Bengali, or Marathi) have begun receiving computational attention through initiative benchmarks such as AI4Bharat IndicCorp and BPCC \cite{dabre2022indicbart}, sub-regional dialects remain almost entirely un-resourced in computational NLP.
+
+
+India is home to 22 constitutionally recognized languages with hundreds of regional dialects spoken by over 1.4 billion people.
+While state-level standard languages (such as Hindi, Bengali, Marathi, Tamil, Telugu, etc.) have started receiving computational attention through initiatives like AI4Bharat IndicCorp and BPCC \cite{dabre2022indicbart}, sub-regional dialects remain almost entirely untouched in NLP.
 
 Marathi, an Indo-Aryan language with over 83 million native speakers primarily in Maharashtra, India, illustrates this linguistic dichotomy.
 While Standard Written Marathi (मानक मराठी, based on the Puneri/Deshi dialect variety) possesses a well-codified literary standard and established digital infrastructure, regional sub-dialects exhibit profound morpho-syntactic, phonological, and lexical divergence from the standard form.
