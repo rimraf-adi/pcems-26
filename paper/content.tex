@@ -16,9 +16,12 @@ We present detailed architectural comparisons, data scaling ablation studies, an
 \end{abstract}
 
 \section{\textcolor{black}{Introduction}}
-% done 
-Natural Language Processing (NLP) is a branch of artifical intelligece that has achieved remarkable advances in recent years
-driven by the emergence of large-scale pre-trained Transformer models \cite{vaswani2017attention,raffel2020exploring}.
+Natural Language Processing (NLP) has achieved significant advances in recent years, enabling computational systems to analyze, interpret, and generate human language.
+Modern NLP architectures, across both Natural Language Understanding (NLU) and Natural Language Generation (NLG), are predominantly anchored in Transformer-based pre-trained models \cite{vaswani2017attention,raffel2020exploring}.
+Decoder-only Large Language Models (LLMs) have driven widespread adoption of generative AI across diverse real-world domains, including healthcare, finance, and legal infrastructure.
+While contemporary LLMs continuously scale parameter capacities to boost task benchmarks, they function largely as opaque systems trained on web-scale corpora of unverified linguistic composition.
+Consequently, severe performance disparities emerge when these models encounter unrepresented linguistic variations within training and evaluation datasets—most notably across non-standard regional dialects of a language \cite{joshi2025survey}.
+
 However, a significant digital divide persists: the vast majority of the world's 7,000+ languages remain critically underserved in computational resources, annotated datasets, and pre-trained model coverage.
 Among these, regional dialects of major languages present a particularly nuanced challenge---they are spoken by millions of people in everyday communication but are rarely represented in formal written corpora, standardized digital lexicons, or training data for downstream NLP applications.
 
