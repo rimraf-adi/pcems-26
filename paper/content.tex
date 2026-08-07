@@ -16,61 +16,68 @@
 \end{abstract}
 
 \section{\textcolor{black}{Introduction}}
+% Natural Language Processing (NLP) has made significant progress in recent years. It allows computers to analyze, interpret, and generate human language. Modern methods for understanding and generating natural language rely on models built on the Transformer architecture \cite{vaswani2017attention,raffel2020exploring}. Large Language Models (LLMs) based on this structure have been used for various NLP tasks in fields like healthcare, finance, and legal systems \cite{dubey2024llama3,gemma2024}.
+
+% NLP has encountered several challenges when it comes to low-resource languages, especially regional dialects of higher-resource languages \cite{joshi2020state,joshi2025survey}. Surveys among communities that speak these dialects show that understanding and analyzing dialectal text is a priority \cite{blaschke2024what}. This highlights the need to convert non-standard dialects into a standard form while preserving the original meaning \cite{kuparinen2023dialect}. Improved NLP methods now make it possible to build systems that connect previously inaccessible low-resource regional dialects.
+
+% India recognizes 22 languages constitutionally, with hundreds of regional dialects spoken by over 1.4 billion people. While languages like Hindi, Bengali, Marathi, and Tamil have gained attention through initiatives like AI4Bharat IndicCorp and BPCC \cite{dabre2022indicbart}, sub-regional dialects remain largely neglected in NLP. An example of this linguistic challenge is Marathi, an Indo-Aryan language spoken by over 83 million people, mainly in Maharashtra \cite{dabre2022indicbart}. Marathi is written in Devanagari from left to right and is one of India's 22 constitutionally recognized languages. While Standard Marathi (which is based on the variety from Pune and nearby areas) has a clear literary standard and established digital infrastructure, regional sub-dialects often show differences in pronunciation and vocabulary compared to the standard form.
 Natural Language Processing (NLP) has achieved significant advances in recent years, allowing computers to analyze, interpret, and generate human language.
 Modern architectures for both, understanding and generation of natural language are based on models built upon Transformers architecture \cite{vaswani2017attention,raffel2020exploring}.
 Large Language Models (LLMs) built upon this architecture had been adpoted for various NLP tasks across diverse real-world problems in healthcare, finance, and legal infrastructure \cite{dubey2024llama3,gemma2024}.
 
-NLP has historically struggled to accommodate low-resource language variants, including regional geographic dialects of higher-resource standardized languages \cite{joshi2020state,joshi2025survey}.
-Surveys among native dialect communities reveal that proper analysis and understanding of dialectal text remains a high priority; for instance, Blaschke et al. \cite{blaschke2024what} report that 61\% of surveyed dialect speakers prefer systems that transcribe regional dialects directly into the standardized written form.
-This highlights the need for converting non-standard dialect text into a standard written form while keeping the original meaning intact \cite{kuparinen2023dialect}.
-Advancing NLP methods have made it possible to design pipelines to seamlessly link previously inaccessible low-resource regional dialects.
+%need to paraphrase this
+NLP has faced several problems in incorporating low-resource languages, especially regional dialects of higher-resource languages \cite{joshi2020state,joshi2025survey}.
+Surveys among native dialect communities reveal that proper analysis and understanding of dialectal text remains a priority \cite{blaschke2024what}.
+highlighting a need for converting non-standard dialect into a standard form while keeping the original meaning intact \cite{kuparinen2023dialect}.
+Advancing NLP methods have made it possible to design systems to seamlessly link previously inaccessible low-resource regional dialects.
 
 
 
-India is home to 22 constitutionally recognized languages with hundreds of regional dialects spoken by over 1.4 billion people.
-While state-level standard languages (such as Hindi, Bengali, Marathi, Tamil, Telugu, etc.) have started receiving computational attention through initiatives like AI4Bharat IndicCorp and BPCC \cite{dabre2022indicbart}, sub-regional dialects remain almost entirely untouched in NLP.
+India has constitutionally recognized 22 languages with hundreds of regional dialects spoken by over 1.4 billion people.
+While languages such as Hindi, Bengali, Marathi, Tamil, Telugu, etc. have started receiving attention through initiatives like AI4Bharat IndicCorp and BPCC \cite{dabre2022indicbart},sub-regional dialects remain almost entirely untouched in NLP. 
+One of the examples of this linguistic ambiguity is Marathi, an Indo-Aryan language spoken by over 83 million people, primarily in Maharashtra \cite{dabre2022indicbart}.
+Marathi is written in Devanagari from left to right and stands as one of India's 22 constitutionally recognized scheduled languages.
+While Standard Marathi (based on the dialect variety of Pune city and surrounding regions) has a well-defined literary standard and established digital infrastructure, regional sub-dialects tend to show phonological, and lexical divergence from the standard form.
+% Three major regional sub-dialects spanning distinct geographical and socio-cultural regions of Maharashtra represent this diversity:
+% \begin{enumerate}
+%     \item \textbf{Malvani (D1)}: Spoken in the Southern Konkan coastal belt (Sindhudurg and Ratnagiri districts), deeply influenced by coastal geography, featuring maritime vocabulary, heavy palatalization, phonetic contractions, and Konkani-influenced lexical items.
+%     \item \textbf{Ahirani (D2)}: Spoken in the Khandesh region of North-Western Maharashtra (Jalgaon, Dhule, Nandurbar), heavily influenced by neighboring Gujarati and Bhili dialects with systematic consonant shifts and distinct postpositional markers.
+%     \item \textbf{Varhadi (D4)}: Spoken in the Vidarbha region of Eastern Maharashtra (Nagpur, Amravati, Akola), featuring characteristic interrogative forms, unique verbal inflectional suffixes, and phonetic contact variations.
+% \end{enumerate}
 
-Marathi, an Indo-Aryan language with over 83 million native speakers primarily in Maharashtra, India, illustrates this linguistic dichotomy.
-While Standard Written Marathi (मानक मराठी, based on the Puneri/Deshi dialect variety) possesses a well-codified literary standard and established digital infrastructure, regional sub-dialects exhibit profound morpho-syntactic, phonological, and lexical divergence from the standard form.
-Three major regional sub-dialects spanning distinct geographical regions of Maharashtra represent this diversity:
-\begin{enumerate}
-    \item \textbf{Malvani (D1)}: Spoken in the Southern Konkan coastal belt (Sindhudurg and Ratnagiri districts), exhibiting heavy palatalization, phonetic contractions, and distinct Konkani-influenced lexical items.
-    \item \textbf{Ahirani (D2)}: Spoken in the Khandesh region of North-Western Maharashtra (Jalgaon, Dhule, Nandurbar), heavily influenced by neighboring Gujarati and Bhili dialects with systematic consonant shifts and distinct postpositional markers.
-    \item \textbf{Varhadi (D4)}: Spoken in the Vidarbha region of Eastern Maharashtra (Nagpur, Amravati, Akola), featuring characteristic interrogative forms and verbal inflectional suffixes.
-\end{enumerate}
+When users speak or write in the regional dialects, existing NLP systems such as Automatic Speech Recognition (ASR), Machine Translation (MT), conversational AI agents, and information retrieval tools fail severely due to high Out-Of-Vocabulary (OOV) rates, non-standard verbal forms, and phonetic spelling variations.
+\textit{Dialect Normalization} is the task of automatically converting non-standard dialectal text into normative standard written form while strictly preserving underlying semantic intent therefore becomes a critical prerequisite for digital inclusion.
 
-When users speak or type in these regional dialects, existing NLP systems---such as Automatic Speech Recognition (ASR), Machine Translation (MT), conversational AI agents, and financial/agricultural information retrieval tools---fail catastrophically due to high Out-Of-Vocabulary (OOV) rates, non-standard verbal inflections, and phonetic spelling variations.
-\textit{Dialect Normalization}---the task of automatically converting non-standard dialectal text into normative standard written form while strictly preserving underlying semantic intent---is therefore a critical prerequisite for digital inclusion and equitable AI accessibility.
+Developing systems for dialect normalization have two fundamental challenges: 
+(1) \textit{Extreme Data Scarcity}: datasets connecting regional Indic dialects to standard written forms are non-existent; and 
+(2) \textit{Morphological Complexity}: Marathi is a morphologically rich language where case markers and verbal tense/aspect suffixes require fine-grained subword transformation rather than a simple dictionary lookup.
 
-However, developing neural models for dialect normalization encounters two fundamental challenges: (1) \textit{Extreme Data Scarcity}: parallel corpora mapping regional Indic dialects to standard written forms are virtually non-existent; and (2) \textit{Morphological Complexity}: Marathi is a highly agglutinative language where case markers, postpositions, and verbal tense/aspect suffixes attach directly to word stems, requiring fine-grained subword morphological transformation rather than dictionary lookup.
-
-To address these challenges, this paper presents a multi-dialect Marathi text normalization framework combining automated synthetic parallel data expansion with rigorous sequence-to-sequence transformer fine-tuning.
-Our main contributions are fourfold:
+To address these challenges, this paper presents a multi-dialect Marathi text normalization framework combining automated synthetic parallel data augmentation with sequence-to-sequence transformer fine-tuning.
+Our main contributions are :
 \begin{itemize}
-    \item \textbf{First Parallel Marathi Dialect Corpus}: We introduce a parallel corpus of 32,335 verified sentence pairs across Malvani (D1), Ahirani (D2), and Varhadi (D4) mapped to Standard Written Marathi across agriculture and finance domains.
-    \item \textbf{Automated Synthetic Augmentation Engine}: We propose a scalable synthetic data generation pipeline using Gemma-2 (9B/27B) paired with a multi-tier verification engine (rule-based script filtering and LLM semantic auditing), doubling the clean parallel training corpus from 16,163 to 32,335 pairs while preserving semantic fidelity.
-    \item \textbf{Rigorous Benchmark Evaluation}: We implement a standardized 85/15 stratified train-test split combined with 5-fold cross-validation across 8 distinct dataset configurations, evaluating representative multilingual sequence-to-sequence transformer architectures: IndicBART (244M) \cite{dabre2022indicbart} and google/mT5-small (300M) \cite{xue2021mt5}.
-    \item \textbf{State-of-the-Art Benchmarks}: We establish benchmark performance for Marathi dialect normalization. Fine-tuned google/mT5-small (300M) achieves \textbf{69.51 BLEU} and \textbf{84.58 chrF++} on the 32k combined multi-dialect dataset (+12.39 BLEU jump over IndicBART), with individual dialect accuracy reaching \textbf{80.99 BLEU} and \textbf{91.21 chrF++} on Varhadi (D4).
+    \item \textbf{Parallel Marathi Dialect Corpus with Synthetic Augmentation}: Based on the RESPIN corpus \cite{kumar2025respin}, we curate and expand a parallel corpus of verified sentence pairs across Malvani, Ahirani, and Varhadi dialects mapped to Standard Marathi across domains of agriculture and finance, combining human-translated pairs with an automated synthetic generation and multi-level verification pipeline.
+    \item \textbf{Sequence-to-Sequence Fine-Tuning Pipeline}: We utilize an end-to-end neural fine-tuning framework for dialect normalization, adapting pre-trained multilingual sequence-to-sequence transformer models for  standardization.
+    \item \textbf{Empirical Evaluations}: We implement a standardized train-test split combined with cross-validation across distinct dataset configurations, conducting experiments, ablation studies, and error analyses.
 \end{itemize}
 
-\subsection{\textcolor{black}{Linguistic Background and Devanagari Orthographic Heterogeneity}}
-
-Devanagari, an abugida writing system used for Marathi, Hindi, and Sanskrit, exhibits inherent orthographic complexities.
-While Standard Marathi possesses formal orthographic rules codified by the \emph{Maharashtra Sahitya Parishad} (governing rules for \emph{anusvara} nasalization, \emph{hrasva-dirgha} vowel length, and consonant cluster representation), regional dialects operate almost exclusively in oral modalities.
-When speakers express dialectal forms in written digital media (e.g., social messaging, user queries, transcription post-processing), they use informal phonetic spellings.
-This introduces several distinct layers of orthographic heterogeneity:
-
-\begin{itemize}
-    \item \textbf{Vocalic Length \& Diphthong Alternations}: Informal dialectal text frequently conflates short (\emph{hrasva}) and long (\emph{dirgha}) vowels (e.g., \emph{इ/ई} and \emph{उ/ऊ}), or substitutes monophthongs for diphthongs (e.g., Standard \emph{होता} $\rightarrow$ Malvani \emph{हतो}).
-    \item \textbf{Nasalization \& Anusvara Variations}: Standard Marathi strictly regulates \emph{anusvara} placement for nasal consonants and grammatical inflections. Dialectal text frequently omits \emph{anusvaras} or converts them to explicit nasal consonants (\emph{न, म, ङ}).
-    \item \textbf{Nukta \& Retroflex Consonant Shifts}: Dialects like Ahirani systematically simplify retroflex consonants (\emph{ळ} $\rightarrow$ \emph{ल} or \emph{य}) and alter dental-palatal fricative conventions (\emph{श/ष} $\rightarrow$ \emph{स}), leading to extreme out-of-vocabulary (OOV) rates in standard tokenizers.
-    \item \textbf{Agglutinative Postposition Merging}: Standard Marathi attaches case markers (\emph{ला, ने, ची, त}) directly to modified stem nouns (\emph{सामान्यरूप}). Dialects modify the stem in non-standard ways (e.g., Standard \emph{मुलाला} $\rightarrow$ Ahirani \emph{पोराले}, Malvani \emph{चेडवाक}).
-\end{itemize}
-
-The remainder of this paper is organized as follows: Section~\ref{sec:related} surveys related work in dialect normalization, Indic NLP, and synthetic data generation.
-Section~\ref{sec:methodology} details our dataset construction pipeline, synthetic expansion architecture, and neural model setups.
-Section~\ref{sec:findings} presents quantitative benchmark results, ablation studies, and qualitative predictions.
-Section~\ref{sec:conclusion} concludes with a summary and directions for future research.
+% \subsection{\textcolor{black}{Linguistic Background and Devanagari Orthographic Heterogeneity}}
+% 
+% Devanagari, an abugida writing system used for Marathi, Hindi, and Sanskrit, exhibits inherent orthographic complexities.
+% While Standard Marathi possesses formal orthographic rules codified by the \emph{Maharashtra Sahitya Parishad} (governing rules for \emph{anusvara} nasalization, \emph{hrasva-dirgha} vowel length, and consonant cluster representation), regional dialects operate almost exclusively in oral modalities.
+% When speakers express dialectal forms in written digital media (e.g., social messaging, user queries, transcription post-processing), they use informal phonetic spellings.
+% This introduces several distinct layers of orthographic heterogeneity:
+% 
+% \begin{itemize}
+%     \item \textbf{Vocalic Length \& Diphthong Alternations}: Informal dialectal text frequently conflates short (\emph{hrasva}) and long (\emph{dirgha}) vowels (e.g., \emph{इ/ई} and \emph{उ/ऊ}), or substitutes monophthongs for diphthongs (e.g., Standard \emph{होता} $\rightarrow$ Malvani \emph{हतो}).
+%     \item \textbf{Nasalization \& Anusvara Variations}: Standard Marathi strictly regulates \emph{anusvara} placement for nasal consonants and grammatical inflections. Dialectal text frequently omits \emph{anusvaras} or converts them to explicit nasal consonants (\emph{न, म, ङ}).
+%     \item \textbf{Nukta \& Retroflex Consonant Shifts}: Dialects like Ahirani systematically simplify retroflex consonants (\emph{ळ} $\rightarrow$ \emph{ल} or \emph{य}) and alter dental-palatal fricative conventions (\emph{श/ष} $\rightarrow$ \emph{स}), leading to extreme out-of-vocabulary (OOV) rates in standard tokenizers.
+%     \item \textbf{Agglutinative Postposition Merging}: Standard Marathi attaches case markers (\emph{ला, ने, ची, त}) directly to modified stem nouns (\emph{सामान्यरूप}). Dialects modify the stem in non-standard ways (e.g., Standard \emph{मुलाला} $\rightarrow$ Ahirani \emph{पोराले}, Malvani \emph{चेडवाक}).
+% \end{itemize}
+% 
+% The remainder of this paper is organized as follows: Section~\ref{sec:related} surveys related work in dialect normalization, Indic NLP, and synthetic data generation.
+% Section~\ref{sec:methodology} details our dataset construction pipeline, synthetic expansion architecture, and neural model setups.
+% Section~\ref{sec:findings} presents quantitative benchmark results, ablation studies, and qualitative predictions.
+% Section~\ref{sec:conclusion} concludes with a summary and directions for future research.
 
 % ===================================================================
 \section{\textcolor{black}{Related Work}}
