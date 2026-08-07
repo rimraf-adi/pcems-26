@@ -334,42 +334,42 @@ All results are reported using standardized automatic evaluation metrics compute
 
 \subsection{\textcolor{black}{Training Configuration and Hyperparameters}}
 
-Table~\ref{tab:training_config} details the training hyperparameters for both fine-tuned architectures.
+The training hyperparameters for both fine-tuned architectures are configured as follows.
 All models are trained using Hugging Face \texttt{Seq2SeqTrainer} with 5-fold cross-validation on the 85\% training pool and evaluated against the 15\% held-out test set.
 Early stopping is applied based on validation loss to prevent overfitting.
 
-\begin{table}[t]
-\color{black}
-\centering
-\caption{\textcolor{black}{Training Hyperparameters for Fine-Tuned Sequence-to-Sequence Models}}
-\label{tab:training_config}
-\begin{tabular}{lcc}
-\hline
-\textbf{Hyperparameter} & \textbf{mT5-small} & \textbf{IndicBART} \\
-\hline
-Base Model & \texttt{google/mt5-small} & \texttt{ai4bharat/IndicBART} \\
-Parameters & 300M & 244M \\
-Vocabulary Size & 250,000 (SentencePiece) & 64,000 (SentencePiece) \\
-Optimizer & AdaFactor (default) & AdamW \\
-Learning Rate & $5 \times 10^{-4}$ & $5 \times 10^{-5}$ \\
-Weight Decay & 0.01 & 0.01 \\
-Warmup Ratio & --- & 0.1 \\
-Batch Size (per device) & 16 & 16 \\
-Gradient Accumulation & 1 & 2 \\
-Effective Batch Size & 16 & 32 \\
-Max Input / Target Len & 128 / 128 & 128 / 128 \\
-Epochs (per fold) & 5 & 5 \\
-Early Stopping Patience & 2 & 2 \\
-Best Model Selection & Lowest \texttt{eval\_loss} & Lowest \texttt{eval\_loss} \\
-Generation Beams & 4 & 4 \\
-Length Penalty & --- & 0.8 \\
-Repetition Penalty & --- & 1.2 \\
-No Repeat N-gram Size & --- & 4 \\
-Mixed Precision (fp16) & No & No \\
-Random Seed & 42 & 42 \\
-\hline
-\end{tabular}
-\end{table}
+% \begin{table}[t]
+% \color{black}
+% \centering
+% \caption{\textcolor{black}{Training Hyperparameters for Fine-Tuned Sequence-to-Sequence Models}}
+% \label{tab:training_config}
+% \begin{tabular}{lcc}
+% \hline
+% \textbf{Hyperparameter} & \textbf{mT5-small} & \textbf{IndicBART} \\
+% \hline
+% Base Model & \texttt{google/mt5-small} & \texttt{ai4bharat/IndicBART} \\
+% Parameters & 300M & 244M \\
+% Vocabulary Size & 250,000 (SentencePiece) & 64,000 (SentencePiece) \\
+% Optimizer & AdaFactor (default) & AdamW \\
+% Learning Rate & $5 \times 10^{-4}$ & $5 \times 10^{-5}$ \\
+% Weight Decay & 0.01 & 0.01 \\
+% Warmup Ratio & --- & 0.1 \\
+% Batch Size (per device) & 16 & 16 \\
+% Gradient Accumulation & 1 & 2 \\
+% Effective Batch Size & 16 & 32 \\
+% Max Input / Target Len & 128 / 128 & 128 / 128 \\
+% Epochs (per fold) & 5 & 5 \\
+% Early Stopping Patience & 2 & 2 \\
+% Best Model Selection & Lowest \texttt{eval\_loss} & Lowest \texttt{eval\_loss} \\
+% Generation Beams & 4 & 4 \\
+% Length Penalty & --- & 0.8 \\
+% Repetition Penalty & --- & 1.2 \\
+% No Repeat N-gram Size & --- & 4 \\
+% Mixed Precision (fp16) & No & No \\
+% Random Seed & 42 & 42 \\
+% \hline
+% \end{tabular}
+% \end{table}
 
 Key architectural differences in training setup include: (i) mT5-small uses the default AdaFactor optimizer with a 10$\times$ higher learning rate ($5 \times 10^{-4}$ vs.\ $5 \times 10^{-5}$), consistent with its text-to-text pre-training paradigm; (ii) IndicBART requires explicit Marathi language conditioning via \texttt{<2mr>} tokens prepended and appended to both source and target sequences, along with \texttt{forced\_bos\_token\_id} configuration to constrain decoder output to the Marathi language subspace; and (iii) IndicBART employs gradient accumulation (effective batch size 32) with additional generation constraints (length penalty 0.8, repetition penalty 1.2, no-repeat 4-gram) to mitigate its tendency toward repetitive or truncated outputs during beam search.
 
