@@ -57,7 +57,7 @@ Our main contributions are :
 \begin{itemize}
     \item \textbf{Parallel Marathi Dialect Corpus with Synthetic Augmentation}: Based on the RESPIN corpus \cite{kumar2025respin}, we curate and expand a parallel corpus of verified sentence pairs across Malvani, Ahirani, and Varhadi dialects mapped to Standard Marathi across domains of agriculture and finance, combining human-translated pairs with an automated synthetic generation and multi-level verification pipeline.
     \item \textbf{End-to-end Fine-Tuning Pipeline}: We utilize a neural fine-tuning framework for dialect normalization, adapting pre-trained multilingual sequence-to-sequence transformer models for  standardization.
-    \item \textbf{Empirical Evaluations}: We implement a standardized train-test split combined with cross-validation across distinct dataset configurations, conducting experiments, ablation studies, and error analyses.
+    \item \textbf{Empirical Evaluations}: We implement a standardized train-test split combined with cross-validation across distinct dataset configurations, conducting experiments, verification filtering analyses, and error evaluations.
 \end{itemize}
 
 % \subsection{\textcolor{black}{Linguistic Background and Devanagari Orthographic Heterogeneity}}
@@ -608,9 +608,9 @@ Varhadi & 72.75 & 70.27 & $-$2.48 & 79.57 & \textbf{78.73} & $-$0.84 \\
 
 
 
-\subsection{\textcolor{black}{Verification Engine Impact: Raw vs.\ Filtered Synthetic Data Ablation Study}}
+\subsection{\textcolor{black}{Verification Engine Impact: Raw Unverified vs.\ Filtered Clean Data}}
 
-To quantify the explicit impact of our multi-tier LLM verification and filtering engine (\texttt{filter\_flawed.py} and \texttt{llm\_verifier.py}), we conduct an ablation study comparing models trained on \textit{Raw Unverified Synthetic Data} versus \textit{Filtered Clean Synthetic Data} (the 32k suite) across 5-fold cross-validation.
+To quantify the explicit impact of our multi-tier LLM verification and filtering engine (\texttt{filter\_flawed.py} and \texttt{llm\_verifier.py}), we conduct a comparative study evaluating models trained on \textit{Raw Unverified Synthetic Data} versus \textit{Filtered Clean Synthetic Data} (the expanded suite) across 5-fold cross-validation.
 The raw unverified dataset contains 19,914 parallel pairs, including 3,428 rejected or flawed pairs exhibiting Hindi language leakage, retained dialect residue, and garbled translations prior to multi-tier verification.
 
 Table~\ref{tab:verification_ablation} presents the quantitative comparison on the benchmark suite.
@@ -618,23 +618,25 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
 \begin{table}[t]
 \color{black}
 \centering
-\renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Ablation Study: Impact of Multi-Tier Verification Engine (Raw Unverified vs.\ Filtered Clean Data)}}
+\renewcommand{\arraystretch}{1.25}
+\caption{\textcolor{black}{Impact of Multi-Tier Verification Engine: Raw Unverified vs.\ Filtered Clean Synthetic Data}}
 \label{tab:verification_ablation}
-\begin{tabular}{llrcccc}
+\begin{tabular}{lccccc}
 \hline
-\makecell[l]{\small\textbf{Model}} & \makecell[l]{\small\textbf{Pipeline State}} & \makecell[c]{\small\textbf{Pairs}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\boldsymbol{\Delta}\\\small\textbf{BLEU}} & \makecell[c]{\boldsymbol{\Delta}\\\small\textbf{chrF++}} \\
+\makecell[l]{\small\textbf{Pipeline State}} & \makecell[c]{\small\textbf{Total Pairs}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\boldsymbol{\Delta}\textbf{ BLEU}} & \makecell[c]{\small\boldsymbol{\Delta}\textbf{ chrF++}} \\
 \hline
-IndicBART & Raw Unverified & 19,914 & 43.09 & 64.54 & $-$33.41 & $-$10.95 \\
-IndicBART & Filtered Clean & 32,335 & \textbf{76.50} & \textbf{75.49} & Baseline & Baseline \\
+\multicolumn{6}{l}{\textit{IndicBART (244M)}} \\
+Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$33.41 & $-$10.95 \\
+Filtered Clean Data & 32,335 & \textbf{76.50} & \textbf{75.49} & Baseline & Baseline \\
 \hline
-mT5-small & Raw Unverified & 19,914 & 61.21 & 80.18 & $-$12.27 & $-$7.52 \\
-mT5-small & Filtered Clean & 32,335 & \textbf{73.48} & \textbf{87.70} & Baseline & Baseline \\
+\multicolumn{6}{l}{\textit{mT5-Small (300M)}} \\
+Raw Unverified Data & 19,914 & 61.21 & 80.18 & $-$12.27 & $-$7.52 \\
+Filtered Clean Data & 32,335 & \textbf{73.48} & \textbf{87.70} & Baseline & Baseline \\
 \hline
 \end{tabular}
 \end{table}
 
-Key findings and insights from this ablation include:
+Key findings and insights from this evaluation include:
 \begin{enumerate}
     \item \textbf{Quality Collapse on Unverified Data}: Training IndicBART on unverified raw LLM outputs causes a catastrophic 33.41 BLEU point drop (collapsing from 76.50 to 43.09) due to severe error propagation from uncorrected dialect residue, garbled syntax, and script errors.
     \item \textbf{mT5-Small Resilience}: While google/mT5-small is more resilient due to its 250,000-token multilingual vocabulary, training on unverified data still suffers a heavy 12.27 BLEU point drop (falling from 73.48 to 61.21) and a 7.52 chrF++ drop.
@@ -709,35 +711,35 @@ Expanded chrF++ & 75.49 & \textbf{84.58} (+9.09) \\
 \end{enumerate}
 
 
-\subsection{\textcolor{black}{Taxonomy of Qualitative Error Modes}}
-
-To systematically analyze remaining failure modes across the test benchmark, we categorize qualitative prediction errors into four distinct grammatical error categories:
-
-% \begin{table}[t]
-% \color{black}
-% \centering
-% \caption{\textcolor{black}{Taxonomy of Qualitative Error Categories in Neural Dialect Normalization}}
-% \label{tab:error_taxonomy}
-% \begin{tabularx}{\textwidth}{lXX}
-% \hline
-% \textbf{Error Category} & \textbf{Linguistic Mechanism} & \textbf{Representative Example} \\
-% \hline
-% \textbf{1. Dialectal Auxiliary Retention} & Retaining non-standard auxiliary forms (\emph{शेतस, हाय, शे}) instead of mapping to normative \emph{आहे}. & \textit{Input}: मना पोराले काम करणा शे. \newline \textit{Pred}: माझ्या मुलाला काम करायचे \textbf{शे}. \newline \textit{Gold}: माझ्या मुलाला काम करायचे \textbf{आहे}. \\
-% \hline
-% \textbf{2. Entity Over-normalization} & Erroneously modifying valid dialectal named entities or crop terms during sequence transformation. & \textit{Input}: बाजरी कापणी कधी करायची? \newline \textit{Pred}: \textbf{धान्य} कापणी कधी करायची? \newline \textit{Gold}: बाजरी कापणी कधी करायची? \\
-% \hline
-% \textbf{3. Disjunctive Particle Omission} & Dropping optional sentence-final interrogative or disjunctive particles (\emph{का, की, जी}). & \textit{Input}: शेतात पाणी हाय का नाही जी? \newline \textit{Pred}: शेतात पाणी आहे की नाही. \newline \textit{Gold}: शेतात पाणी आहे की नाही \textbf{जी}? \\
-% \hline
-% \textbf{4. Agglutinative Boundary Shift} & Mis-segmenting stem-postposition boundaries in complex case inflections. & \textit{Input}: बँकेत खात्यावर पैसे जमा केले. \newline \textit{Pred}: बँके\textbf{च्या} खात्यावर पैसे जमा केले. \newline \textit{Gold}: बँकेत खात्यावर पैसे जमा केले. \\
-% \hline
-% \end{tabularx}
-% \end{table}
-
-The financial domain example demonstrates 100\% exact string match with perfect preservation of complex domain-specific entities (क्रेडिट कार्ड, डेबिट कार्ड, कर्ज, पैसे).
-This is notable because the input sentence contains 24 Devanagari tokens with multiple technical banking terms that the model must recognize and preserve unchanged during the normalization process.
-
-The agricultural example illustrates nuanced behavior on Varhadi interrogative normalization.
-The model correctly preserves the Varhadi interrogative form \emph{काऊन} (``why'') and produces semantically equivalent output, differing from the gold reference only in the optional sentence-final question particle \emph{का?}---a legitimate stylistic variation in Standard Marathi.
+% \subsection{\textcolor{black}{Taxonomy of Qualitative Error Modes}}
+% 
+% To systematically analyze remaining failure modes across the test benchmark, we categorize qualitative prediction errors into four distinct grammatical error categories:
+% 
+% % \begin{table}[t]
+% % \color{black}
+% % \centering
+% % \caption{\textcolor{black}{Taxonomy of Qualitative Error Categories in Neural Dialect Normalization}}
+% % \label{tab:error_taxonomy}
+% % \begin{tabularx}{\textwidth}{lXX}
+% % \hline
+% % \textbf{Error Category} & \textbf{Linguistic Mechanism} & \textbf{Representative Example} \\
+% % \hline
+% % \textbf{1. Dialectal Auxiliary Retention} & Retaining non-standard auxiliary forms (\emph{शेतस, हाय, शे}) instead of mapping to normative \emph{आहे}. & \textit{Input}: मना पोराले काम करणा शे. \newline \textit{Pred}: माझ्या मुलाला काम करायचे \textbf{शे}. \newline \textit{Gold}: माझ्या मुलाला काम करायचे \textbf{आहे}. \\
+% % \hline
+% % \textbf{2. Entity Over-normalization} & Erroneously modifying valid dialectal named entities or crop terms during sequence transformation. & \textit{Input}: बाजरी कापणी कधी करायची? \newline \textit{Pred}: \textbf{धान्य} कापणी कधी करायची? \newline \textit{Gold}: बाजरी कापणी कधी करायची? \\
+% % \hline
+% % \textbf{3. Disjunctive Particle Omission} & Dropping optional sentence-final interrogative or disjunctive particles (\emph{का, की, जी}). & \textit{Input}: शेतात पाणी हाय का नाही जी? \newline \textit{Pred}: शेतात पाणी आहे की नाही. \newline \textit{Gold}: शेतात पाणी आहे की नाही \textbf{जी}? \\
+% % \hline
+% % \textbf{4. Agglutinative Boundary Shift} & Mis-segmenting stem-postposition boundaries in complex case inflections. & \textit{Input}: बँकेत खात्यावर पैसे जमा केले. \newline \textit{Pred}: बँके\textbf{च्या} खात्यावर पैसे जमा केले. \newline \textit{Gold}: बँकेत खात्यावर पैसे जमा केले. \\
+% % \hline
+% % \end{tabularx}
+% % \end{table}
+% 
+% The financial domain example demonstrates 100\% exact string match with perfect preservation of complex domain-specific entities (क्रेडिट कार्ड, डेबिट कार्ड, कर्ज, पैसे).
+% This is notable because the input sentence contains 24 Devanagari tokens with multiple technical banking terms that the model must recognize and preserve unchanged during the normalization process.
+% 
+% The agricultural example illustrates nuanced behavior on Varhadi interrogative normalization.
+% The model correctly preserves the Varhadi interrogative form \emph{काऊन} (``why'') and produces semantically equivalent output, differing from the gold reference only in the optional sentence-final question particle \emph{का?}---a legitimate stylistic variation in Standard Marathi.
 
 \subsection{\textcolor{black}{Dialect Difficulty Hierarchy}}
 
