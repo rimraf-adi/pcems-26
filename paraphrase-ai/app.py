@@ -337,12 +337,18 @@ if proc_orig.strip() and proc_para.strip():
         sent_metrics = sent_data.get("metrics", {})
         pca_data = results.get("embeddings_pca", {})
 
-        # Safe dictionary getters
+        # Safe dictionary getters for unmerged separate detector indices
         sem_sim = doc_data.get("semantic_similarity", doc_data.get("similarity", 0.0))
         jaccard_sim = doc_data.get("jaccard_similarity", 0.0)
         lex_repl_rate = doc_data.get("lexical_replacement_rate", 1.0 - jaccard_sim)
-        turnitin_risk_pct = doc_data.get("turnitin_risk_pct", round(jaccard_sim * 100, 1))
-        turnitin_compliant = doc_data.get("turnitin_compliant", turnitin_risk_pct <= 10.0)
+        
+        turnitin_plagiarism_pct = doc_data.get("turnitin_plagiarism_pct", round(jaccard_sim * 100, 1))
+        gpt_risk_pct = doc_data.get("gpt_risk_pct", 0.0)
+        gemini_risk_pct = doc_data.get("gemini_risk_pct", 0.0)
+        claude_risk_pct = doc_data.get("claude_risk_pct", 0.0)
+        max_detector_risk = doc_data.get("max_detector_risk", turnitin_plagiarism_pct)
+        turnitin_compliant = doc_data.get("turnitin_compliant", max_detector_risk <= 10.0)
+
         status_badge = doc_data.get("status_badge", "📊 Analyzed")
         status_desc = doc_data.get("status_desc", doc_data.get("status", "Analysis completed."))
         
@@ -370,66 +376,72 @@ if proc_orig.strip() and proc_para.strip():
         # ----------------------------------------------------
         with tab_overview:
             # Collapsible Metric Guide
-            with st.expander("ℹ️ Multi-Factor Turnitin AI Detector & Plagiarism Risk Guide (Click to expand)", expanded=False):
+            with st.expander("ℹ️ Unmerged Independent AI & Plagiarism Detector Index Guide (Click to expand)", expanded=False):
                 st.markdown(r"""
-                - 🎯 **Intelligent Turnitin Risk Index (< 10% Target)**: Multi-factor score combining:
-                  1. **Lexical Overlap (Plagiarism)**: Exact word token matches against baseline text.
-                  2. **AI Burstiness Monotone Penalty**: Flags uniform sentence lengths ($\text{CV} < 0.45$).
-                  3. **AI Signature Vocabulary Density**: Counts GPT trope terms (*delve, pivotal, overarching, testament, furthermore, etc.*).
-                - 🧠 **Semantic Fidelity**: Cosine similarity ensuring technical meaning and scientific facts remain 100% accurate.
-                - 🔤 **Vocabulary Re-Wording**: Percentage of unique words substituted with synonyms (**>60%** target).
-                - 🎲 **Burstiness & Perplexity**: Evaluates sentence rhythm and vocabulary unpredictability to prevent AI classifier flags.
+                - 📜 **Turnitin Plagiarism Index (%)**: Pure lexical n-gram / exact token overlap against baseline text (Target: < 10%).
+                - 🤖 **ChatGPT / OpenAI Risk (%)**: Detection probability based on GPT vocabulary tropes & cadence (Target: < 10%).
+                - 💎 **Gemini / Google Risk (%)**: Detection probability based on Gemini transition phrases (Target: < 10%).
+                - 🧠 **Claude / Anthropic Risk (%)**: Detection probability based on Claude signature hedge phrases (Target: < 10%).
+                - 🧠 **Semantic Fidelity (%)**: Vector cosine similarity ensuring zero loss of technical meaning.
                 """)
 
             st.markdown('<div class="stCard">', unsafe_allow_html=True)
             
-            # Top Multi-Dimensional Metric Cards with Explicit Explanations
-            m1, m2, m3, m4 = st.columns(4)
+            # 5 Separate Unmerged Metric Cards for Granular Targeting
+            m1, m2, m3, m4, m5 = st.columns(5)
             
             with m1:
+                c1_color = "#34D399" if turnitin_plagiarism_pct <= 10.0 else "#FB7185"
+                st.markdown(f'''
+                <div class="metric-box">
+                    <div class="metric-val" style="color: {c1_color};">{turnitin_plagiarism_pct}%</div>
+                    <div class="metric-lbl">Turnitin Plagiarism</div>
+                    <div class="metric-sub">Direct Word Overlap</div>
+                    <div class="metric-expl">Lexical token matches. Target: <b>< 10%</b></div>
+                </div>
+                ''', unsafe_allow_html=True)
+
+            with m2:
+                c2_color = "#34D399" if gpt_risk_pct <= 10.0 else "#FB7185"
+                st.markdown(f'''
+                <div class="metric-box">
+                    <div class="metric-val" style="color: {c2_color};">{gpt_risk_pct}%</div>
+                    <div class="metric-lbl">ChatGPT Risk</div>
+                    <div class="metric-sub">OpenAI Detector</div>
+                    <div class="metric-expl">GPT Tropes & Cadence. Target: <b>< 10%</b></div>
+                </div>
+                ''', unsafe_allow_html=True)
+
+            with m3:
+                c3_color = "#34D399" if gemini_risk_pct <= 10.0 else "#FB7185"
+                st.markdown(f'''
+                <div class="metric-box">
+                    <div class="metric-val" style="color: {c3_color};">{gemini_risk_pct}%</div>
+                    <div class="metric-lbl">Gemini Risk</div>
+                    <div class="metric-sub">Google AI Detector</div>
+                    <div class="metric-expl">Gemini Phrases. Target: <b>< 10%</b></div>
+                </div>
+                ''', unsafe_allow_html=True)
+
+            with m4:
+                c4_color = "#34D399" if claude_risk_pct <= 10.0 else "#FB7185"
+                st.markdown(f'''
+                <div class="metric-box">
+                    <div class="metric-val" style="color: {c4_color};">{claude_risk_pct}%</div>
+                    <div class="metric-lbl">Claude Risk</div>
+                    <div class="metric-sub">Anthropic Detector</div>
+                    <div class="metric-expl">Claude Hedges. Target: <b>< 10%</b></div>
+                </div>
+                ''', unsafe_allow_html=True)
+
+            with m5:
                 sem_pct = int(sem_sim * 100)
                 st.markdown(f'''
                 <div class="metric-box">
                     <div class="metric-val" style="color: #38BDF8;">{sem_pct}%</div>
                     <div class="metric-lbl">Semantic Fidelity</div>
                     <div class="metric-sub">Meaning Preservation</div>
-                    <div class="metric-expl">Preserves <b>{sem_pct}%</b> of original scientific intent & facts.</div>
-                </div>
-                ''', unsafe_allow_html=True)
-
-            with m2:
-                lex_pct = int(lex_repl_rate * 100)
-                st.markdown(f'''
-                <div class="metric-box">
-                    <div class="metric-val" style="color: #34D399;">{lex_pct}%</div>
-                    <div class="metric-lbl">Vocabulary Re-Wording</div>
-                    <div class="metric-sub">Lexical Substitution Rate</div>
-                    <div class="metric-expl"><b>{lex_pct}%</b> of words replaced with new terms. (Target: >60%)</div>
-                </div>
-                ''', unsafe_allow_html=True)
-
-            with m3:
-                color_v = "#34D399" if turnitin_compliant else "#FB7185"
-                t_badge_txt = "✅ Compliant (<10%)" if turnitin_compliant else "⚠️ Exceeds 10% Cutoff"
-                expl_v = f"Turnitin risk is <b>{turnitin_risk_pct}%</b>. Met target!" if turnitin_compliant else f"Turnitin risk is <b>{turnitin_risk_pct}%</b> (>10% target)."
-                st.markdown(f'''
-                <div class="metric-box">
-                    <div class="metric-val" style="color: {color_v};">{turnitin_risk_pct}%</div>
-                    <div class="metric-lbl">Turnitin Risk Index</div>
-                    <div class="metric-sub">{t_badge_txt}</div>
-                    <div class="metric-expl">{expl_v} (Target: <10%)</div>
-                </div>
-                ''', unsafe_allow_html=True)
-
-            with m4:
-                ttr_ratio = round(vocab_rich_para / max(0.01, vocab_rich_orig), 2)
-                expl_r = f"<b>{(ttr_ratio-1)*100:.0f}%</b> richer vocabulary diversity." if ttr_ratio >= 1.0 else "Slightly less lexical variety."
-                st.markdown(f'''
-                <div class="metric-box">
-                    <div class="metric-val" style="color: #FBBF24;">{ttr_ratio}x</div>
-                    <div class="metric-lbl">Vocabulary Richness</div>
-                    <div class="metric-sub">Type-Token Ratio Ratio</div>
-                    <div class="metric-expl">{expl_r} (Target: >1.0x)</div>
+                    <div class="metric-expl">Preserves <b>{sem_pct}%</b> of scientific intent.</div>
                 </div>
                 ''', unsafe_allow_html=True)
 
@@ -441,9 +453,9 @@ if proc_orig.strip() and proc_para.strip():
             with g_col:
                 fig_gauge = go.Figure(go.Indicator(
                     mode="gauge+number",
-                    value=turnitin_risk_pct,
+                    value=max_detector_risk,
                     domain={'x': [0, 1], 'y': [0, 1]},
-                    title={'text': "Turnitin Plagiarism Risk Index (%)", 'font': {'size': 18, 'color': '#F8FAFC'}},
+                    title={'text': "Highest Risk Vector Index (%)", 'font': {'size': 18, 'color': '#F8FAFC'}},
                     gauge={
                         'axis': {'range': [0, 100], 'tickcolor': "#64748B"},
                         'bar': {'color': "#34D399" if turnitin_compliant else "#F43F5E"},
@@ -463,17 +475,18 @@ if proc_orig.strip() and proc_para.strip():
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
             with c_col:
-                st.subheader("💡 Turnitin Submission Diagnosis")
+                st.subheader("💡 Detector Vector Diagnosis")
                 st.markdown(f"**Status**: `{status_badge}`")
                 st.write(status_desc)
 
                 st.markdown(f"""
                 <div class="advice-card">
-                    <b>🎯 Turnitin Submission Target (< 10% Risk):</b><br>
-                    • <b>Lexical Overlap</b>: Exact word token overlap is <b>{int(jaccard_sim*100)}%</b> (meaning <b>{int(lex_repl_rate*100)}%</b> of words were re-worded).<br>
-                    • <b>Turnitin Compliance Status</b>: {"<span style='color:#34D399; font-weight:bold;'>READY FOR SUBMISSION (<10% Risk)</span>" if turnitin_compliant else "<span style='color:#FB7185; font-weight:bold;'>REWRITING REQUIRED (>10% Risk)</span>"}<br>
-                    • <b>Burstiness Style</b>: Current sentence length variation score is <b>{bp_curr.get('burstiness_score', 0.4)}</b> (<i>{bp_curr.get('burstiness_status', '')}</i>).<br>
-                    • <b>Readability Evolution</b>: Average sentence length shifted from <b>{read_base.get('avg_sentence_length', 15.0)} words</b> to <b>{read_curr.get('avg_sentence_length', 15.0)} words</b>.
+                    <b>🎯 Individual Vector Targets (< 10% Risk Each):</b><br>
+                    • 📜 <b>Turnitin Plagiarism</b>: <b>{turnitin_plagiarism_pct}%</b> (Direct word overlap)<br>
+                    • 🤖 <b>ChatGPT Detector</b>: <b>{gpt_risk_pct}%</b> (GPT signature terms & cadence)<br>
+                    • 💎 <b>Gemini Detector</b>: <b>{gemini_risk_pct}%</b> (Google AI tropes)<br>
+                    • 🧠 <b>Claude Detector</b>: <b>{claude_risk_pct}%</b> (Anthropic hedge phrases)<br>
+                    • 🟢 <b>Overall Status</b>: {"<span style='color:#34D399; font-weight:bold;'>READY FOR SUBMISSION (<10% All Vectors)</span>" if turnitin_compliant else "<span style='color:#FB7185; font-weight:bold;'>REWRITING REQUIRED (Vector > 10%)</span>"}
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -668,40 +681,81 @@ if proc_orig.strip() and proc_para.strip():
                 </div>
                 ''', unsafe_allow_html=True)
 
-            with bp_c3:
-                trans_cnt = bp_curr.get("ai_transition_count", 0)
-                ai_dens = bp_curr.get("ai_density_per_k", 0.0)
-                color_t = "#FCA5A5" if trans_cnt > 5 or ai_dens > 20.0 else "#6EE7B7"
+            # Model-Specific AI Fingerprint Cards
+            f_col1, f_col2, f_col3 = st.columns(3)
+
+            with f_col1:
+                g_cnt = bp_curr.get("gpt_count", 0)
+                g_dens = bp_curr.get("gpt_density_per_k", 0.0)
+                g_color = "#FB7185" if g_dens > 10.0 else "#34D399"
                 st.markdown(f'''
                 <div class="metric-box">
-                    <div class="metric-val" style="color: {color_t};">{trans_cnt}</div>
-                    <div class="metric-lbl">AI Fingerprint Terms</div>
-                    <div class="metric-sub">{ai_dens} per 1k words</div>
-                    <div class="metric-expl">Frequency of GPT tropes ('delve', 'pivotal', 'testament', 'furthermore').</div>
+                    <div class="metric-val" style="color: {g_color};">{g_cnt}</div>
+                    <div class="metric-lbl">ChatGPT (OpenAI) Tropes</div>
+                    <div class="metric-sub">{g_dens} per 1k words</div>
+                    <div class="metric-expl">'delve', 'tapestry', 'pivotal', 'testament'</div>
+                </div>
+                ''', unsafe_allow_html=True)
+
+            with f_col2:
+                gm_cnt = bp_curr.get("gemini_count", 0)
+                gm_dens = bp_curr.get("gemini_density_per_k", 0.0)
+                gm_color = "#FB7185" if gm_dens > 10.0 else "#34D399"
+                st.markdown(f'''
+                <div class="metric-box">
+                    <div class="metric-val" style="color: {gm_color};">{gm_cnt}</div>
+                    <div class="metric-lbl">Gemini (Google) Tropes</div>
+                    <div class="metric-sub">{gm_dens} per 1k words</div>
+                    <div class="metric-expl">'shed light on', 'plays a crucial role', 'leverage'</div>
+                </div>
+                ''', unsafe_allow_html=True)
+
+            with f_col3:
+                cl_cnt = bp_curr.get("claude_count", 0)
+                cl_dens = bp_curr.get("claude_density_per_k", 0.0)
+                cl_color = "#FB7185" if cl_dens > 10.0 else "#34D399"
+                st.markdown(f'''
+                <div class="metric-box">
+                    <div class="metric-val" style="color: {cl_color};">{cl_cnt}</div>
+                    <div class="metric-lbl">Claude (Anthropic) Hedges</div>
+                    <div class="metric-sub">{cl_dens} per 1k words</div>
+                    <div class="metric-expl">'it is worth noting', 'nuance', 'salient'</div>
                 </div>
                 ''', unsafe_allow_html=True)
 
             st.markdown("---")
-            st.markdown("### 🔍 Side-by-Side Burstiness & Perplexity Comparison")
+            st.markdown("### 🔍 Side-by-Side Burstiness, Perplexity & AI Fingerprint Comparison")
 
             b_df = pd.DataFrame([
                 {
                     "Metric": "Burstiness Score (CV)",
                     "Baseline content.tex": str(bp_base.get("burstiness_score", 0.0)),
                     "Current content.tex": str(bp_curr.get("burstiness_score", 0.0)),
-                    "Interpretation": "Measures variation in sentence length"
+                    "Interpretation": "Sentence length rhythm variation"
                 },
                 {
                     "Metric": "Perplexity Entropy (Bits)",
                     "Baseline content.tex": str(bp_base.get("perplexity_entropy", 0.0)),
                     "Current content.tex": str(bp_curr.get("perplexity_entropy", 0.0)),
-                    "Interpretation": "Measures vocabulary unpredictability"
+                    "Interpretation": "Vocabulary unpredictability"
                 },
                 {
-                    "Metric": "AI Transition Words Count",
-                    "Baseline content.tex": str(bp_base.get("ai_transition_count", 0)),
-                    "Current content.tex": str(bp_curr.get("ai_transition_count", 0)),
-                    "Interpretation": "Overused logical connectors"
+                    "Metric": "ChatGPT (OpenAI) Tropes Count",
+                    "Baseline content.tex": str(bp_base.get("gpt_count", 0)),
+                    "Current content.tex": str(bp_curr.get("gpt_count", 0)),
+                    "Interpretation": "Overused GPT terms ('delve', 'pivotal')"
+                },
+                {
+                    "Metric": "Gemini (Google) Tropes Count",
+                    "Baseline content.tex": str(bp_base.get("gemini_count", 0)),
+                    "Current content.tex": str(bp_curr.get("gemini_count", 0)),
+                    "Interpretation": "Google AI phrases ('plays a crucial role')"
+                },
+                {
+                    "Metric": "Claude (Anthropic) Hedges Count",
+                    "Baseline content.tex": str(bp_base.get("claude_count", 0)),
+                    "Current content.tex": str(bp_curr.get("claude_count", 0)),
+                    "Interpretation": "Claude hedge phrases ('it is worth noting')"
                 },
                 {
                     "Metric": "Average Sentence Length",

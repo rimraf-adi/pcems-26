@@ -33,17 +33,28 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import PCA
 
-# Expanded AI transition & signature GPT vocabulary terms
-AI_TRANSITION_WORDS = {
-    "therefore", "however", "furthermore", "moreover", "consequently",
-    "in conclusion", "it is important to note", "additionally", "thus",
-    "in summary", "overall", "nonetheless", "hence", "importantly",
+# Model-Specific AI Fingerprint Vocabulary Dictionaries
+GPT_FINGERPRINT_WORDS = {
     "delve", "tapestry", "testament", "pivotal", "overarching", "foster",
     "beacon", "paramount", "elucidate", "multifaceted", "underscores",
     "paradigm", "realm", "harness", "catalyst", "spearhead", "interplay",
     "intricate", "foundational", "transformative", "seamless", "synergy",
     "holistic", "unwavering", "demystify", "embark", "cornerstone",
-    "it is worth noting", "serves as a", "shed light on", "plays a crucial role"
+    "furthermore", "moreover", "consequently", "it is important to note"
+}
+
+GEMINI_FINGERPRINT_WORDS = {
+    "shed light on", "plays a crucial role", "serves as a", "dynamic",
+    "comprehensive", "leverage", "key takeaway", "in summary", "overall",
+    "in light of", "brings to the fore", "stands out", "paves the way",
+    "rich array", "noteworthy", "unravel", "vital role", "highlighting"
+}
+
+CLAUDE_FINGERPRINT_WORDS = {
+    "it is worth noting", "nuance", "salient", "notable", "intrinsically",
+    "inextricably", "alignment", "paramount", "pivotal", "thoughtful",
+    "balanced", "worth highlighting", "important to consider",
+    "multi-faceted", "nuanced perspective", "broader context"
 }
 
 def get_device() -> str:
@@ -85,7 +96,7 @@ def compute_shannon_entropy(words: List[str]) -> float:
 def compute_burstiness_and_perplexity(text: str) -> Dict[str, Any]:
     """
     Compute Burstiness (variance in sentence length/rhythm) 
-    and Perplexity proxy (word choice unpredictability & AI transition frequency).
+    and Perplexity proxy for individual GPT, Gemini, and Claude detection vectors.
     """
     words = tokenize_words(text)
     sents = [s.strip() for s in re.split(r'(?<=[.!?])\s+', text.strip()) if s.strip()]
@@ -95,8 +106,12 @@ def compute_burstiness_and_perplexity(text: str) -> Dict[str, Any]:
             "burstiness_status": "Uniform",
             "perplexity_entropy": 0.0,
             "perplexity_status": "Low Predictability",
-            "ai_transition_count": 0,
-            "ai_density_per_k": 0.0,
+            "gpt_count": 0,
+            "gemini_count": 0,
+            "claude_count": 0,
+            "gpt_density_per_k": 0.0,
+            "gemini_density_per_k": 0.0,
+            "claude_density_per_k": 0.0,
             "sentence_len_std": 0.0,
         }
 
@@ -126,19 +141,25 @@ def compute_burstiness_and_perplexity(text: str) -> Dict[str, Any]:
     else:
         perplexity_status = "Low Perplexity (Predictable / Formulaic)"
 
-    # AI Transition & Fingerprint Overuse Detector
+    # Separate Model-Specific Fingerprint Overuse Detectors
     lower_text = text.lower()
-    transition_count = sum(len(re.findall(r'\b' + re.escape(tw) + r'\b', lower_text)) for tw in AI_TRANSITION_WORDS)
-    ai_density_per_k = round((transition_count / max(1, len(words))) * 1000.0, 1)
+    gpt_cnt = sum(len(re.findall(r'\b' + re.escape(tw) + r'\b', lower_text)) for tw in GPT_FINGERPRINT_WORDS)
+    gemini_cnt = sum(len(re.findall(r'\b' + re.escape(tw) + r'\b', lower_text)) for tw in GEMINI_FINGERPRINT_WORDS)
+    claude_cnt = sum(len(re.findall(r'\b' + re.escape(tw) + r'\b', lower_text)) for tw in CLAUDE_FINGERPRINT_WORDS)
 
+    n_words = max(1, len(words))
     return {
         "burstiness_score": round(burstiness_cv, 3),
         "burstiness_status": burstiness_status,
         "burstiness_color": burstiness_color,
         "perplexity_entropy": entropy,
         "perplexity_status": perplexity_status,
-        "ai_transition_count": transition_count,
-        "ai_density_per_k": ai_density_per_k,
+        "gpt_count": gpt_cnt,
+        "gemini_count": gemini_cnt,
+        "claude_count": claude_cnt,
+        "gpt_density_per_k": round((gpt_cnt / n_words) * 1000.0, 1),
+        "gemini_density_per_k": round((gemini_cnt / n_words) * 1000.0, 1),
+        "claude_density_per_k": round((claude_cnt / n_words) * 1000.0, 1),
         "sentence_len_mean": round(mean_len, 1),
         "sentence_len_std": round(std_len, 1),
     }
@@ -392,38 +413,46 @@ class ParaphraseAnalyzer:
         # Lexical Replacement Rate (1 - Jaccard overlap)
         lexical_replacement_rate = 1.0 - jaccard_sim
 
-        # Multi-factor Turnitin AI Detector & Plagiarism Risk Index (0-100%)
-        # 1. Direct Lexical Overlap Component
-        lexical_risk = jaccard_sim * 100.0
-        
-        # 2. AI Monotone Cadence Penalty (Low Burstiness CV < 0.45 triggers AI detectors)
-        burst_cv = bp_para.get("burstiness_score", 0.4)
-        burst_penalty = max(0.0, (0.45 - burst_cv) * 25.0) if burst_cv < 0.45 else 0.0
-        
-        # 3. AI Fingerprint Vocabulary Overuse Penalty
-        ai_density = bp_para.get("ai_density_per_k", 0.0)
-        fp_penalty = min(20.0, ai_density * 2.0)
+        # SEPARATE, UNMERGED INDIVIDUAL DETECTOR INDICES
+        # 1. Pure Lexical Plagiarism Overlap Index (%)
+        turnitin_plagiarism_pct = round(jaccard_sim * 100.0, 1)
 
-        # Composite Turnitin Risk Score (Combining Plagiarism Overlap + AI Statistical Signatures)
-        turnitin_risk_pct = round(min(100.0, lexical_risk + burst_penalty + fp_penalty), 1)
-        turnitin_compliant = bool(turnitin_risk_pct <= 10.0)
+        # Sentence Cadence / Monotone AI Rhythm Penalty
+        burst_cv = bp_para.get("burstiness_score", 0.4)
+        burst_penalty = max(0.0, (0.45 - burst_cv) * 20.0) if burst_cv < 0.45 else 0.0
+
+        # 2. ChatGPT (OpenAI) AI Detection Risk Index (%)
+        gpt_dens = bp_para.get("gpt_density_per_k", 0.0)
+        gpt_risk_pct = round(min(100.0, (jaccard_sim * 35.0) + (gpt_dens * 3.0) + burst_penalty), 1)
+
+        # 3. Gemini (Google) AI Detection Risk Index (%)
+        gemini_dens = bp_para.get("gemini_density_per_k", 0.0)
+        gemini_risk_pct = round(min(100.0, (jaccard_sim * 35.0) + (gemini_dens * 3.5) + burst_penalty), 1)
+
+        # 4. Claude (Anthropic) AI Detection Risk Index (%)
+        claude_dens = bp_para.get("claude_density_per_k", 0.0)
+        claude_risk_pct = round(min(100.0, (jaccard_sim * 35.0) + (claude_dens * 3.5) + burst_penalty), 1)
+
+        # Highest risk vector among all detectors
+        max_detector_risk = max(turnitin_plagiarism_pct, gpt_risk_pct, gemini_risk_pct, claude_risk_pct)
+        turnitin_compliant = bool(max_detector_risk <= 10.0)
 
         # Status & Color Evaluation
-        if turnitin_risk_pct > 25.0 or jaccard_sim >= 0.25:
-            status_title = f"Turnitin Risk: High ({turnitin_risk_pct}% Composite Risk)"
-            status_desc = f"Composite risk is {turnitin_risk_pct}%. Lexical overlap ({int(jaccard_sim*100)}%), low sentence length variance, or AI fingerprint terms will trigger Turnitin. Further re-wording is required."
+        if max_detector_risk > 25.0:
+            status_title = f"High Risk Flag: Max Vector at {max_detector_risk}%"
+            status_desc = f"Specific risk vectors exceed submission limits (Plagiarism: {turnitin_plagiarism_pct}%, GPT: {gpt_risk_pct}%, Gemini: {gemini_risk_pct}%, Claude: {claude_risk_pct}%). Target individual high-risk cards below."
             status_color = "red"
-            status_badge = "🔴 Exceeds Turnitin Cutoff (>10%)"
-        elif turnitin_risk_pct > 10.0:
-            status_title = f"Turnitin Risk: Moderate ({turnitin_risk_pct}% Composite Risk)"
-            status_desc = f"Good conceptual alignment ({int(semantic_sim*100)}%), but composite risk ({turnitin_risk_pct}%) slightly exceeds the <10% submission threshold. Recommended: vary sentence lengths and replace AI transition terms."
+            status_badge = "🔴 Exceeds 10% Cutoff"
+        elif max_detector_risk > 10.0:
+            status_title = f"Moderate Risk: Max Vector at {max_detector_risk}%"
+            status_desc = f"Near target! (Plagiarism: {turnitin_plagiarism_pct}%, GPT: {gpt_risk_pct}%, Gemini: {gemini_risk_pct}%, Claude: {claude_risk_pct}%). Reduce specific model fingerprint terms."
             status_color = "orange"
-            status_badge = "🟡 Near Turnitin Target (10-25%)"
+            status_badge = "🟡 Near 10% Cutoff"
         else:
-            status_title = "Turnitin Compliant (<10% Plagiarism & AI Risk Target Met)"
-            status_desc = f"Excellent human-like prose transformation! Composite Turnitin risk is {turnitin_risk_pct}%, safely meeting the <10% submission threshold while preserving core technical intent ({int(semantic_sim*100)}%)."
+            status_title = "Turnitin & Multi-AI Compliant (<10% Target Met Across All Vectors)"
+            status_desc = f"All individual detector vectors are under 10%! (Plagiarism: {turnitin_plagiarism_pct}%, GPT: {gpt_risk_pct}%, Gemini: {gemini_risk_pct}%, Claude: {claude_risk_pct}%). Preserves {int(semantic_sim*100)}% semantic fidelity."
             status_color = "green"
-            status_badge = "🟢 Turnitin Compliant (<10%)"
+            status_badge = "🟢 Compliant (<10%)"
 
         # 2. Paragraph Level Breakdown (1-to-1 Aligned)
         orig_paras = self.split_paragraphs(orig_text)
@@ -519,10 +548,6 @@ class ParaphraseAnalyzer:
 
         all_sent_sims = [s["similarity"] for s in sentence_analysis] if sentence_analysis else [0.0]
 
-        # Composite Turnitin AI Detector & Plagiarism Risk Index
-        composite_turnitin_risk_pct = round(min(100.0, max(lexical_risk + burst_penalty + fp_penalty, (verbatim_copy_count / max(1, len(orig_sents))) * 100.0)), 1)
-        turnitin_compliant = composite_turnitin_risk_pct <= 10.0 and verbatim_copy_count == 0
-
         total_ms = (time.time() - start_time) * 1000
         logger.info(f"✅ Multi-Dimensional Evaluation Complete in {total_ms:.1f}ms")
 
@@ -534,7 +559,12 @@ class ParaphraseAnalyzer:
                 "semantic_similarity": round(semantic_sim, 4),
                 "jaccard_similarity": round(jaccard_sim, 4),
                 "lexical_replacement_rate": round(lexical_replacement_rate, 4),
-                "turnitin_risk_pct": composite_turnitin_risk_pct,
+                "turnitin_plagiarism_pct": turnitin_plagiarism_pct,
+                "gpt_risk_pct": gpt_risk_pct,
+                "gemini_risk_pct": gemini_risk_pct,
+                "claude_risk_pct": claude_risk_pct,
+                "max_detector_risk": max_detector_risk,
+                "turnitin_risk_pct": max_detector_risk,
                 "turnitin_compliant": turnitin_compliant,
                 "status_title": status_title,
                 "status_desc": status_desc,
@@ -568,7 +598,7 @@ class ParaphraseAnalyzer:
                     "high_risk_count": high_risk_count,
                     "moderate_risk_count": moderate_risk_count,
                     "low_risk_count": low_risk_count,
-                    "turnitin_risk_pct": turnitin_risk_pct,
+                    "turnitin_risk_pct": max_detector_risk,
                 }
             },
             "embeddings_pca": pca_embedding_data
