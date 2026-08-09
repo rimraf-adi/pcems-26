@@ -118,7 +118,7 @@ Table~\ref{tab:related_comparison} summarizes the key distinctions between our w
 \centering
 \caption{\textcolor{black}{Comparison with Prior Marathi Dialect Processing Research}}
 \label{tab:related_comparison}
-\begin{tabular}{cccccc}
+\begin{tabular}{:c:c:c:c:c:c:}
 \hline
 \makecell[c]{\small\textbf{Study}} & \makecell[c]{\small\textbf{Task}} & \makecell[c]{\small\textbf{Dialects}} & \makecell[c]{\small\textbf{Data}\\\small\textbf{Size}} & \makecell[c]{\small\textbf{Best Acc.}\\\small\textbf{(\%)}} & \makecell[c]{\small\textbf{Open}\\\small\textbf{Data}} \\
 \hline
@@ -189,7 +189,6 @@ The target dialects display rich phonological, morphological, and lexical transf
 % \hline
 % \end{tabularx}
 % \end{table}
-
 \subsection{\textcolor{black}{Original Corpus Curation and Foundation in RESPIN}}
 
 The foundational dialectal sentence prompts for our dataset were drawn from the domain-specific text transcripts of the RESPIN-S1.0 initiative \cite{kumar2025respin}, developed at IISc Bangalore under the Gates Foundation project.
@@ -210,7 +209,7 @@ Table~\ref{tab:respin_stats} summarizes key corpus statistics.
 \centering
 \caption{\textcolor{black}{RESPIN-S1.0 Marathi Source Corpus Statistics}}
 \label{tab:respin_stats}
-\begin{tabular}{ll}
+\begin{tabular}{:l:l:}
 \hline
 \small\textbf{Statistic} & \small\textbf{Value} \\
 \hline
@@ -242,7 +241,7 @@ Table~\ref{tab:asr_baseline} details the dialectwise ASR baseline performance ac
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Baseline ASR Performance (\texttt{indic-conformer-600m}) Dialectwise Breakdown on \texttt{IISc\_RESPIN\_test\_mr}}}
 \label{tab:asr_baseline}
-\begin{tabular}{lccccc}
+\begin{tabular}{:l:c:c:c:c:c:}
 \hline
 \makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Utts}} & \makecell[c]{\small\textbf{Duration}\\\small\textbf{(h)}} & \makecell[c]{\small\textbf{Norm.}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Norm.}\\\small\textbf{CER (\%)}} & \makecell[c]{\small\textbf{Exact}\\\small\textbf{Match (\%)}} \\
 \hline
@@ -385,7 +384,7 @@ Key architectural differences in training setup include: (i) mT5-small uses the 
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Comprehensive Evaluation Matrix on \texttt{IISc\_RESPIN\_test\_mr} (2,170 Utterances)}}
 \label{tab:respin_comprehensive}
-\begin{tabular}{|l|l|l|c|c|c|c|c|}
+\begin{tabular}{:l:l:l:c:c:c:c:c:}
 \hline
 \makecell[l]{\small\textbf{Model Scope}} & \makecell[l]{\small\textbf{Training Data}} & \makecell[l]{\small\textbf{Dialect}} & \makecell[c]{\small\textbf{Utts}} & \multicolumn{2}{c|}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{5-8}
@@ -426,7 +425,7 @@ Table~\ref{tab:wer_reductions_indicbart} and Table~\ref{tab:wer_reductions_mt5} 
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Dialectwise Relative WER Reductions: ASR Baseline vs.\ Fine-Tuned IndicBART (Synthetically Expanded Data)}}
 \label{tab:wer_reductions_indicbart}
-\begin{tabular}{|l|c|c|c|}
+\begin{tabular}{:l:c:c:c:}
 \hline
 \makecell[l]{\small\textbf{Sub-Dialect}} & \makecell[c]{\small\textbf{ASR Baseline}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{IndicBART}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Relative WER}\\\small\textbf{Drop (\%)}} \\
 \hline
@@ -443,7 +442,7 @@ Varhadi & 24.79 & 15.65 & $-$36.87 \\
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Dialectwise Relative WER Reductions: ASR Baseline vs.\ Fine-Tuned mT5-Small (Synthetically Expanded Data)}}
 \label{tab:wer_reductions_mt5}
-\begin{tabular}{|l|c|c|c|}
+\begin{tabular}{:l:c:c:c:}
 \hline
 \makecell[l]{\small\textbf{Sub-Dialect}} & \makecell[c]{\small\textbf{ASR Baseline}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{mT5-Small}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Relative WER}\\\small\textbf{Drop (\%)}} \\
 \hline
@@ -471,7 +470,7 @@ Table~\ref{tab:results_original_single} presents the performance matrix on 5-fol
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: Single-Dialect Models}}
 \label{tab:results_original_single}
-\begin{tabular}{|l|c|c|c|c|c|c|}
+\begin{tabular}{:l:c:c:c:c:c:c:}
 \hline
 & & & \multicolumn{2}{c|}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
@@ -490,7 +489,7 @@ Varhadi & 5,086 & 762 & 72.87 & 85.72 & \textbf{80.99} & \textbf{91.21} \\
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: Multi-Dialect Dialectwise Breakdown}}
 \label{tab:results_original_multidialect}
-\begin{tabular}{|l|c|c|c|c|c|c|}
+\begin{tabular}{:l:c:c:c:c:c:c:}
 \hline
 & & & \multicolumn{2}{c|}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
@@ -513,7 +512,7 @@ Table~\ref{tab:results_expanded_single} presents the performance matrix on synth
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: Single-Dialect Models}}
 \label{tab:results_expanded_single}
-\begin{tabular}{|l|c|c|c|c|c|c|}
+\begin{tabular}{:l:c:c:c:c:c:c:}
 \hline
 & & & \multicolumn{2}{c|}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
@@ -532,7 +531,7 @@ Varhadi & 10,155 & 1,523 & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: Multi-Dialect Dialectwise Breakdown}}
 \label{tab:results_expanded_multidialect}
-\begin{tabular}{|l|c|c|c|c|c|c|}
+\begin{tabular}{:l:c:c:c:c:c:c:}
 \hline
 & & & \multicolumn{2}{c|}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
@@ -587,7 +586,7 @@ IndicBART benefits substantially from augmentation on the multi-dialect task (+8
 \renewcommand{\arraystretch}{1.25}
 \caption{\textcolor{black}{Impact of Synthetic Data Augmentation: Original vs.\ Synthetically Expanded Data BLEU Change}}
 \label{tab:augmentation_impact}
-\begin{tabular}{|l|c|c|c|c|c|c|}
+\begin{tabular}{:l:c:c:c:c:c:c:}
 \hline
 & \multicolumn{3}{c|}{\textbf{IndicBART BLEU}} & \multicolumn{3}{c|}{\textbf{mT5-Small BLEU}} \\
 \cline{2-7}
@@ -617,7 +616,7 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Impact of Multi-Tier Verification Engine: Raw Unverified vs.\ Filtered Clean Synthetic Data}}
 \label{tab:verification_ablation}
-\begin{tabular}{|l|l|c|c|c|c|c|}
+\begin{tabular}{:l:l:c:c:c:c:c:}
 \hline
 \makecell[l]{\small\textbf{Model}} & \makecell[l]{\small\textbf{Pipeline State}} & \makecell[c]{\small\textbf{Total Pairs}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{$\Delta$ BLEU}} & \makecell[c]{\small\textbf{$\Delta$ chrF++}} \\
 \hline
