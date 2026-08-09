@@ -370,12 +370,15 @@ if proc_orig.strip() and proc_para.strip():
         # ----------------------------------------------------
         with tab_overview:
             # Collapsible Metric Guide
-            with st.expander("ℹ️ Turnitin Submission Target & Metric Guide (Click to expand)", expanded=False):
+            with st.expander("ℹ️ Multi-Factor Turnitin AI Detector & Plagiarism Risk Guide (Click to expand)", expanded=False):
                 st.markdown(r"""
-                - 🎯 **Turnitin Target (< 10% Risk)**: Turnitin submission safety cutoff. Keep lexical overlap and verbatim copying under 10%.
-                - 🧠 **Semantic Fidelity (Meaning Preservation)**: Vector-space cosine similarity measuring how accurately core technical facts are preserved.
-                - 🔤 **Vocabulary Re-Wording (Lexical Substitution)**: Percentage of unique words changed. **>60%** indicates strong vocabulary re-wording.
-                - 📚 **Vocabulary Richness (Type-Token Ratio)**: Lexical diversity ratio ($\text{TTR}_{\text{current}} / \text{TTR}_{\text{baseline}}$). **>1.0x** means richer, less repetitive prose.
+                - 🎯 **Intelligent Turnitin Risk Index (< 10% Target)**: Multi-factor score combining:
+                  1. **Lexical Overlap (Plagiarism)**: Exact word token matches against baseline text.
+                  2. **AI Burstiness Monotone Penalty**: Flags uniform sentence lengths ($\text{CV} < 0.45$).
+                  3. **AI Signature Vocabulary Density**: Counts GPT trope terms (*delve, pivotal, overarching, testament, furthermore, etc.*).
+                - 🧠 **Semantic Fidelity**: Cosine similarity ensuring technical meaning and scientific facts remain 100% accurate.
+                - 🔤 **Vocabulary Re-Wording**: Percentage of unique words substituted with synonyms (**>60%** target).
+                - 🎲 **Burstiness & Perplexity**: Evaluates sentence rhythm and vocabulary unpredictability to prevent AI classifier flags.
                 """)
 
             st.markdown('<div class="stCard">', unsafe_allow_html=True)
@@ -667,13 +670,14 @@ if proc_orig.strip() and proc_para.strip():
 
             with bp_c3:
                 trans_cnt = bp_curr.get("ai_transition_count", 0)
-                color_t = "#FCA5A5" if trans_cnt > 5 else "#6EE7B7"
+                ai_dens = bp_curr.get("ai_density_per_k", 0.0)
+                color_t = "#FCA5A5" if trans_cnt > 5 or ai_dens > 20.0 else "#6EE7B7"
                 st.markdown(f'''
                 <div class="metric-box">
                     <div class="metric-val" style="color: {color_t};">{trans_cnt}</div>
-                    <div class="metric-lbl">Formulaic AI Connectors</div>
-                    <div class="metric-sub">Overused Transition Words</div>
-                    <div class="metric-expl">Frequency of connectors like 'furthermore', 'however', 'in conclusion'.</div>
+                    <div class="metric-lbl">AI Fingerprint Terms</div>
+                    <div class="metric-sub">{ai_dens} per 1k words</div>
+                    <div class="metric-expl">Frequency of GPT tropes ('delve', 'pivotal', 'testament', 'furthermore').</div>
                 </div>
                 ''', unsafe_allow_html=True)
 

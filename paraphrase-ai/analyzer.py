@@ -33,11 +33,17 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import PCA
 
-# Common AI transition & filler phrases (as shown in AI detection research)
+# Expanded AI transition & signature GPT vocabulary terms
 AI_TRANSITION_WORDS = {
     "therefore", "however", "furthermore", "moreover", "consequently",
     "in conclusion", "it is important to note", "additionally", "thus",
-    "in summary", "overall", "nonetheless", "hence", "importantly"
+    "in summary", "overall", "nonetheless", "hence", "importantly",
+    "delve", "tapestry", "testament", "pivotal", "overarching", "foster",
+    "beacon", "paramount", "elucidate", "multifaceted", "underscores",
+    "paradigm", "realm", "harness", "catalyst", "spearhead", "interplay",
+    "intricate", "foundational", "transformative", "seamless", "synergy",
+    "holistic", "unwavering", "demystify", "embark", "cornerstone",
+    "it is worth noting", "serves as a", "shed light on", "plays a crucial role"
 }
 
 def get_device() -> str:
@@ -62,13 +68,13 @@ def compute_jaccard_similarity(words1: List[str], words2: List[str]) -> float:
     return float(len(intersection) / len(union))
 
 def compute_vocabulary_diversity(words: List[str]) -> float:
-    """Compute Type-Token Ratio (TTR) for vocabulary richness."""
+    """Compute Type-Token Ratio (TTR) as vocabulary richness index."""
     if not words:
         return 0.0
     return float(len(set(words)) / len(words))
 
 def compute_shannon_entropy(words: List[str]) -> float:
-    """Compute Shannon Entropy of word frequencies as an offline proxy for Perplexity (unpredictability)."""
+    """Compute Shannon Entropy of unigram distribution as Perplexity proxy."""
     if not words:
         return 0.0
     total_words = len(words)
@@ -90,6 +96,7 @@ def compute_burstiness_and_perplexity(text: str) -> Dict[str, Any]:
             "perplexity_entropy": 0.0,
             "perplexity_status": "Low Predictability",
             "ai_transition_count": 0,
+            "ai_density_per_k": 0.0,
             "sentence_len_std": 0.0,
         }
 
@@ -119,9 +126,10 @@ def compute_burstiness_and_perplexity(text: str) -> Dict[str, Any]:
     else:
         perplexity_status = "Low Perplexity (Predictable / Formulaic)"
 
-    # AI Transition Word Overuse Detector
+    # AI Transition & Fingerprint Overuse Detector
     lower_text = text.lower()
     transition_count = sum(len(re.findall(r'\b' + re.escape(tw) + r'\b', lower_text)) for tw in AI_TRANSITION_WORDS)
+    ai_density_per_k = round((transition_count / max(1, len(words))) * 1000.0, 1)
 
     return {
         "burstiness_score": round(burstiness_cv, 3),
@@ -130,6 +138,7 @@ def compute_burstiness_and_perplexity(text: str) -> Dict[str, Any]:
         "perplexity_entropy": entropy,
         "perplexity_status": perplexity_status,
         "ai_transition_count": transition_count,
+        "ai_density_per_k": ai_density_per_k,
         "sentence_len_mean": round(mean_len, 1),
         "sentence_len_std": round(std_len, 1),
     }
@@ -383,20 +392,36 @@ class ParaphraseAnalyzer:
         # Lexical Replacement Rate (1 - Jaccard overlap)
         lexical_replacement_rate = 1.0 - jaccard_sim
 
+        # Multi-factor Turnitin AI Detector & Plagiarism Risk Index (0-100%)
+        # 1. Direct Lexical Overlap Component
+        lexical_risk = jaccard_sim * 100.0
+        
+        # 2. AI Monotone Cadence Penalty (Low Burstiness CV < 0.45 triggers AI detectors)
+        burst_cv = bp_para.get("burstiness_score", 0.4)
+        burst_penalty = max(0.0, (0.45 - burst_cv) * 25.0) if burst_cv < 0.45 else 0.0
+        
+        # 3. AI Fingerprint Vocabulary Overuse Penalty
+        ai_density = bp_para.get("ai_density_per_k", 0.0)
+        fp_penalty = min(20.0, ai_density * 2.0)
+
+        # Composite Turnitin Risk Score (Combining Plagiarism Overlap + AI Statistical Signatures)
+        turnitin_risk_pct = round(min(100.0, lexical_risk + burst_penalty + fp_penalty), 1)
+        turnitin_compliant = bool(turnitin_risk_pct <= 10.0)
+
         # Status & Color Evaluation
-        if semantic_sim >= 0.90 or jaccard_sim >= 0.30:
-            status_title = "Turnitin Risk: High Similarity (>30% Lexical Overlap)"
-            status_desc = "The rewritten manuscript retains high lexical overlap with the baseline. Further paraphrasing is required to meet the Turnitin <10% risk target."
+        if turnitin_risk_pct > 25.0 or jaccard_sim >= 0.25:
+            status_title = f"Turnitin Risk: High ({turnitin_risk_pct}% Composite Risk)"
+            status_desc = f"Composite risk is {turnitin_risk_pct}%. Lexical overlap ({int(jaccard_sim*100)}%), low sentence length variance, or AI fingerprint terms will trigger Turnitin. Further re-wording is required."
             status_color = "red"
             status_badge = "🔴 Exceeds Turnitin Cutoff (>10%)"
-        elif semantic_sim >= 0.75 or jaccard_sim >= 0.15:
-            status_title = "Turnitin Risk: Moderate Similarity (15-30% Lexical Overlap)"
-            status_desc = "Good conceptual alignment, but lexical overlap is slightly above the <10% Turnitin target. Minor sentence re-phrasing recommended."
+        elif turnitin_risk_pct > 10.0:
+            status_title = f"Turnitin Risk: Moderate ({turnitin_risk_pct}% Composite Risk)"
+            status_desc = f"Good conceptual alignment ({int(semantic_sim*100)}%), but composite risk ({turnitin_risk_pct}%) slightly exceeds the <10% submission threshold. Recommended: vary sentence lengths and replace AI transition terms."
             status_color = "orange"
-            status_badge = "🟡 Near Turnitin Target (10-15%)"
+            status_badge = "🟡 Near Turnitin Target (10-25%)"
         else:
             status_title = "Turnitin Compliant (<10% Plagiarism & AI Risk Target Met)"
-            status_desc = "Excellent prose transformation! Lexical overlap is below 10%, meeting the strict Turnitin submission threshold while preserving core technical meaning."
+            status_desc = f"Excellent human-like prose transformation! Composite Turnitin risk is {turnitin_risk_pct}%, safely meeting the <10% submission threshold while preserving core technical intent ({int(semantic_sim*100)}%)."
             status_color = "green"
             status_badge = "🟢 Turnitin Compliant (<10%)"
 
@@ -493,7 +518,10 @@ class ParaphraseAnalyzer:
         pca_embedding_data = self.compute_pca_embedding_space(orig_sents, para_sents)
 
         all_sent_sims = [s["similarity"] for s in sentence_analysis] if sentence_analysis else [0.0]
-        turnitin_risk_pct = round(100.0 * ((verbatim_copy_count + high_risk_count) / max(1, len(orig_sents))), 1)
+
+        # Composite Turnitin AI Detector & Plagiarism Risk Index
+        composite_turnitin_risk_pct = round(min(100.0, max(lexical_risk + burst_penalty + fp_penalty, (verbatim_copy_count / max(1, len(orig_sents))) * 100.0)), 1)
+        turnitin_compliant = composite_turnitin_risk_pct <= 10.0 and verbatim_copy_count == 0
 
         total_ms = (time.time() - start_time) * 1000
         logger.info(f"✅ Multi-Dimensional Evaluation Complete in {total_ms:.1f}ms")
@@ -506,8 +534,8 @@ class ParaphraseAnalyzer:
                 "semantic_similarity": round(semantic_sim, 4),
                 "jaccard_similarity": round(jaccard_sim, 4),
                 "lexical_replacement_rate": round(lexical_replacement_rate, 4),
-                "turnitin_risk_pct": turnitin_risk_pct,
-                "turnitin_compliant": turnitin_risk_pct <= 10.0 and verbatim_copy_count == 0,
+                "turnitin_risk_pct": composite_turnitin_risk_pct,
+                "turnitin_compliant": turnitin_compliant,
                 "status_title": status_title,
                 "status_desc": status_desc,
                 "status_color": status_color,
