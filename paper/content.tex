@@ -29,15 +29,15 @@ Large Language Models (LLMs) had been adpoted for various NLP tasks across diver
 NLP tends to face several issues in incorporating low-resource languages, especially regional dialects of higher-resource languages \cite{joshi2020state,joshi2025survey}.
 Surveys among native dialect communities reveal that proper analysis and understanding of dialectal text remains a priority \cite{blaschke2024what}.
 suggesting a need for converting non-standard dialect into a standard form while keeping the original meaning intact \cite{kuparinen2023dialect}.
-Advancing NLP methods have made it possible to design systems to seamlessly link previously inaccessible low-resource regional dialects.
+Advancing NLP methods have made it possible to design systems that seamlessly link previously inaccessible low-resource regional dialects.
 
 
 
 India has constitutionally recognized 22 languages with hundreds of regional dialects spoken by over 1.4 billion people.
 While languages such as Hindi, Bengali, Marathi, Tamil, Telugu, etc. have started receiving attention through initiatives like AI4Bharat IndicCorp and BPCC \cite{dabre2022indicbart},sub-regional dialects remain almost entirely untouched in NLP. 
-One of the examples of this linguistic ambiguity is Marathi, an Indo-Aryan language spoken by over 83 million people, primarily in Maharashtra \cite{dabre2022indicbart}.
-Marathi is written in Devanagari from left to right and stands as one of India's 22 constitutionally recognized scheduled languages.
-While Standard Marathi (based on the dialect variety of Pune city and surrounding regions) has a well-defined literary standard and established digital infrastructure, regional sub-dialects tend to show phonological, and lexical divergence from the standard form.
+One of the examples of this linguistic ambiguity is Marathi, an Indo-Aryan language spoken by over 83 million people in the state of Maharashtra \cite{dabre2022indicbart}.
+Marathi is written in Devanagari script from left to right and stands as one of India's recognized scheduled languages.
+While Standard Marathi (based on the dialect variety of Pune city and surrounding regions) has a well-defined literary standard and established digital infrastructure, regional sub-dialects tend to show phonological and lexical divergence from the standard form \cite{kulkarni2023variation,tarfe2024linguistic}.
 % Three major regional sub-dialects spanning distinct geographical and socio-cultural regions of Maharashtra represent this diversity:
 % \begin{enumerate}
 %     \item \textbf{Malvani}: Spoken in the Southern Konkan coastal belt (Sindhudurg and Ratnagiri districts), deeply influenced by coastal geography, featuring maritime vocabulary, heavy palatalization, phonetic contractions, and Konkani-influenced lexical items.
@@ -391,7 +391,7 @@ Key architectural differences in training setup include: (i) mT5-small uses the 
 \cline{5-8}
 & & & & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-\multirow{6}{*}{\makecell[l]{Single-\\Dialect}} & \multirow{3}{*}{Original} & Malvani & 559 & 57.80 & 74.43 & \textbf{43.86} & \textbf{75.04} \\
+\multirow{6}{*}{Single-Dialect} & \multirow{3}{*}{Original} & Malvani & 559 & 57.80 & 74.43 & \textbf{43.86} & \textbf{75.04} \\
  & & Ahirani & 540 & 90.13 & 92.15 & \textbf{79.46} & \textbf{88.34} \\
  & & Varhadi & 516 & 83.59 & 88.62 & \textbf{74.81} & \textbf{85.20} \\
 \cline{2-8}
@@ -399,7 +399,7 @@ Key architectural differences in training setup include: (i) mT5-small uses the 
  & & Ahirani & 540 & 65.41 & 79.20 & \textbf{79.76} & \textbf{89.12} \\
  & & Varhadi & 516 & 67.97 & 81.45 & \textbf{76.90} & \textbf{87.60} \\
 \hline
-\multirow{6}{*}{\makecell[l]{Multi-\\Dialect}} & \multirow{3}{*}{Original} & Malvani & 559 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
+\multirow{6}{*}{Multi-Dialect} & \multirow{3}{*}{Original} & Malvani & 559 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
  & & Ahirani & 540 & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
  & & Varhadi & 516 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
 \cline{2-8}
@@ -621,10 +621,10 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
 \hline
 \makecell[l]{\small\textbf{Model}} & \makecell[l]{\small\textbf{Pipeline State}} & \makecell[c]{\small\textbf{Total Pairs}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{$\Delta$ BLEU}} & \makecell[c]{\small\textbf{$\Delta$ chrF++}} \\
 \hline
-\multirow{2}{*}{\makecell[l]{IndicBART\\(244M)}} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$33.41 & $-$10.95 \\
+\multirow{2}{*}{IndicBART (244M)} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$33.41 & $-$10.95 \\
  & Filtered Clean Data & 32,335 & \textbf{76.50} & \textbf{75.49} & Baseline & Baseline \\
 \hline
-\multirow{2}{*}{\makecell[l]{mT5-Small\\(300M)}} & Raw Unverified Data & 19,914 & 61.21 & 80.18 & $-$12.27 & $-$7.52 \\
+\multirow{2}{*}{mT5-Small (300M)} & Raw Unverified Data & 19,914 & 61.21 & 80.18 & $-$12.27 & $-$7.52 \\
  & Filtered Clean Data & 32,335 & \textbf{73.48} & \textbf{87.70} & Baseline & Baseline \\
 \hline
 \end{tabular}
