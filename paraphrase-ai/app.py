@@ -365,7 +365,7 @@ if proc_orig.strip() and proc_para.strip():
         tab_overview, tab_embed, tab_bp, tab_paragraph, tab_sentence, tab_export = st.tabs([
             "📊 Executive Dashboard",
             "🌌 Embedding Vector Graph",
-            "🎲 Perplexity & Burstiness",
+            "🧬 AI Signal Forensics",
             "📑 Paragraph Alignment",
             "🔍 Sentence Risk Inspector",
             "📄 Report & CSV Export"
@@ -489,6 +489,21 @@ if proc_orig.strip() and proc_para.strip():
                     • 🟢 <b>Overall Status</b>: {"<span style='color:#34D399; font-weight:bold;'>READY FOR SUBMISSION (<10% All Vectors)</span>" if turnitin_compliant else "<span style='color:#FB7185; font-weight:bold;'>REWRITING REQUIRED (Vector > 10%)</span>"}
                 </div>
                 """, unsafe_allow_html=True)
+
+            with st.expander("🕵️ Detailed Sentence AI Report (High Risk AI Phrasing)", expanded=True):
+                st.write("These sentences in the Current manuscript contain AI-specific tropes or fingerprints (e.g., 'delve into', 'in summary'). Consider rewriting them to lower the AI detection risk.")
+                ai_sentences = [m for m in results["sentence"]["matches"] if m.get("ai_flags", "None") != "None"]
+                if not ai_sentences:
+                    st.success("No high-risk AI fingerprints detected in individual sentences!")
+                else:
+                    df_ai = pd.DataFrame(ai_sentences)
+                    st.dataframe(df_ai[["best_match_id", "ai_flags", "flagged_phrases", "best_match_sentence"]].rename(columns={
+                        "best_match_id": "Sent #",
+                        "ai_flags": "AI Model",
+                        "flagged_phrases": "Flagged Phrases",
+                        "best_match_sentence": "Sentence Content"
+                    }), use_container_width=True)
+
 
         # ----------------------------------------------------
         # TAB 2: VISUAL EMBEDDING SPACE GRAPH
@@ -649,129 +664,96 @@ if proc_orig.strip() and proc_para.strip():
                         st.plotly_chart(fig_heat, use_container_width=True)
 
         # ----------------------------------------------------
-        # TAB 3: PERPLEXITY & BURSTINESS
+        # TAB 3: AI SIGNAL FORENSICS
         # ----------------------------------------------------
         with tab_bp:
-            st.subheader("🎲 Perplexity & Burstiness AI Signature Analysis")
-            st.caption("AI text generators exhibit low burstiness (monotonous sentence length) and low perplexity (predictable word choices).")
+            st.subheader("🧬 AI Signal Forensics & Risk Vectors")
+            st.caption("Multi-dimensional statistical analysis of specific AI generator signatures.")
 
-            bp_c1, bp_c2, bp_c3 = st.columns(3)
-
-            with bp_c1:
-                b_score = bp_curr.get("burstiness_score", 0.0)
-                b_status = bp_curr.get("burstiness_status", "Normal")
-                st.markdown(f'''
-                <div class="metric-box">
-                    <div class="metric-val" style="color: #A7F3D0;">{b_score}</div>
-                    <div class="metric-lbl">Burstiness Index (CV)</div>
-                    <div class="metric-sub">{b_status}</div>
-                    <div class="metric-expl">Sentence length variation. Higher score = natural human rhythm.</div>
-                </div>
-                ''', unsafe_allow_html=True)
-
-            with bp_c2:
-                p_entropy = bp_curr.get("perplexity_entropy", 0.0)
-                p_status = bp_curr.get("perplexity_status", "Normal")
-                st.markdown(f'''
-                <div class="metric-box">
-                    <div class="metric-val" style="color: #38BDF8;">{p_entropy}</div>
-                    <div class="metric-lbl">Perplexity Proxy (Entropy)</div>
-                    <div class="metric-sub">{p_status}</div>
-                    <div class="metric-expl">Word choice randomness. Higher score = unpredictable human style.</div>
-                </div>
-                ''', unsafe_allow_html=True)
-
-            # Model-Specific AI Fingerprint Cards
+            # Model-Specific AI Risk Cards
             f_col1, f_col2, f_col3 = st.columns(3)
 
+            gpt_risk = gpt_risk_pct
+            gemini_risk = gemini_risk_pct
+            claude_risk = claude_risk_pct
+
             with f_col1:
-                g_cnt = bp_curr.get("gpt_count", 0)
-                g_dens = bp_curr.get("gpt_density_per_k", 0.0)
-                g_color = "#FB7185" if g_dens > 10.0 else "#34D399"
+                g_color = "#FB7185" if gpt_risk > 10.0 else "#34D399"
                 st.markdown(f'''
                 <div class="metric-box">
-                    <div class="metric-val" style="color: {g_color};">{g_cnt}</div>
-                    <div class="metric-lbl">ChatGPT (OpenAI) Tropes</div>
-                    <div class="metric-sub">{g_dens} per 1k words</div>
-                    <div class="metric-expl">'delve', 'tapestry', 'pivotal', 'testament'</div>
+                    <div class="metric-val" style="color: {g_color};">{gpt_risk}%</div>
+                    <div class="metric-lbl">ChatGPT (OpenAI) Signal</div>
+                    <div class="metric-expl">Specific probability of GPT origin. Target: <b>< 10%</b></div>
                 </div>
                 ''', unsafe_allow_html=True)
 
             with f_col2:
-                gm_cnt = bp_curr.get("gemini_count", 0)
-                gm_dens = bp_curr.get("gemini_density_per_k", 0.0)
-                gm_color = "#FB7185" if gm_dens > 10.0 else "#34D399"
+                gm_color = "#FB7185" if gemini_risk > 10.0 else "#34D399"
                 st.markdown(f'''
                 <div class="metric-box">
-                    <div class="metric-val" style="color: {gm_color};">{gm_cnt}</div>
-                    <div class="metric-lbl">Gemini (Google) Tropes</div>
-                    <div class="metric-sub">{gm_dens} per 1k words</div>
-                    <div class="metric-expl">'shed light on', 'plays a crucial role', 'leverage'</div>
+                    <div class="metric-val" style="color: {gm_color};">{gemini_risk}%</div>
+                    <div class="metric-lbl">Gemini (Google) Signal</div>
+                    <div class="metric-expl">Specific probability of Gemini origin. Target: <b>< 10%</b></div>
                 </div>
                 ''', unsafe_allow_html=True)
 
             with f_col3:
-                cl_cnt = bp_curr.get("claude_count", 0)
-                cl_dens = bp_curr.get("claude_density_per_k", 0.0)
-                cl_color = "#FB7185" if cl_dens > 10.0 else "#34D399"
+                cl_color = "#FB7185" if claude_risk > 10.0 else "#34D399"
                 st.markdown(f'''
                 <div class="metric-box">
-                    <div class="metric-val" style="color: {cl_color};">{cl_cnt}</div>
-                    <div class="metric-lbl">Claude (Anthropic) Hedges</div>
-                    <div class="metric-sub">{cl_dens} per 1k words</div>
-                    <div class="metric-expl">'it is worth noting', 'nuance', 'salient'</div>
+                    <div class="metric-val" style="color: {cl_color};">{claude_risk}%</div>
+                    <div class="metric-lbl">Claude (Anthropic) Signal</div>
+                    <div class="metric-expl">Specific probability of Claude origin. Target: <b>< 10%</b></div>
                 </div>
                 ''', unsafe_allow_html=True)
 
             st.markdown("---")
-            st.markdown("### 🔍 Side-by-Side Burstiness, Perplexity & AI Fingerprint Comparison")
+            st.markdown("### 🕸️ Signal Radar Space")
+            
+            # Extract Signals for radar chart
+            gpt_sig = bp_curr.get("gpt_signals", {})
+            gemini_sig = bp_curr.get("gemini_signals", {})
+            claude_sig = bp_curr.get("claude_signals", {})
+            
+            if gpt_sig:
+                categories = list(gpt_sig.keys())
+                fig_radar = go.Figure()
 
-            b_df = pd.DataFrame([
-                {
-                    "Metric": "Burstiness Score (CV)",
-                    "Baseline content.tex": str(bp_base.get("burstiness_score", 0.0)),
-                    "Current content.tex": str(bp_curr.get("burstiness_score", 0.0)),
-                    "Interpretation": "Sentence length rhythm variation"
-                },
-                {
-                    "Metric": "Perplexity Entropy (Bits)",
-                    "Baseline content.tex": str(bp_base.get("perplexity_entropy", 0.0)),
-                    "Current content.tex": str(bp_curr.get("perplexity_entropy", 0.0)),
-                    "Interpretation": "Vocabulary unpredictability"
-                },
-                {
-                    "Metric": "ChatGPT (OpenAI) Tropes Count",
-                    "Baseline content.tex": str(bp_base.get("gpt_count", 0)),
-                    "Current content.tex": str(bp_curr.get("gpt_count", 0)),
-                    "Interpretation": "Overused GPT terms ('delve', 'pivotal')"
-                },
-                {
-                    "Metric": "Gemini (Google) Tropes Count",
-                    "Baseline content.tex": str(bp_base.get("gemini_count", 0)),
-                    "Current content.tex": str(bp_curr.get("gemini_count", 0)),
-                    "Interpretation": "Google AI phrases ('plays a crucial role')"
-                },
-                {
-                    "Metric": "Claude (Anthropic) Hedges Count",
-                    "Baseline content.tex": str(bp_base.get("claude_count", 0)),
-                    "Current content.tex": str(bp_curr.get("claude_count", 0)),
-                    "Interpretation": "Claude hedge phrases ('it is worth noting')"
-                },
-                {
-                    "Metric": "Average Sentence Length",
-                    "Baseline content.tex": f"{bp_base.get('sentence_len_mean', 0.0)} words",
-                    "Current content.tex": f"{bp_curr.get('sentence_len_mean', 0.0)} words",
-                    "Interpretation": "Mean words per sentence"
-                },
-                {
-                    "Metric": "Sentence Length Std Dev",
-                    "Baseline content.tex": f"± {bp_base.get('sentence_len_std', 0.0)} words",
-                    "Current content.tex": f"± {bp_curr.get('sentence_len_std', 0.0)} words",
-                    "Interpretation": "Spread/rhythm variation"
-                }
-            ])
+                fig_radar.add_trace(go.Scatterpolar(
+                    r=list(gpt_sig.values()),
+                    theta=categories,
+                    fill='toself',
+                    name='ChatGPT',
+                    line=dict(color='#10B981')
+                ))
+                fig_radar.add_trace(go.Scatterpolar(
+                    r=list(gemini_sig.values()),
+                    theta=categories,
+                    fill='toself',
+                    name='Gemini',
+                    line=dict(color='#3B82F6')
+                ))
+                fig_radar.add_trace(go.Scatterpolar(
+                    r=list(claude_sig.values()),
+                    theta=categories,
+                    fill='toself',
+                    name='Claude',
+                    line=dict(color='#8B5CF6')
+                ))
 
-            st.dataframe(b_df, use_container_width=True, hide_index=True)
+                fig_radar.update_layout(
+                    polar=dict(
+                        radialaxis=dict(
+                            visible=True,
+                            range=[0, 1]
+                        )),
+                    showlegend=True,
+                    template="plotly_dark",
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(15, 23, 42, 0.6)",
+                    margin=dict(l=40, r=40, t=40, b=40),
+                )
+                st.plotly_chart(fig_radar, use_container_width=True)
 
         # ----------------------------------------------------
         # TAB 4: PARAGRAPH BREAKDOWN
