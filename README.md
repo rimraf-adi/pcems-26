@@ -10,11 +10,11 @@ Official LaTeX paper repository for **"Multi-Dialect Marathi Text Normalization 
 
 ## 📌 Abstract
 
-Low-resource regional dialects pose severe challenges for Natural Language Processing (NLP) systems due to significant morpho-syntactic variation, non-standard orthography, and extreme scarcity of annotated parallel corpora. In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: **Malvani (D1)**, **Ahirani (D2)**, and **Varhadi (D4)**. 
+Low-resource regional dialects pose severe challenges for Natural Language Processing (NLP) systems due to significant morpho-syntactic variation, non-standard orthography, and extreme scarcity of annotated parallel corpora. In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: **Malvani**, **Ahirani**, and **Varhadi**. 
 
-To overcome severe data scarcity, we introduce an automated synthetic parallel data expansion pipeline combining large language model (LLM) generation using Gemma-2 (9B/27B) with a multi-tier verification engine (rule-based script filtering and LLM semantic auditing), effectively doubling the clean parallel training corpus from 16,163 to 32,335 verified pairs across agriculture and finance domains. We conduct a rigorous empirical evaluation of state-of-the-art multilingual sequence-to-sequence transformer architectures---`google/mT5-small` (300M) and `ai4bharat/IndicBART` (244M)---under an 85/15 stratified test split with 5-fold cross-validation across 8 dataset configurations. 
+To overcome severe data scarcity, we introduce an automated synthetic parallel data expansion pipeline combining large language model (LLM) generation using Gemma-2 (9B/27B) with a multi-tier verification engine (rule-based script filtering and LLM semantic auditing), effectively doubling the clean parallel training corpus into verified synthetically expanded pairs across agriculture and finance domains. We conduct a rigorous empirical evaluation of state-of-the-art multilingual sequence-to-sequence transformer architectures---`google/mT5-small` (300M) and `ai4bharat/IndicBART` (244M)---under an 85/15 stratified test split with 5-fold cross-validation across 8 dataset configurations. 
 
-Empirical results demonstrate that `mT5-small` achieves state-of-the-art performance with **69.51 BLEU** and **84.58 chrF++** on the 32k combined multi-dialect dataset (+12.39 BLEU over IndicBART), with individual dialect performance reaching **80.99 BLEU** and **91.21 chrF++** on Varhadi (D4). Furthermore, an ablation study on the verification engine proves that training on unverified raw synthetic data causes a catastrophic drop of **-33.41 BLEU points**, highlighting the critical role of multi-tier auditing.
+Empirical results demonstrate that `mT5-small` achieves state-of-the-art performance with **69.51 BLEU** and **84.58 chrF++** on the synthetically expanded multi-dialect dataset (+12.39 BLEU over IndicBART), with individual dialect performance reaching **80.99 BLEU** and **91.21 chrF++** on Varhadi. Furthermore, an ablation study on the verification engine proves that training on unverified raw synthetic data causes a catastrophic drop of **-33.41 BLEU points**, highlighting the critical role of multi-tier auditing.
 
 ---
 
@@ -82,10 +82,10 @@ xelatex -interaction=nonstopmode springer.tex
 
 | Model Configuration | Dataset Partition | BLEU | chrF++ | WER (%) |
 | :--- | :---: | :---: | :---: | :---: |
-| **mT5-small (300M)** | D4 Varhadi (16k) | **80.99** | **91.21** | **14.73%** |
-| **mT5-small (300M)** | D2 Ahirani (32k) | **79.76** | **91.50** | **12.61%** |
-| **IndicBART (244M)** | D124 Combined (32k) | **76.50** | **75.49** | **16.23%** |
-| **mT5-small (300M)** | **D124 Combined (32k SOTA)** | **73.48** | **87.70** | **16.58%** |
+| **mT5-small (300M)** | Varhadi (Original) | **80.99** | **91.21** | **14.73** |
+| **mT5-small (300M)** | Ahirani (Synthetically Expanded) | **79.76** | **91.50** | **12.61** |
+| **IndicBART (244M)** | Multi-Dialect (Synthetically Expanded) | **76.50** | **75.49** | **16.23** |
+| **mT5-small (300M)** | **Multi-Dialect (Synthetically Expanded SOTA)** | **73.48** | **87.70** | **16.58** |
 
 ---
 

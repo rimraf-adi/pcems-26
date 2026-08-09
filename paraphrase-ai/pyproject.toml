@@ -1,0 +1,14 @@
+[project]
+name = "paraphrase-ai"
+version = "0.1.0"
+description = "Paraphrase AI Granular Similarity Studio"
+requires-python = ">=3.9"
+dependencies = [
+    "torch>=2.0.0",
+    "torchvision",
+    "streamlit>=1.30.0",
+    "pandas>=2.0.0",
+    "plotly>=5.0.0",
+    "scikit-learn",
+    "sentence-transformers",
+]

@@ -9,3 +9,9 @@
 *.blg
 missfont.log
 dialect-normalisation
+.DS_Store
+.venv
+__pycache__/
+*.pyc
+.agents/
+.claude/
