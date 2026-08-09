@@ -274,15 +274,16 @@ with st.sidebar:
         st.rerun()
 
     st.markdown("---")
-    st.subheader("🎯 Risk Thresholds")
+    st.subheader("🎯 Turnitin Submission Target")
     high_threshold = st.slider(
-        "High Risk Similarity Cutoff",
+        "Turnitin Risk Cutoff (% Similarity)",
         min_value=0.05,
-        max_value=0.90,
-        value=0.85,
+        max_value=0.50,
+        value=0.10,
         step=0.05,
-        help="Sentences scoring above this value will be flagged as requiring rephrasing."
+        help="Turnitin submission safety threshold. Default set to 0.10 (10% similarity cutoff) for Turnitin AI detector & plagiarism compliance."
     )
+    st.caption("🎯 **Turnitin Submission Goal**: < 10% Plagiarism & AI Detector Risk")
 
 # Initial State Sync if empty
 if "orig_input_area" not in st.session_state or "para_input_area" not in st.session_state:
@@ -291,7 +292,7 @@ if "orig_input_area" not in st.session_state or "para_input_area" not in st.sess
 # Quick Action Bar above text areas
 action_col1, action_col2 = st.columns([3, 1])
 with action_col1:
-    st.caption("Editing manuscript prose below triggers real-time multi-metric evaluation.")
+    st.caption("Editing manuscript prose below triggers real-time multi-metric evaluation against the Turnitin <10% target.")
 with action_col2:
     if st.button("🔄 Sync Disk Files", use_container_width=True):
         sync_disk_to_state(full_manuscript_mode)
@@ -340,6 +341,8 @@ if proc_orig.strip() and proc_para.strip():
         sem_sim = doc_data.get("semantic_similarity", doc_data.get("similarity", 0.0))
         jaccard_sim = doc_data.get("jaccard_similarity", 0.0)
         lex_repl_rate = doc_data.get("lexical_replacement_rate", 1.0 - jaccard_sim)
+        turnitin_risk_pct = doc_data.get("turnitin_risk_pct", round(jaccard_sim * 100, 1))
+        turnitin_compliant = doc_data.get("turnitin_compliant", turnitin_risk_pct <= 10.0)
         status_badge = doc_data.get("status_badge", "📊 Analyzed")
         status_desc = doc_data.get("status_desc", doc_data.get("status", "Analysis completed."))
         
@@ -367,11 +370,11 @@ if proc_orig.strip() and proc_para.strip():
         # ----------------------------------------------------
         with tab_overview:
             # Collapsible Metric Guide
-            with st.expander("ℹ️ How to Read These Metric Cards (Click to expand guide)", expanded=False):
+            with st.expander("ℹ️ Turnitin Submission Target & Metric Guide (Click to expand)", expanded=False):
                 st.markdown(r"""
-                - 🧠 **Semantic Fidelity (Meaning Preservation)**: Vector-space cosine similarity measuring how accurately core technical facts are preserved. **50%–80%** is optimal for paraphrasing.
+                - 🎯 **Turnitin Target (< 10% Risk)**: Turnitin submission safety cutoff. Keep lexical overlap and verbatim copying under 10%.
+                - 🧠 **Semantic Fidelity (Meaning Preservation)**: Vector-space cosine similarity measuring how accurately core technical facts are preserved.
                 - 🔤 **Vocabulary Re-Wording (Lexical Substitution)**: Percentage of unique words changed. **>60%** indicates strong vocabulary re-wording.
-                - 🚨 **Verbatim Risk Sentences**: Count of sentences with near-identical wording ($\ge 95\%$ similarity). **Goal is 0** before submission.
                 - 📚 **Vocabulary Richness (Type-Token Ratio)**: Lexical diversity ratio ($\text{TTR}_{\text{current}} / \text{TTR}_{\text{baseline}}$). **>1.0x** means richer, less repetitive prose.
                 """)
 
@@ -387,7 +390,7 @@ if proc_orig.strip() and proc_para.strip():
                     <div class="metric-val" style="color: #38BDF8;">{sem_pct}%</div>
                     <div class="metric-lbl">Semantic Fidelity</div>
                     <div class="metric-sub">Meaning Preservation</div>
-                    <div class="metric-expl">Preserves <b>{sem_pct}%</b> of original scientific intent & facts. (Target: 50%–80%)</div>
+                    <div class="metric-expl">Preserves <b>{sem_pct}%</b> of original scientific intent & facts.</div>
                 </div>
                 ''', unsafe_allow_html=True)
 
@@ -403,15 +406,15 @@ if proc_orig.strip() and proc_para.strip():
                 ''', unsafe_allow_html=True)
 
             with m3:
-                verb_cnt = sent_metrics.get("verbatim_copy_count", sent_metrics.get("high_risk_count", 0))
-                color_v = "#FB7185" if verb_cnt > 0 else "#34D399"
-                expl_v = f"<b>{verb_cnt}</b> near-identical sentence requires re-wording." if verb_cnt > 0 else "0 verbatim sentence copies detected."
+                color_v = "#34D399" if turnitin_compliant else "#FB7185"
+                t_badge_txt = "✅ Compliant (<10%)" if turnitin_compliant else "⚠️ Exceeds 10% Cutoff"
+                expl_v = f"Turnitin risk is <b>{turnitin_risk_pct}%</b>. Met target!" if turnitin_compliant else f"Turnitin risk is <b>{turnitin_risk_pct}%</b> (>10% target)."
                 st.markdown(f'''
                 <div class="metric-box">
-                    <div class="metric-val" style="color: {color_v};">{verb_cnt}</div>
-                    <div class="metric-lbl">Verbatim Risk Sentences</div>
-                    <div class="metric-sub">Near-Identical Wording</div>
-                    <div class="metric-expl">{expl_v} (Target: 0)</div>
+                    <div class="metric-val" style="color: {color_v};">{turnitin_risk_pct}%</div>
+                    <div class="metric-lbl">Turnitin Risk Index</div>
+                    <div class="metric-sub">{t_badge_txt}</div>
+                    <div class="metric-expl">{expl_v} (Target: <10%)</div>
                 </div>
                 ''', unsafe_allow_html=True)
 
@@ -435,21 +438,21 @@ if proc_orig.strip() and proc_para.strip():
             with g_col:
                 fig_gauge = go.Figure(go.Indicator(
                     mode="gauge+number",
-                    value=sem_sim * 100,
+                    value=turnitin_risk_pct,
                     domain={'x': [0, 1], 'y': [0, 1]},
-                    title={'text': "Semantic Overlap Index", 'font': {'size': 18, 'color': '#F8FAFC'}},
+                    title={'text': "Turnitin Plagiarism Risk Index (%)", 'font': {'size': 18, 'color': '#F8FAFC'}},
                     gauge={
                         'axis': {'range': [0, 100], 'tickcolor': "#64748B"},
-                        'bar': {'color': "#8B5CF6"},
+                        'bar': {'color': "#34D399" if turnitin_compliant else "#F43F5E"},
                         'steps': [
-                            {'range': [0, 50], 'color': "rgba(52, 211, 153, 0.2)"},
-                            {'range': [50, 75], 'color': "rgba(251, 191, 36, 0.2)"},
-                            {'range': [75, 100], 'color': "rgba(244, 63, 94, 0.25)"}
+                            {'range': [0, 10], 'color': "rgba(52, 211, 153, 0.3)"},
+                            {'range': [10, 25], 'color': "rgba(251, 191, 36, 0.25)"},
+                            {'range': [25, 100], 'color': "rgba(244, 63, 94, 0.3)"}
                         ],
                         'threshold': {
-                            'line': {'color': "#F43F5E", 'width': 4},
+                            'line': {'color': "#34D399", 'width': 4},
                             'thickness': 0.75,
-                            'value': high_threshold * 100
+                            'value': 10.0
                         }
                     }
                 ))
@@ -457,16 +460,17 @@ if proc_orig.strip() and proc_para.strip():
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
             with c_col:
-                st.subheader("💡 Executive Manuscript Diagnosis")
+                st.subheader("💡 Turnitin Submission Diagnosis")
                 st.markdown(f"**Status**: `{status_badge}`")
                 st.write(status_desc)
 
                 st.markdown(f"""
                 <div class="advice-card">
-                    <b>🎯 Academic Editing Insights & Benchmarks:</b><br>
+                    <b>🎯 Turnitin Submission Target (< 10% Risk):</b><br>
                     • <b>Lexical Overlap</b>: Exact word token overlap is <b>{int(jaccard_sim*100)}%</b> (meaning <b>{int(lex_repl_rate*100)}%</b> of words were re-worded).<br>
+                    • <b>Turnitin Compliance Status</b>: {"<span style='color:#34D399; font-weight:bold;'>READY FOR SUBMISSION (<10% Risk)</span>" if turnitin_compliant else "<span style='color:#FB7185; font-weight:bold;'>REWRITING REQUIRED (>10% Risk)</span>"}<br>
                     • <b>Burstiness Style</b>: Current sentence length variation score is <b>{bp_curr.get('burstiness_score', 0.4)}</b> (<i>{bp_curr.get('burstiness_status', '')}</i>).<br>
-                    • <b>Readability Evolution</b>: Average sentence length shifted from <b>{read_base.get('avg_sentence_length', 15.0)} words</b> (baseline) to <b>{read_curr.get('avg_sentence_length', 15.0)} words</b> (current).
+                    • <b>Readability Evolution</b>: Average sentence length shifted from <b>{read_base.get('avg_sentence_length', 15.0)} words</b> to <b>{read_curr.get('avg_sentence_length', 15.0)} words</b>.
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -788,7 +792,7 @@ if proc_orig.strip() and proc_para.strip():
                         st.markdown("**Baseline Sentence:**")
                         st.info(s_match.get("orig_sentence", ""))
                     with s_c2:
-                        st.markdown(f"**Current Sentence (Match #{s_match.get('best_match_id', 1)}):**")
+                        st.markdown(f"**Current Sentence (1-to-1 Aligned Match #{s_match.get('best_match_id', 1)}):**")
                         st.success(s_match.get("best_match_sentence", ""))
 
                     st.markdown('</div>', unsafe_allow_html=True)

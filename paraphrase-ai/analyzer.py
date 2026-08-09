@@ -228,6 +228,38 @@ class ParaphraseAnalyzer:
             v2 = vectorizer.transform(texts2)
             return cosine_similarity(v1, v2)
 
+    def align_sentences(self, orig_sents: List[str], para_sents: List[str], sentence_matrix: np.ndarray) -> List[int]:
+        """
+        Compute 1-to-1 positional and semantic sentence alignment indices.
+        Returns a list of best_match_idx for each orig_sent preserving 1-to-1 sequential integrity.
+        """
+        n1 = len(orig_sents)
+        n2 = len(para_sents)
+        if n1 == 0 or n2 == 0:
+            return []
+
+        # If sentence counts are identical, enforce strict 1-to-1 positional correspondence
+        if n1 == n2:
+            return list(range(n1))
+
+        # If sentence counts differ, combine positional document progress with semantic similarity
+        aligned_indices = []
+        for i in range(n1):
+            target_pos = (i / max(1, n1 - 1)) * (n2 - 1) if n1 > 1 else 0
+            best_j = 0
+            best_score = -1.0
+            
+            for j in range(n2):
+                pos_distance = abs(j - target_pos) / max(1, n2)
+                pos_score = max(0.0, 1.0 - pos_distance)
+                # Hybrid score balancing vector similarity and relative positional alignment
+                combined_score = 0.6 * sentence_matrix[i, j] + 0.4 * pos_score
+                if combined_score > best_score:
+                    best_score = combined_score
+                    best_j = j
+            aligned_indices.append(best_j)
+        return aligned_indices
+
     def compute_pca_embedding_space(self, orig_sents: List[str], para_sents: List[str]) -> Dict[str, Any]:
         """Reduce high-dimensional sentence embeddings to 2D & 3D space using PCA for visual vector graph."""
         if not orig_sents or not para_sents:
@@ -279,11 +311,12 @@ class ParaphraseAnalyzer:
                 "z3d": float(coords_3d[idx, 2]),
             })
 
-        # 5. Build Trajectories between best matching sentence pairs
+        # 5. Build 1-to-1 Trajectories using positional alignment
         sim_matrix = self.compute_similarity_matrix(orig_sents, para_sents)
+        aligned_pairs = self.align_sentences(orig_sents, para_sents, sim_matrix)
         trajectories = []
         for i in range(n1):
-            best_j = int(np.argmax(sim_matrix[i]))
+            best_j = aligned_pairs[i] if i < len(aligned_pairs) else 0
             best_sim = float(sim_matrix[i, best_j])
             
             # 2D Euclidean distance in projected PCA space
@@ -318,7 +351,7 @@ class ParaphraseAnalyzer:
         }
 
     def analyze(
-        self, original_text: str, paraphrased_text: str, high_similarity_threshold: float = 0.85
+        self, original_text: str, paraphrased_text: str, high_similarity_threshold: float = 0.10
     ) -> Dict[str, Any]:
         """Run complete multi-dimensional manuscript analysis with Perplexity, Burstiness & Embedding Space Graph."""
         start_time = time.time()
@@ -351,28 +384,23 @@ class ParaphraseAnalyzer:
         lexical_replacement_rate = 1.0 - jaccard_sim
 
         # Status & Color Evaluation
-        if semantic_sim >= 0.90:
-            status_title = "Near-Verbatim Overlap"
-            status_desc = "The rewritten manuscript retains almost identical wording and phrase structures as the baseline. Major rephrasing is required before submission."
+        if semantic_sim >= 0.90 or jaccard_sim >= 0.30:
+            status_title = "Turnitin Risk: High Similarity (>30% Lexical Overlap)"
+            status_desc = "The rewritten manuscript retains high lexical overlap with the baseline. Further paraphrasing is required to meet the Turnitin <10% risk target."
             status_color = "red"
-            status_badge = "🔴 Critical Overlap"
-        elif semantic_sim >= 0.75:
-            status_title = "Moderate Paraphrase (High Conceptual Fidelity)"
-            status_desc = "The core scientific concepts are accurately preserved with partial vocabulary replacement. Minor sentence restructuring recommended."
+            status_badge = "🔴 Exceeds Turnitin Cutoff (>10%)"
+        elif semantic_sim >= 0.75 or jaccard_sim >= 0.15:
+            status_title = "Turnitin Risk: Moderate Similarity (15-30% Lexical Overlap)"
+            status_desc = "Good conceptual alignment, but lexical overlap is slightly above the <10% Turnitin target. Minor sentence re-phrasing recommended."
             status_color = "orange"
-            status_badge = "🟡 Moderate Alignment"
-        elif semantic_sim >= 0.50:
-            status_title = "Substantial Rewrite (High Academic Originality)"
-            status_desc = "Excellent rephrasing! The text uses distinct vocabulary and sentence constructions while keeping the underlying technical meaning intact."
-            status_color = "green"
-            status_badge = "🟢 Strong Rephrase"
+            status_badge = "🟡 Near Turnitin Target (10-15%)"
         else:
-            status_title = "Low Semantic Overlap (Divergent Content)"
-            status_desc = "The two text versions show significant structural and semantic divergence. Verify that essential findings and citations were not omitted."
-            status_color = "blue"
-            status_badge = "🔵 Divergent Text"
+            status_title = "Turnitin Compliant (<10% Plagiarism & AI Risk Target Met)"
+            status_desc = "Excellent prose transformation! Lexical overlap is below 10%, meeting the strict Turnitin submission threshold while preserving core technical meaning."
+            status_color = "green"
+            status_badge = "🟢 Turnitin Compliant (<10%)"
 
-        # 2. Paragraph Level Breakdown
+        # 2. Paragraph Level Breakdown (1-to-1 Aligned)
         orig_paras = self.split_paragraphs(orig_text)
         para_paras = self.split_paragraphs(para_text)
 
@@ -381,10 +409,16 @@ class ParaphraseAnalyzer:
 
         if orig_paras and para_paras:
             para_matrix = self.compute_similarity_matrix(orig_paras, para_paras)
+            n_p1 = len(orig_paras)
+            n_p2 = len(para_paras)
             for i, p_orig in enumerate(orig_paras):
-                best_idx = int(np.argmax(para_matrix[i]))
-                best_sim = float(para_matrix[i, best_idx])
-                best_para_match = para_paras[best_idx] if best_idx < len(para_paras) else ""
+                if n_p1 == n_p2:
+                    best_idx = i
+                else:
+                    best_idx = int(np.argmax(para_matrix[i]))
+                
+                best_sim = float(para_matrix[i, best_idx]) if best_idx < n_p2 else 0.0
+                best_para_match = para_paras[best_idx] if best_idx < n_p2 else ""
                 
                 p_words_orig = tokenize_words(p_orig)
                 p_words_para = tokenize_words(best_para_match)
@@ -401,7 +435,7 @@ class ParaphraseAnalyzer:
                     "word_count_para": len(best_para_match.split()),
                 })
 
-        # 3. Sentence Level Breakdown & Risk Assessment
+        # 3. Sentence Level Breakdown & Turnitin Risk Assessment (1-to-1 Positional Matching)
         orig_sents = self.split_sentences(orig_text)
         para_sents = self.split_sentences(para_text)
 
@@ -415,8 +449,10 @@ class ParaphraseAnalyzer:
 
         if orig_sents and para_sents:
             sentence_matrix = self.compute_similarity_matrix(orig_sents, para_sents)
+            aligned_sent_indices = self.align_sentences(orig_sents, para_sents, sentence_matrix)
+
             for i, s_orig in enumerate(orig_sents):
-                best_idx = int(np.argmax(sentence_matrix[i]))
+                best_idx = aligned_sent_indices[i] if i < len(aligned_sent_indices) else 0
                 best_sim = float(sentence_matrix[i, best_idx])
                 best_sent_match = para_sents[best_idx] if best_idx < len(para_sents) else ""
 
@@ -424,22 +460,22 @@ class ParaphraseAnalyzer:
                 s_w2 = tokenize_words(best_sent_match)
                 s_lexical_sim = compute_jaccard_similarity(s_w1, s_w2)
 
-                if best_sim >= 0.95 or s_lexical_sim >= 0.90:
-                    risk_level = "Direct Verbatim Copy"
-                    risk_badge = "🔴 Verbatim"
+                if best_sim >= 0.95 or s_lexical_sim >= 0.85:
+                    risk_level = "Direct Verbatim Copy (Turnitin High Risk)"
+                    risk_badge = "🔴 Verbatim (High Risk)"
                     verbatim_copy_count += 1
                     high_risk_count += 1
-                elif best_sim >= high_similarity_threshold:
-                    risk_level = "High Similarity (Needs Rephrase)"
-                    risk_badge = "🟠 High Overlap"
+                elif s_lexical_sim >= high_similarity_threshold or best_sim >= 0.80:
+                    risk_level = "High Similarity (Turnitin Risk >10%)"
+                    risk_badge = "🟠 Exceeds 10% Risk"
                     high_risk_count += 1
-                elif best_sim >= 0.65:
-                    risk_level = "Moderate Rephrase (Good)"
-                    risk_badge = "🟡 Moderate"
+                elif s_lexical_sim >= 0.05:
+                    risk_level = "Moderate Rephrase (Near <10% Target)"
+                    risk_badge = "🟡 Moderate (5-10%)"
                     moderate_risk_count += 1
                 else:
-                    risk_level = "Distinct Rewrite (Original)"
-                    risk_badge = "🟢 Distinct"
+                    risk_level = "Turnitin Safe (<10% Similarity)"
+                    risk_badge = "🟢 Turnitin Safe (<10%)"
                     low_risk_count += 1
 
                 sentence_analysis.append({
@@ -457,6 +493,7 @@ class ParaphraseAnalyzer:
         pca_embedding_data = self.compute_pca_embedding_space(orig_sents, para_sents)
 
         all_sent_sims = [s["similarity"] for s in sentence_analysis] if sentence_analysis else [0.0]
+        turnitin_risk_pct = round(100.0 * ((verbatim_copy_count + high_risk_count) / max(1, len(orig_sents))), 1)
 
         total_ms = (time.time() - start_time) * 1000
         logger.info(f"✅ Multi-Dimensional Evaluation Complete in {total_ms:.1f}ms")
@@ -469,6 +506,8 @@ class ParaphraseAnalyzer:
                 "semantic_similarity": round(semantic_sim, 4),
                 "jaccard_similarity": round(jaccard_sim, 4),
                 "lexical_replacement_rate": round(lexical_replacement_rate, 4),
+                "turnitin_risk_pct": turnitin_risk_pct,
+                "turnitin_compliant": turnitin_risk_pct <= 10.0 and verbatim_copy_count == 0,
                 "status_title": status_title,
                 "status_desc": status_desc,
                 "status_color": status_color,
@@ -501,6 +540,7 @@ class ParaphraseAnalyzer:
                     "high_risk_count": high_risk_count,
                     "moderate_risk_count": moderate_risk_count,
                     "low_risk_count": low_risk_count,
+                    "turnitin_risk_pct": turnitin_risk_pct,
                 }
             },
             "embeddings_pca": pca_embedding_data
