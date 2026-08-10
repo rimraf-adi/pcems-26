@@ -306,7 +306,7 @@ The near-1:1 ratio between original and synthetic pairs across all three dialect
 
 \subsection{\textcolor{black}{Evaluation Protocol}}
 
-To verify model training and ensure hyperparameter stability during development, models were initially validated using 5-Fold Cross-Validation on an 85/15 stratified split of the training pool.
+To verify model training and ensure stability during development, models were initially validated using 5-Fold Cross-Validation on an 85/15 stratified split of the training pool.
 For final benchmark reporting, models were trained on the complete dataset (combining original and synthetically expanded pairs) and evaluated on the official held-out RESPIN test set (\texttt{IISc\_RESPIN\_test\_mr}, comprising 2,170 utterances across target dialects).
 
 This setup is applied across all dataset configurations: Southern Konkan (Original), Northern Konkan (Original), Varhadi (Original), Combined-data (Original), and their Synthetically Expanded counterparts.
@@ -362,63 +362,15 @@ All results are reported using standard automatic metrics computed via SacreBLEU
 
 Key observations from Table~\ref{tab:respin_comprehensive} include:
 \begin{enumerate}
-    \item \textbf{mT5-Small Performance}: The synthetically expanded fine-tuned \texttt{mT5-small} model achieves 73.48 BLEU and 84.58 chrF++ on the overall test set, demonstrating robust multi-dialect transfer learning.
-    \item \textbf{IndicBART Scaling}: Fine-tuning IndicBART on the synthetically expanded multi-dialect corpus achieves \textbf{76.50 BLEU} and \textbf{85.90 chrF++}, demonstrating that synthetic data expansion activates latent capacity in mBART-50 architectures.
+    \item \textbf{mT5-Small Performance}: The synthetically expanded fine-tuned \texttt{mT5-small} model achieves 73.48 BLEU and 84.58 chrF++ on the overall test set.
+    \item \textbf{IndicBART Scaling}: Fine-tuning IndicBART on the synthetically expanded multi-dialect corpus achieves \textbf{76.50 BLEU} and \textbf{85.90 chrF++}, demonstrating that data expansion pulls out the latent capacity in mBART-50 architectures.
 \end{enumerate}
 
-\subsection{\textcolor{black}{Dialectwise Relative WER Reductions vs.\ ASR Baseline}}
 
-Table~\ref{tab:wer_reductions_indicbart} and Table~\ref{tab:wer_reductions_mt5} compare the Word Error Rate of the baseline ASR system against fine-tuned \texttt{IndicBART} and \texttt{mT5-small} models across sub-dialects.
 
-\begin{table}[t]
-\color{black}
-\centering
-\renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Dialectwise Relative WER Reductions: ASR Baseline vs.\ Fine-Tuned IndicBART (Synthetically Expanded Data)}}
-\label{tab:wer_reductions_indicbart}
-\begin{tabular}{|l:c:c:c|}
-\hline
-\makecell[l]{\small\textbf{Sub-Dialect}} & \makecell[c]{\small\textbf{ASR Baseline}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{IndicBART}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Relative WER}\\\small\textbf{Drop (\%)}} \\
-\hline
-Southern Konkan & 41.80 & 49.15 & +17.59 \\
-Northern Konkan & 39.53 & 52.54 & +32.91 \\
-Varhadi & 35.94 & 37.74 & +4.99 \\
-\hline
-\textbf{Multi-Dialect (All)} & \textbf{39.41} & \textbf{27.16} & \textbf{$-$31.07} \\
-\hline
-\end{tabular}
-\end{table}
+\subsection{\textcolor{black}{Benchmark Results on Original and Synthetic Datasets}}
 
-\begin{table}[t]
-\color{black}
-\centering
-\renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Dialectwise Relative WER Reductions: ASR Baseline vs.\ Fine-Tuned mT5-Small (Synthetically Expanded Data)}}
-\label{tab:wer_reductions_mt5}
-\begin{tabular}{|l:c:c:c|}
-\hline
-\makecell[l]{\small\textbf{Sub-Dialect}} & \makecell[c]{\small\textbf{ASR Baseline}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{mT5-Small}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Relative WER}\\\small\textbf{Drop (\%)}} \\
-\hline
-Southern Konkan & 41.80 & 30.37 & $-$27.33 \\
-Northern Konkan & 39.53 & 29.45 & $-$25.50 \\
-Varhadi & 35.94 & 27.16 & $-$24.43 \\
-\hline
-\textbf{Multi-Dialect (All)} & \textbf{39.41} & \textbf{21.43} & \textbf{$-$45.62} \\
-\hline
-\end{tabular}
-\end{table}
-
-Both fine-tuned text normalizers achieve substantial relative WER reductions over initial ASR output, with \texttt{mT5-small} consistently outperforming \texttt{IndicBART}:
-\begin{itemize}
-    \item \textbf{Northern Konkan}: \texttt{mT5-small} reduces ASR WER from 39.53\% to \textbf{29.45\%} (\textbf{$-$25.50\% relative reduction}), outperforming \texttt{IndicBART} (which suffered a +32.91\% WER increase).
-    \item \textbf{Varhadi}: \texttt{mT5-small} reduces WER from 35.94\% to \textbf{27.16\%} (\textbf{$-$24.43\% relative reduction}), outperforming \texttt{IndicBART} (which suffered a +4.99\% WER increase).
-    \item \textbf{Southern Konkan}: \texttt{mT5-small} reduces WER from 41.80\% to \textbf{30.37\%} (\textbf{$-$27.33\% relative reduction}), outperforming \texttt{IndicBART} (which suffered a +17.59\% WER increase).
-    \item \textbf{Multi-Dialect (All)}: \texttt{mT5-small} reduces overall WER from 39.41\% to \textbf{21.43\%} (\textbf{$-$45.62\% relative reduction}), outperforming \texttt{IndicBART} (27.16\% WER, $-$31.07\% reduction).
-\end{itemize}
-
-\subsection{\textcolor{black}{Benchmark Results on Original Datasets}}
-
-Table~\ref{tab:results_original_single} presents the performance matrix on 5-fold cross-validated original single-dialect benchmarks, and Table~\ref{tab:results_original_multidialect} details the dialectwise evaluation breakdown of the multi-dialect model on original data.
+Table~\ref{tab:results_original_single} presents the performance matrix on 5-fold cross-validated original single-dialect benchmarks, and Table~\ref{tab:results_original_multidialect} explains the dialect-wise breakdown of the multi-dialect model on original data.
 
 \begin{table}[t]
 \color{black}
@@ -463,7 +415,6 @@ Combined (All) & 16,163 & 2,424 & -- & -- & \textbf{63.29} & \textbf{81.37} \\
 }
 \end{table}
 
-\subsection{\textcolor{black}{Benchmark Results on Synthetically Expanded Datasets}}
 
 Table~\ref{tab:results_expanded_single} presents the performance matrix on synthetically expanded single-dialect benchmarks, and Table~\ref{tab:results_expanded_multidialect} details the dialectwise evaluation breakdown of the multi-dialect model on expanded data.
 
@@ -510,36 +461,6 @@ Combined (All) & 32,335 & 4,850 & -- & -- & \textbf{69.51} & \textbf{84.58} \\
 }
 \end{table}
 
-% \subsection{\textcolor{black}{Qualitative Prediction Analysis}}
-% 
-% Table~\ref{tab:qualitative} presents representative prediction outputs from fine-tuned models on held-out test sentences from \texttt{IISc\_RESPIN\_test\_mr}.
-% 
-% \begin{table}[t]
-% \color{black}
-% \centering
-% \caption{\textcolor{black}{Qualitative Prediction Samples from Fine-Tuned Models on Unseen Test Data}}
-% \label{tab:qualitative}
-% \begin{tabularx}{\textwidth}{lX}
-% \hline
-% \textbf{Field} & \textbf{Content} \\
-% \hline
-% \multicolumn{2}{l}{\textit{Sample 1: Interrogative Dialect Normalization (Multi-Dialect Synthetically Expanded Model)}} \\
-% \hline
-% Dialect Input & मनाले बँकमा क्रेडिट कार्ड काढण्यासाठी शेतस, तुनाले काय कागदपत्रे लागन? \\
-% Ground Truth & मला बँकेत क्रेडिट कार्ड काढायचे आहे, तुला काय कागदपत्रे लागतील? \\
-% IndicBART Pred & मला बँकेत क्रेडिट कार्ड काढण्यासाठी आहे, तुला काय कागदपत्रे लागतील? \\
-% mT5-Small Pred & मला बँकेत क्रेडिट कार्ड काढण्यासाठी असते, तुला काय कागदपत्रे लागतील? \\
-% Evaluation & \textbf{Accurate Interrogative Normalization:} \emph{मनाले} $\rightarrow$ \emph{मला}, \emph{बँकमा} $\rightarrow$ \emph{बँकेत}, \emph{तुनाले} $\rightarrow$ \emph{तुला}, \emph{लागन} $\rightarrow$ \emph{लागतील}. \\
-% \hline
-% \multicolumn{2}{l}{\textit{Sample 2: Financial Domain Entity Alignment (Multi-Dialect Synthetically Expanded Model)}} \\
-% \hline
-% Dialect Input & क्रेडिट कार्डवरून जास्तीत जास्त किती कर्ज मिळते, आणि डेबिट कार्डवरून जास्तीत जास्त किती पैसे काढू शकतो आम्ही? \\
-% Model Output & क्रेडिट कार्डवरून जास्तीत जास्त किती कर्ज मिळते, आणि डेबिट कार्डवरून जास्तीत जास्त किती पैसे काढू शकतो आम्ही? \\
-% Reference Target & क्रेडिट कार्डवरून जास्तीत जास्त किती कर्ज मिळते, आणि डेबिट कार्डवरून जास्तीत जास्त किती पैसे काढू शकतो आम्ही? \\
-% Evaluation & \textbf{Exact String Match: BLEU 100.0, chrF++ 100.0} \\
-% \hline
-% \end{tabularx}
-% \end{table}
 
 \subsection{\textcolor{black}{Impact of Synthetic Data Augmentation}}
 
@@ -606,7 +527,7 @@ Key findings and insights from this evaluation include:
     \item \textbf{Essential Role of Multi-Tier Auditing}: Removing flawed pairs via \texttt{filter\_flawed.py} and correcting recoverable generations via \texttt{correct\_flawed.py} is directly responsible for eliminating hallucinated dialect markers, preserving semantic fidelity, and driving sequence-to-sequence normalization to state-of-the-art accuracy levels.
 \end{enumerate}
 
-\subsection{\textcolor{black}{Cross-Validation Stability Analysis}}
+
 
 % To assess the stability and reproducibility of our benchmark results, Table~\ref{tab:cv_variance} reports per-fold test BLEU and chrF++ scores across the 5-fold cross-validation protocol for the best-performing mT5-small model on the synthetically expanded multi-dialect dataset.
 %
@@ -631,13 +552,6 @@ Key findings and insights from this evaluation include:
 % \end{tabular}
 % \end{table}
 
-The extremely low standard deviation in test BLEU (0.13) and chrF++ (0.05) across folds demonstrates that model performance is robust and not an artifact of a single favorable train-test partition.
-Per-dialect fold-level analysis further confirms stable per-dialect breakdown: Southern Konkan (66.62 $\pm$ 0.18 BLEU), Northern Konkan (62.72 $\pm$ 0.19 BLEU), and Varhadi (78.73 $\pm$ 0.11 BLEU), reinforcing the consistent difficulty hierarchy Varhadi $<$ Northern Konkan $<$ Southern Konkan across all folds.
-
-Critically, cross-dialect joint training in the synthetically expanded multi-dialect configuration provides a significant boost to IndicBART's per-dialect sub-scores: Southern Konkan reaches 52.15 BLEU (+3.63 over single-dialect IndicBART model) and Northern Konkan reaches 54.35 BLEU (+7.06 over single-dialect model), suggesting that cross-dialect transfer learning benefits models with smaller, more linguistically focused vocabularies.
-
-An important observation is that IndicBART's single-dialect performance \textit{decreases} for Southern Konkan and Northern Konkan when moving from original to synthetically expanded data, while mT5 improves dramatically.
-This suggests that the synthetic data distribution may slightly deviate from the original distribution in ways that IndicBART's narrower vocabulary cannot accommodate, while mT5's broader subword coverage absorbs the distributional shift effectively.
 
 \subsection{\textcolor{black}{Model Architecture Analysis}}
 
