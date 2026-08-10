@@ -10,14 +10,17 @@
 \usepackage{xcolor}
 \usepackage{colortbl}
 \usepackage{arydshln}
-\setlength\dashlinedash{1.2pt}
-\setlength\dashlinegap{1.5pt}
-\setlength\arrayrulewidth{0.4pt}
+\setlength\dashlinedash{2.8pt}
+\setlength\dashlinegap{0.8pt}
+\setlength\arrayrulewidth{1.1pt}
 \arrayrulecolor{black}
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{url}
+\usepackage[sort&compress]{cite}
 \usepackage{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
 
 \hypersetup{
     colorlinks=true,
@@ -29,7 +32,19 @@
 % --- Devanagari support for XeLaTeX ---
 \usepackage{fontspec}
 \usepackage{ucharclasses}
-\newfontfamily\devanagarifont{Devanagari Sangam MN}[Script=Devanagari]
+\IfFontExistsTF{Devanagari Sangam MN}{
+    \newfontfamily\devanagarifont{Devanagari Sangam MN}[Script=Devanagari]
+}{
+    \IfFontExistsTF{Noto Sans Devanagari}{
+        \newfontfamily\devanagarifont{Noto Sans Devanagari}[Script=Devanagari]
+    }{
+        \IfFontExistsTF{Lohit Devanagari}{
+            \newfontfamily\devanagarifont{Lohit Devanagari}[Script=Devanagari]
+        }{
+            \newfontfamily\devanagarifont{FreeSerif}[Script=Devanagari]
+        }
+    }
+}
 \setTransitionsForDevanagari{\devanagarifont}{\normalfont}
 
 \begin{document}
@@ -52,7 +67,7 @@ Saugata Sinha}
 \input{content.tex}
 
 % --- Modular BibTeX Bibliography (Springer LNCS style) ---
-\bibliographystyle{splncs04}
+\bibliographystyle{unsrt}
 \bibliography{references}
 
 \end{document}

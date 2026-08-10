@@ -23,42 +23,26 @@
 % NLP has encountered several challenges when it comes to low-resource languages, especially regional dialects of higher-resource languages \cite{joshi2020state,joshi2025survey}. Surveys among communities that speak these dialects show that understanding and analyzing dialectal text is a priority \cite{blaschke2024what}. This highlights the need to convert non-standard dialects into a standard form while preserving the original meaning \cite{kuparinen2023dialect}. Improved NLP methods now make it possible to build systems that connect previously inaccessible low-resource regional dialects.
 
 % India recognizes 22 languages constitutionally, with hundreds of regional dialects spoken by over 1.4 billion people. While languages like Hindi, Bengali, Marathi, and Tamil have gained attention through initiatives like AI4Bharat IndicCorp and BPCC \cite{dabre2022indicbart}, sub-regional dialects remain largely neglected in NLP. An example of this linguistic challenge is Marathi, an Indo-Aryan language spoken by over 83 million people, mainly in Maharashtra \cite{dabre2022indicbart}. Marathi is written in Devanagari from left to right and is one of India's 22 constitutionally recognized languages. While Standard Marathi (which is based on the variety from Pune and nearby areas) has a clear literary standard and established digital infrastructure, regional sub-dialects often show differences in pronunciation and vocabulary compared to the standard form.
-Natural Language Processing (NLP) has achieved progress in recent years, which has allowed computers to analyze, interpret, and generate human language.
-Modern architectures for both, understanding and generation of natural language are based on models built upon Transformers architecture \cite{vaswani2017attention,raffel2020exploring}.
-Large Language Models (LLMs) had been adpoted for various NLP tasks across diverse real-world problems in healthcare, finance, and legal infrastructure \cite{dubey2024llama3,gemma2024}.
+Recent advances in deep learning and self-attention mechanisms \cite{vaswani2017attention} have driven rapid progress across natural language understanding and sequence-to-sequence generation tasks.
+The widespread adoption of Large Language Models (LLMs) \cite{dubey2024llama3} and open-weight foundational architectures \cite{gemma2024} has enabled specialized text processing across domains such as finance, healthcare, and digital governance.
+However, current language technology ecosystems remain predominantly tailored toward standardized, high-resource national languages, creating a substantial performance bottleneck when applied to non-standard regional dialects \cite{joshi2020state}.
+Community surveys and global NLP evaluations \cite{blaschke2024what,joshi2025survey} emphasize that native dialect speakers experience severe system degradation in downstream tasks---such as Automatic Speech Recognition (ASR), Machine Translation (MT), and conversational interfaces---due to unstandardized orthography, phonetic variation, and vocabulary shifts \cite{koenecke2020racial,kuparinen2023dialect}.
 
-%need to paraphrase this
-NLP tends to face several issues in incorporating low-resource languages, especially regional dialects of higher-resource languages \cite{joshi2020state,joshi2025survey}.
-Surveys among native dialect communities reveal that proper analysis and understanding of dialectal text remains a priority \cite{blaschke2024what}.
-suggesting a need for converting non-standard dialect into a standard form while keeping the original meaning intact \cite{kuparinen2023dialect}.
-Advancing NLP methods have made it possible to design systems that seamlessly link previously inaccessible low-resource regional dialects.
+Dialect normalization---the task of transducing non-standard, regional dialectal text into normative written language while strictly preserving underlying semantic intent \cite{kuparinen2023dialect}---serves as an essential pre-processing layer to ensure digital linguistic inclusion.
+In multilingual environments such as India, which encompasses 22 scheduled languages alongside hundreds of unwritten regional dialects spoken by 1.4 billion people, sub-regional varieties remain drastically neglected.
+Marathi, an Indo-Aryan scheduled language spoken by over 83 million people in western India \cite{dabre2022indicbart}, provides a salient case study.
+While Standard Marathi (centered around the Pune literary register) possesses codified orthographic norms and digital infrastructure, regional sub-dialects---such as Southern Konkan (Malvani), Northern Konkan (Ahirani/Khandeshi), and Varhadi (Vidarbha)---exhibit marked phonological, lexical, and morpho-syntactic divergence from the normative written standard \cite{kulkarni2023variation,tarfe2024linguistic}.
 
+Building computational normalization systems for regional Indic dialects presents two core challenges:
+(1) \textit{Extreme Data Scarcity}: parallel corpora mapping unstandardized regional dialects to normative standard forms are virtually non-existent; and
+(2) \textit{Agglutinative Morphological Complexity}: Marathi features rich inflectional morphology, where noun case markers, postpositional affixes, and verbal tense/aspect suffixes undergo complex subword transformations rather than simple surface dictionary lookup \cite{ansary2024unicode,partanen2019dialect}.
 
-India has 22 official languages with hundreds of regional dialects spoken by over 1.4 billion people.
-While languages such as Hindi, Bengali, Marathi, Tamil, Telugu, etc. have started receiving attention through initiatives like AI4Bharat IndicCorp and BPCC \cite{dabre2022indicbart},sub-regional dialects remain almost entirely untouched in NLP. 
-One of the examples of this linguistic ambiguity is Marathi, an Indo-Aryan language spoken by over 83 million people in the state of Maharashtra \cite{dabre2022indicbart}.
-Marathi is written in Devanagari script from left to right and stands as one of India's recognized scheduled languages.
-While Standard Marathi (based on the dialect variety of Pune city and surrounding regions) has a well-defined literary standard and established digital infrastructure, regional sub-dialects tend to show phonological and lexical divergence from the standard form \cite{kulkarni2023variation,tarfe2024linguistic}.
-% Three major regional sub-dialects spanning distinct geographical and socio-cultural regions of Maharashtra represent this diversity:
-% \begin{enumerate}
-%     \item \textbf{Southern Konkan}: Spoken in the Southern Konkan coastal belt (Sindhudurg and Ratnagiri districts), deeply influenced by coastal geography, featuring maritime vocabulary, heavy palatalization, phonetic contractions, and Konkani-influenced lexical items.
-%     \item \textbf{Northern Konkan}: Spoken in the Khandesh region of North-Western Maharashtra (Jalgaon, Dhule, Nandurbar), heavily influenced by neighboring Gujarati and Bhili dialects with systematic consonant shifts and distinct postpositional markers.
-%     \item \textbf{Varhadi}: Spoken in the Vidarbha region of Eastern Maharashtra (Nagpur, Amravati, Akola), featuring characteristic interrogative forms, unique verbal inflectional suffixes, and phonetic contact variations.
-% \end{enumerate}
-Users having a native dialect have faced difficulties in using the existing NLP systems of Automatic Speech Recognition (ASR), Machine Translation (MT), conversational AI agents, and information retrieval tools \cite{koenecke2020racial,aharoni2020unsupervised}.
-This tendency seems largely because of high Out-Of-Vocabulary (OOV) rates, non-standard verbal forms, and spelling variations \cite{partanen2019dialect,kuparinen2023dialect,ansary2024unicode}.
-\textit{Dialect Normalization} is the task of converting non-standard dialectal text into normative standard written form while strictly preserving underlying semantic intent therefore becomes a critical prerequisite for digital inclusion.
-
-Developing systems for dialect normalization have faced two fundamental challenges: 
-(1) \textit{Extreme Data Scarcity}: datasets connecting regional Indic dialects to standard written forms are non-existent; and 
-(2) \textit{Morphological Complexity}: Marathi is a morphologically rich language where case markers and verbal tense/aspect suffixes require fine-grained subword transformation rather than a naive lookup.
-
-Addressing these challenges, this paper presents a multi-dialect Marathi text normalization pipeline combining synthetic data augmentation with sequence-to-sequence transformer fine-tuning.
-Our main contributions are :
+To address these limitations, this work establishes a multi-dialect Marathi text normalization benchmark utilizing synthetic corpus expansion and sequence-to-sequence transformer fine-tuning.
+Our core contributions are:
 \begin{itemize}
-    \item \textbf{Parallel Marathi Dialect Corpus with Synthetic Augmentation}: Based on the RESPIN corpus \cite{kumar2025respin}, we curate and expand a parallel corpus of verified sentence pairs across Southern Konkan, Northern Konkan, and Varhadi dialects mapped to Standard Marathi , combining human-translated pairs with an automated synthetic generation and multi-level verification pipeline.
-    \item \textbf{End-to-end Fine-Tuning Pipeline}: We utilize a neural fine-tuning framework for dialect normalization, adapting pre-trained msequence-to-sequence transformer models for standardization.
-    \item \textbf{Empirical Evaluations}: We implement a standardized train-test split combined with cross-validation across distinct dataset configurations, conducting experiments, verification filtering analyses, and error evaluations.
+    \item \textbf{Curated Parallel Dialect Corpus}: Grounded in the RESPIN read-speech transcripts \cite{kumar2025respin}, we construct and release a parallel corpus mapping three major Marathi sub-dialects (Southern Konkan, Northern Konkan, and Varhadi) to Standard Marathi across agricultural and banking domains.
+    \item \textbf{Automated Synthetic Augmentation with Multi-Tier Verification}: We design a domain-constrained synthetic generation engine using Gemma-4 \cite{gemma2024} coupled with a multi-tier verification pipeline (Devanagari script integrity filtering and LLaMA-3.1-8B \cite{dubey2024llama3} semantic auditing) that purges corrupted pairs and expands the parallel corpus to 32,335 verified sentence pairs.
+    \item \textbf{Cross-Validated Neural Benchmarks}: We conduct 5-fold cross-validated empirical evaluations comparing multilingual sequence-to-sequence architectures (\texttt{mT5-small} and IndicBART) across single-dialect, multi-dialect, original, and synthetically expanded dataset partitions, evaluating model scaling, verification engine ablation, and subword morphological error patterns.
 \end{itemize}
 
 % \subsection{\textcolor{black}{Linguistic Background and Devanagari Orthographic Heterogeneity}}
@@ -84,78 +68,48 @@ Our main contributions are :
 \section{\textcolor{black}{Related Work}}
 \label{sec:related}
 
-\subsection{\textcolor{black}{Dialect Normalization and Text Standardization}}
+% ===================================================================
+\section{\textcolor{black}{Related Work}}
+\label{sec:related}
 
+\subsection{\textcolor{black}{Historical and User-Generated Text Normalization}}
 
+Text normalization encompasses both historical spelling modernization and the transduction of User-Generated Content (UGC).
+Early comparative evaluations by Pettersson et al. \cite{pettersson2014multilingual} and Scherrer and Erjavec \cite{scherrer2016normalising} established Character-level Statistical Machine Translation (CSMT) as an effective baseline for modernizing archaic European text.
+Multilingual evaluations by Tang et al. \cite{tang2018evaluation} and Bollmann \cite{bollmann2019historical} across seven languages revealed that subword modeling via Byte-Pair Encoding (BPE) consistently outperforms character-level models, while Bawden et al. \cite{bawden2022automatic} confirmed that sentence-level context resolves ambiguous historical spelling variants.
 
-Early works around Dialect Normalization includes Partanen et al. \cite{partanen2019dialect} who evaluated sequence transduction across 23 Finnish dialect varieties, demonstrating that sliding-window neural architectures (LSTMs and character Transformers) effectively normalize non-standard dialects into Standard Finnish, drastically reducing word error rates from an initial 52.89\% down to 5.73\%.
-Kuparinen et al. \cite{kuparinen2023dialect} extended this and covered four distinct language families (Finnish, Norwegian, Swiss German, and Slovene), showing that fine-tuned transformers and pre-trained byte-level architectures (byT5) consistently surpass character-level statistical machine translation (SMT) and neural baselines across diverse dialectal data.
-Similarly, The Conventional Orthography for Dialectal Arabic (CODA) framework \cite{habash2012coda} established baselines for mapping diverse regional Arabic varieties (Egyptian, Levantine, Gulf, Maghrebi) to Modern Standard Arabic (MSA) for corpus creation and Arabic dialect processing using computational methods.
-The MADAR project subsequently applied these techniques to fine-grained dialect identification and translation across 25 Arab cities.
-Early approaches heavily relied on character-level finite-state transducers (FSTs) and phrase-based SMT rules, but present times have used pre-trained multilingual encoder-decoder transformers.
-In Germanic languages, Swiss German dialect normalization to Standard High German has been analysed due to the absence of standardized orthography for Swiss German dialects \cite{samardzic2016archimob}.
-Recent work by Kresic and Abbas \cite{kresic2024normalizing} demonstrated that fine-tuning multilingual transformers on the SwissDial corpus gave good results with the \texttt{mT5-small} model achieving performance close to larger base and large transformer variants.
-Further research into low-resource settings highlights the effectiveness of subword-level modeling (such as Byte-Pair Encoding) in handling the out-of-vocabulary (OOV) and unique spelling challenges inherent in highly variable, unstandardized user-generated dialectal text \cite{zampieri2020nlp}.
+In digital social media text, De Clercq et al. \cite{declercq2013normalization} demonstrated that combining character- and word-level SMT architectures addresses informal slang and phonetic typos.
+Matos Veliz et al. \cite{matosveliz2019data} showed that data augmentation is vital for enabling neural models to normalize noisy user input.
+Frameworks such as MoNoise \cite{vandergoot2019monoise} modeled noisy text as edit operations, while the MultiLexNorm benchmark \cite{vandergoot2021multilexnorm} confirmed that lexical normalization directly enhances downstream parsing and POS tagging.
+Samuel and Straka \cite{samuel2021ufal} further established the efficacy of fine-tuning byte-level architectures (byT5 \cite{xue2021mt5}) for word-level sequence transduction.
 
-Dialect normalization remains a critically underexplored area for indic languages.
-Earlier work has addressed code-mixed language and script transliteration but explicit conversion of a dialectal text to standard written form within the same language has received comparatively less attention.
-The primary challenges identified in Indic dialect NLP include severe data scarcity, morpho-syntactic divergence, and orthographic inconsistency stemming from the lack of standardized writing systems for most dialects \cite{kakwani2020indicnlpsuite}.
-Recent benchmarking efforts, such as the INDIC-DIALECT dataset, have begun to systematically evaluate dialect classification and translation across regional varieties like Bhojpuri, Magahi, and Maithili into Standard Hindi, revealing significant performance gaps when using generalized models \cite{kumar2024indicdialect}.
-A comprehensive global survey by Joshi et al. \cite{joshi2025survey} categorizes dialectal NLP tasks across Natural Language Understanding (NLU) and Natural Language Generation (NLG) across diverse language families, emphasizing the acute performance degradation of state-of-the-art models on non-standard dialects and calling for equitable language technologies.
-To address this, researchers have explored hybrid approaches.
-Recently, Dimakis et al. \cite{dimakis2025dialect} introduced a hybrid normalization framework combining rule-based morphological transformations with LLM few-shot prompting to standardize low-resource Greek dialect proverbs without requiring prior parallel training data.
-Similarly, for Indic languages, Weighted Finite State Transducers (WFSTs) are increasingly being integrated alongside neural models to deterministically normalize semiotic entities (such as numbers and dates) before passing the text to deep learning backends \cite{pratap2024wfst}.
+\subsection{\textcolor{black}{Global Dialect-to-Standard Text Normalization}}
 
-In the specific context of Marathi language dialect processing, research has historically concentrated on speech, acoustic classification, or localized applications:
-\begin{itemize}
-    \item \textbf{Acoustic Speech Classification \& Recognition}: Mulla and Kumar \cite{mulla2022text} explored spectro-temporal feature extraction (15 parameters including chromagram, spectral centroid, and MFCCs) with Chi-Square/ANOVA feature selection on 7,555 speech recordings from the LDC-IL Marathi raw speech corpus across four dialects (Goa-based, Vidarbha, Marathwada, Puneri), achieving 84.24\% accuracy with Ridge Classifiers. Pawar et al. \cite{pawar2026automatic} investigated acoustic dialect identification across Northern Konkan, Varhadi, and Standard Marathi audio using MFCC features and Convolutional Neural Networks (CNNs) under clean and artificially generated Gaussian noise conditions (SNR 1.78--9.74 dB), achieving up to 93.65\% accuracy in clean environments and 87.29\% under noisy conditions. Amartyaveer et al. \cite{amartyaveer2025improving} and Kumar et al. \cite{kumar2025respin} at IISc Bangalore introduced RESPIN-S1.0 (a 10,000+ hour read-speech corpus across 38 Indian dialects and 9 languages, including 4 Marathi sub-dialects: Southern Konkan, Northern Konkan, Standard Marathi, and Varhadi) and developed multimodal ASR and RoBERTa embeddings for dialect identification, achieving 79.81\% accuracy.
-    \item \textbf{Text-Level Dialect Processing \& Translation}: Gaikwad et al. \cite{gaikwad2025marathi} explored zero-shot prompting via the commercial Gemini API within a Retrieval-Augmented Generation (RAG) framework using Sentence Transformers and FAISS to translate Konkani (Devanagari) dialect queries into Standard Marathi for document Q\&A. Vyavhare et al. \cite{vyavhare2026marathi} proposed a hybrid rule-based dictionary and neural translation web interface for regional Marathi dialects. Gavali \cite{gavali2026marathi} introduced a student-level framework combining IndicBERT and IndicWav2Vec for dialect detection and normalization on small local datasets.
-\end{itemize}
+Dialect-to-standard normalization transduces non-standard regional varieties into normative standard forms.
+In European languages, Scherrer and Ljube{\v{s}}i{\'c} \cite{scherrer2016swiss} applied CSMT to Swiss German, demonstrating that sentence context resolves ambiguous dialectal word forms, while Lusetti et al. \cite{lusetti2018impact} showed neural encoder-decoder architectures surpass SMT when augmented with target language models.
+Kresic and Abbas \cite{kresic2024normalizing} benchmarked \texttt{mT5-small} fine-tuning on the SwissDial corpus, showing performance competitive with larger models.
+Partanen et al. \cite{partanen2019dialect} normalized 23 Finnish dialects using sliding-window LSTMs and character Transformers, while H{\"a}m{\"a}l{\"a}inen et al. \cite{hamalainen2020normalizing,hamalainen2022generating} explored Swedish and Estonian dialect normalization.
+Kuparinen et al. \cite{kuparinen2023dialect} conducted a multi-lingual evaluation across four language families, proving that fine-tuned sequence-to-sequence transformers and byte-level models (byT5) consistently outperform statistical baselines.
 
-While prior work focused either on speech/acoustic classification or zero-shot prompting , we establish the first large-scale parallel-pair text benchmark, introduce a synthetic data expansion engine powered by Llama-3.1-8B \cite{dubey2024llama3} and Gemma-4 \cite{gemma2024}) with multi-tier verification,
-and conduct 5-fold cross-validated fine-tuning of open-weight transformers (\texttt{mT5-small} and IndicBART) for local, reproducible inference.
+In East Asian and Afroasiatic varieties, Abe et al. \cite{abe2018multi} translated Japanese regional dialects using multi-dialectal LSTMs operating on \emph{bunsetsu} phrases.
+For Arabic dialects, CODA \cite{habash2012coda} codified conventional orthography for Modern Standard Arabic (MSA), extended by MADAR \cite{bouamor2018madar} across 25 Arab cities, Eryani et al. \cite{eryani2020arabic}, and NADI shared tasks \cite{abdulmageed2023nadi}.
+Zhao and Chodroff \cite{zhao2022mandarin} analyzed Mandarin dialect variation, and Dimakis et al. \cite{dimakis2025dialect} combined morphological rules with LLM few-shot prompting for Greek dialect proverbs.
 
+\subsection{\textcolor{black}{Indic NLP and Marathi Regional Dialects}}
 
-% Table~\ref{tab:related_comparison} summarizes the key distinctions between our work and prior approaches to Marathi dialect processing.
+Despite high linguistic heterogeneity, dialect normalization remains critically underexplored for Indic languages \cite{joshi2020state,joshi2025survey,zampieri2020nlp}.
+Pre-trained sequence-to-sequence architectures like IndicBART \cite{dabre2022indicbart} leverage mBART-50 \cite{lewis2020bart} with unified Devanagari representation across 11 languages, while mT5 \cite{xue2021mt5} extends T5 \cite{raffel2020exploring} across 101 languages, making its subword vocabulary suitable for dialectal transformations.
+Monolingual Marathi initiatives like L3Cube-MahaNLP \cite{joshi2022l3cube} provided classification encoders (MahaBERT) but lack generative sequence transduction capabilities.
+Benchmarks like INDIC-DIALECT \cite{kumar2024indicdialect} evaluate Hindi regional varieties (Bhojpuri, Magahi, Maithili), while WFST hybrid systems \cite{pratap2024wfst} handle semiotic text normalization.
+Prior Marathi research focused on speech/acoustic classification \cite{mulla2022text,pawar2026automatic}, read-speech transcripts such as RESPIN-S1.0 \cite{amartyaveer2025improving,kumar2025respin}, or zero-shot RAG prompting \cite{gaikwad2025marathi,vyavhare2026marathi}.
+We bridge this gap by establishing the first 5-fold cross-validated parallel text normalization benchmark for regional Marathi sub-dialects.
 
-% \begin{table}[t]
-% \color{black}
-% \centering
-% \caption{\textcolor{black}{Comparison with Prior Marathi Dialect Processing Research}}
-% \label{tab:related_comparison}
-% \begin{tabular}{|c:c:c:c:c:c|}
-% \hline
-% \makecell[c]{\small\textbf{Study}} & \makecell[c]{\small\textbf{Task}} & \makecell[c]{\small\textbf{Dialects}} & \makecell[c]{\small\textbf{Data}\\\small\textbf{Size}} & \makecell[c]{\small\textbf{Best Acc.}\\\small\textbf{(\%)}} & \makecell[c]{\small\textbf{Open}\\\small\textbf{Data}} \\
-% \hline
-% Mulla \& Kumar (2022) \cite{mulla2022text} & Acoustic Classification & 4 & 7,555 & 84.24 & No \\
-% Pawar et al.\ (2026) \cite{pawar2026automatic} & Acoustic Identification & 3 & --- & 93.65 & No \\
-% Gaikwad et al.\ (2025) \cite{gaikwad2025marathi} & Zero-Shot Translation & 1 & RAG & --- & No \\
-% Vyavhare et al.\ (2026) \cite{vyavhare2026marathi} & Hybrid Rule+Neural & --- & --- & --- & No \\
-% \hline
-% \end{tabular}
-% \end{table}
+\subsection{\textcolor{black}{Synthetic Data Generation and Multi-Tier Verification}}
 
-\subsection{\textcolor{black}{Indic NLP and Sequence-to-Sequence Transformers}}
-
-The development of pre-trained models for Indic languages has shown steep increase in recent years.
-IndicBART \cite{dabre2022indicbart} introduced a multilingual sequence-to-sequence model based on the mBART-50 architecture \cite{lewis2020bart},trained on 11 Indic languages with a unified Devanagari script representation with a 64,000-token SentencePiece vocabulary.
-It utilizes orthographic relations between Indic scripts to facilitate cross-lingual transfer learning and demonstrated state-of-the-art  performance on neural machine translation tasks despite being significantly smaller than models of similar category.
-
-
-Similarly ,models such as mT5 \cite{xue2021mt5} which is the multilingual extension of T5 \cite{raffel2020exploring} extended Text-to-Text Transfer Transformers across 101 languages with the mC4 dataset. which features a 250,000-token SentencePiece vocabulary and showed state-of-the-art results on the XTREME multilingual benchmark.
-Its text-to-text formulation, which casts all NLP tasks as input-output text transformations, makes it particularly well-suited for sequence-level normalization tasks.
-The L3Cube-MahaNLP initiative \cite{joshi2022l3cube} gave Marathi-specific transformer models (MahaBERT, MahaRoBERTa) and curated datasets for tasks like sentiment analysis, named entity recognition, and hate speech detection.
-However, these encoder-only models are primarily designed for classification-like tasks instead of sequence-to-sequence generation.
-
-\subsection{\textcolor{black}{Synthetic Data Generation for Low-Resource NLP}}
-
-Using LLMs for synthetic data generation has proven to be a useful strategy for solving data scarcity in low-resource settings.
-Recent work has shown that LLMs can be used more effectively as data generators than as direct task solvers, where synthetic data from a large teacher model is utilized to train smaller models \cite{wang2022selfinstruct,taori2023alpaca,mukherjee2023orca}.
-This paradigm is often regarded as a form of knowledge distillation that tries to compensate the costs and time bottlenecks associated with human annotation procedures \cite{ho2023distilling}.
-By the use of appropriate prompt-engineering techniques, frontier models can generate data that effectively transfers their capabilities to specialized and efficient student models \cite{pecher2023better}.
-For Indic languages specifically, synthetic data augmentation has been applied primarily to machine translation tasks, with back-translation and pivoting through high-resource languages serving as common strategies.
-
-Our work extends this paradigm specifically to the dialect normalization task, introducing domain-aware generation and multi-stage LLM verification tailored to Marathi dialects.
+LLM-driven synthetic data generation mitigates extreme data scarcity in low-resource settings.
+Self-instruct mechanisms \cite{wang2022selfinstruct} and instruction tuning (Alpaca \cite{taori2023alpaca}, Orca \cite{mukherjee2023orca}) demonstrate that strong teacher models can distill capabilities into compact student transformers \cite{ho2023distilling,pecher2023better,degibert2024scaling}.
+However, naive synthetic generation for unstandardized dialects risks language leakage, hallucinated entities, and uncorrected dialect residue.
+We address this by combining domain-constrained 1-prompt-per-sentence generation via Gemma-4 \cite{gemma2024} with a multi-tier verification engine incorporating Devanagari script filtering and LLaMA-3.1-8B \cite{dubey2024llama3} semantic auditing, ensuring verified parallel training corpora.
 
 
 % ===================================================================
@@ -210,16 +164,19 @@ While RESPIN has audio recordings and their transcripts across agriculture and b
 \small\textbf{Statistic} & \small\textbf{Value} \\
 \hline
 Total Utterances & 809,934 \\
-Total Duration & 1,026.28 hours \\
+Total Duration & 1,026.06 hours \\
 Unique Speakers & 2,644 \\
 Unique Pincodes & 234 \\
-Gender Distribution & 51\% Female, 49\% Male \\
-Domains & Agriculture, Banking \\
-Domain Split & 49\% Agriculture, 51\% Banking \\
-Dialect Variants & Southern Konkan, Northern Konkan, Varhadi \\
 \hline
 \end{tabular}
 \end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig1_respin_demographics.pdf}
+\caption{RESPIN-S1.0 Marathi source corpus demographics: (A) domain distribution (49\% Agriculture, 51\% Banking); (B) gender split (51\% Female, 49\% Male); (C) audio recording duration per dialect variant.}
+\label{fig:respin_demographics}
+\end{figure}
 
 The large speaker diversity ensures broad coverage of intra-dialect phonetic and lexical variation, while the balanced gender and domain splits reduce systematic bias in our derived parallel corpus.
 
@@ -257,9 +214,47 @@ The large speaker diversity ensures broad coverage of intra-dialect phonetic and
 %     \item \textbf{Southern Konkan}: Proves to be the most challenging dialect for speech recognition, exhibiting 34.37\% WER and 7.45\% CER (559 utterances) due to distinct vocalic shortening and phonetic contractions.
 % \end{itemize}
 
-\subsection{\textcolor{black}{LLM-Driven Parallel Corpus Genaration and Verification}}
+\begin{figure}[t]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=1.4cm and 3.5cm,
+    font=\small\sffamily\bfseries,
+    box/.style={draw=black!80, fill=gray!12, rounded corners=5pt, thick, align=center, text width=4.5cm, inner sep=8pt},
+    stage/.style={draw=black!80, fill=green!12, rounded corners=5pt, thick, align=center, text width=4.5cm, inner sep=8pt},
+    engine/.style={draw=black!80, fill=orange!15, rounded corners=5pt, thick, align=center, text width=4.5cm, inner sep=8pt},
+    model/.style={draw=black!80, fill=blue!12, rounded corners=5pt, thick, align=center, text width=4.5cm, inner sep=8pt},
+    arrow/.style={-Latex, ultra thick, color=black!80}
+]
 
-To deal with data scarcity, we developed an automated synthetic data generation pipeline powered by Gemma-4 \cite{gemma2024} in 9B-instruction-tuned (\texttt{gemma-2-9b-it}) configurations, accessed via Ollama.
+% Row 1: Source & LLM Generator (Left to Right)
+\node (input) [box] {\textbf{RESPIN Source Corpus}\\[3pt]809k Utterances (1,026 Hours)};
+\node (gen) [engine, right=3.5cm of input] {\textbf{LLM Generation Engine}\\[3pt]Gemma-4 (16,163 Synthetic Pairs)};
+
+% Row 2: Verification Engine (Right to Left)
+\node (tier1) [stage, below=1.4cm of gen] {\textbf{Tier 1: Rule-Based Filter}\\[3pt]Script Integrity \& Length Ratio};
+\node (tier2) [stage, left=3.5cm of tier1] {\textbf{Tier 2: LLM Semantic Auditor}\\[3pt]Llama-3.1-8B Verification Pass};
+
+% Row 3: Expanded Corpus & Seq2Seq Fine-Tuning (Left to Right)
+\node (corpus) [box, fill=cyan!12, below=1.4cm of tier2] {\textbf{Verified Parallel Corpus}\\[3pt]33,156 Clean Sentence Pairs};
+\node (seq2seq) [model, right=3.5cm of corpus] {\textbf{Seq2Seq Model Training}\\[3pt]IndicBART \& mT5-Small Evaluation};
+
+% Straight Flow Connections with Wide Spacing & Concise Scriptsize Labels
+\draw [arrow] (input) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Source Text} (gen);
+\draw [arrow] (gen) -- node[right=6pt, font=\scriptsize\sffamily\bfseries] {Raw Pairs} (tier1);
+\draw [arrow] (tier1) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Filtered} (tier2);
+\draw [arrow] (tier2) -- node[left=6pt, font=\scriptsize\sffamily\bfseries] {Audited Data} (corpus);
+\draw [arrow] (corpus) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Training Data} (seq2seq);
+
+\end{tikzpicture}%
+}
+\caption{System architecture of the proposed multi-dialect text normalization framework, illustrating LLM synthetic corpus expansion, multi-tier verification engine, and seq2seq model fine-tuning.}
+\label{fig:system_architecture}
+\end{figure}
+
+\subsection{\textcolor{black}{LLM-Driven Parallel Corpus Generation and Verification}}
+
+To deal with data scarcity, we developed an automated synthetic data generation pipeline powered by Gemma-4 \cite{gemma2024} in 9B-instruction-tuned (\texttt{gemma-4}) configurations, accessed via Ollama.
 We considered several design decisions to ensure generation quality to be maximised:
 
 \begin{itemize}
@@ -286,23 +281,32 @@ All generated pairs undergo a three-tier verification and correction pipeline:
 \begin{table}[t]
 \color{black}
 \centering
-\caption{\textcolor{black}{Parallel Dataset Composition and Yield Across All Three Dialect Suites}}
+\caption{\textcolor{black}{Parallel Dataset Composition, Synthetic Generation Yield, and Verification Filtering}}
 \label{tab:dataset_summary}
-\begin{tabular}{|c:c:c:c|}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|l:c:c:c:c:c|}
 \hline
-\makecell[c]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Original}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Synthetic}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} \\
+\makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Original Clean}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Raw Synthetic}\\\small\textbf{Generated}} & \makecell[c]{\small\textbf{Clean Synthetic}\\\small\textbf{Verified}} & \makecell[c]{\small\textbf{Corrupted / Rejected}\\\small\textbf{Pairs (\%)}} & \makecell[c]{\small\textbf{Total Clean}\\\small\textbf{Expanded Pairs}} \\
 \hline
-Southern Konkan & 5,838 & 5,576 & \textbf{11,414} \\
-Northern Konkan & 5,825 & 5,501 & \textbf{11,326} \\
-Varhadi & 5,330 & 5,086 & \textbf{10,416} \\
+Southern Konkan & 5,576 & 5,838 & 5,569 & 269 (4.61\%) & \textbf{11,145} \\
+Northern Konkan & 5,501 & 5,825 & 5,534 & 291 (5.00\%) & \textbf{11,035} \\
+Varhadi & 5,086 & 5,330 & 5,069 & 261 (4.90\%) & \textbf{10,155} \\
 \hline
-\textbf{Total (All 3 Dialects)} & \textbf{16,993} & \textbf{16,163} & \textbf{33,156} \\
+\textbf{Total (All 3 Dialects)} & \textbf{16,163} & \textbf{16,993} & \textbf{16,172} & \textbf{821 (4.83\%)} & \textbf{32,335} \\
 \hline
 \end{tabular}
+}
 \end{table}
 
-As mentioned in Table~\ref{tab:dataset_summary}, the synthetic augmentation pipeline contributed 16,163 high-quality verified parallel pairs, almost doubling the original dataset to produce an expanded version of 33,156 samples.
-The near-1:1 ratio between original and synthetic pairs across all three dialects demonstrates the consistency and reliability of the entire pipeline.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig2_dataset_composition.pdf}
+\caption{Parallel dataset expansion composition per dialect partition, comparing original parallel pairs against synthetic verified pairs produced by the LLM generation and auditing pipeline.}
+\label{fig:dataset_composition}
+\end{figure}
+
+As detailed in Table~\ref{tab:dataset_summary}, out of 16,993 raw synthetic parallel candidate pairs generated by the LLM pipeline, our multi-tier verification engine flagged and discarded 821 corrupted or flawed pairs (an overall corruption/rejection rate of 4.83\%), yielding 16,172 clean verified synthetic pairs.
+Combined with the 16,163 clean original pairs, the final expanded benchmark suite comprises 32,335 high-quality parallel sentence pairs across all three dialects.
 
 \subsection{\textcolor{black}{Evaluation Protocol}}
 
@@ -329,46 +333,55 @@ All results are reported using standard automatic metrics computed via SacreBLEU
 \color{black}
 \centering
 \renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Comprehensive Evaluation Matrix on \texttt{IISc\_RESPIN\_test\_mr} (2,170 Utterances)}}
+\caption{\textcolor{black}{Comprehensive Evaluation Matrix on \texttt{IISc\_RESPIN\_test\_mr} Benchmark Set (2,170 Utterances)}}
 \label{tab:respin_comprehensive}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:l:c:c:c:c:c|}
 \hline
-\makecell[l]{\small\textbf{Model Scope}} & \makecell[l]{\small\textbf{Training Data}} & \makecell[l]{\small\textbf{Dialect}} & \makecell[c]{\small\textbf{Utts}} & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
+\makecell[l]{\small\textbf{Model Scope}} & \makecell[l]{\small\textbf{Training Data}} & \makecell[l]{\small\textbf{Dialect / Subset}} & \makecell[c]{\small\textbf{Utts}} & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{5-8}
 & & & & \makecell[c]{\small\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\small\textbf{WER ($\downarrow$)}} & \makecell[c]{\small\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\small\textbf{WER ($\downarrow$)}} \\
 \hline
-\multirow{3}{*}{Single-Dialect} & \multirow{3}{*}{Original} & Southern Konkan & 559 & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
+\multirow{3}{*}{Single-Dialect} & \multirow{3}{*}{Original (16k)} & Southern Konkan & 559 & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
  & & Northern Konkan & 540 & \textbf{90.13} & \textbf{6.46\%} & 79.46 & 11.95\% \\
  & & Varhadi & 516 & \textbf{83.59} & \textbf{10.19\%} & 74.81 & 14.73\% \\
 \cline{2-8}
- & \multirow{3}{*}{Expanded} & Southern Konkan & 559 & 24.06 & 60.32\% & \textbf{44.36} & \textbf{32.75\%} \\
+ & \multirow{3}{*}{Expanded (32k)} & Southern Konkan & 559 & 24.06 & 60.32\% & \textbf{44.36} & \textbf{32.75\%} \\
  & & Northern Konkan & 540 & 65.41 & 28.70\% & \textbf{79.76} & \textbf{12.61\%} \\
  & & Varhadi & 516 & 67.97 & 25.43\% & \textbf{76.90} & \textbf{14.19\%} \\
 \hline
-\multirow{8}{*}{Multi-Dialect} & \multirow{4}{*}{Original} & Southern Konkan & 559 & -- & -- & 40.94 & 35.34\% \\
+\multirow{5}{*}{Multi-Dialect} & \multirow{5}{*}{Original (16k)} & Southern Konkan & 559 & -- & -- & \textbf{40.94} & \textbf{35.34\%} \\
  & & Northern Konkan & 540 & -- & -- & \textbf{77.50} & \textbf{14.65\%} \\
+ & & Standard Benchmark & 555 & -- & -- & \textbf{96.65} & \textbf{1.91\%} \\
  & & Varhadi & 516 & -- & -- & \textbf{73.47} & \textbf{16.16\%} \\
- & & Combined (All) & 2,170 & 62.98 & 30.13\% & \textbf{72.18} & \textbf{17.23\%} \\
+ & & \textbf{Overall Combined} & \textbf{2,170} & 62.98 & 30.13\% & \textbf{72.18} & \textbf{17.23\%} \\
 \cline{2-8}
- & \multirow{4}{*}{Expanded} & Southern Konkan & 559 & -- & -- & 43.88 & 34.96\% \\
+ & \multirow{5}{*}{Expanded (32k)} & Southern Konkan & 559 & -- & -- & \textbf{43.88} & \textbf{34.96\%} \\
  & & Northern Konkan & 540 & -- & -- & \textbf{78.16} & \textbf{13.55\%} \\
+ & & Standard Benchmark & 555 & -- & -- & \textbf{97.39} & \textbf{1.37\%} \\
  & & Varhadi & 516 & -- & -- & \textbf{74.74} & \textbf{15.57\%} \\
- & & Combined (All) & 2,170 & \textbf{76.50} & \textbf{16.23\%} & 73.48 & 16.58\% \\
+ & & \textbf{Overall Combined} & \textbf{2,170} & \textbf{76.50} & \textbf{16.23\%} & 73.48 & 16.58\% \\
 \hline
 \end{tabular}
 }
 \end{table}
 
-Key observations from Table~\ref{tab:respin_comprehensive} include:
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig3_respin_comprehensive.pdf}
+\caption{Comprehensive sequence-to-sequence evaluation matrix on the held-out RESPIN test benchmark (2,170 utterances), comparing IndicBART (244M) and mT5-small (300M) across single-dialect and multi-dialect training configurations.}
+\label{fig:respin_comprehensive}
+\end{figure}
+
+Key observations from Table~\ref{tab:respin_comprehensive} and Figure~\ref{fig:respin_comprehensive} include:
 \begin{enumerate}
-    \item \textbf{mT5-Small Performance}: The synthetically expanded fine-tuned \texttt{mT5-small} model achieves 73.48 BLEU and 84.58 chrF++ on the overall test set.
-    \item \textbf{IndicBART Scaling}: Fine-tuning IndicBART on the synthetically expanded multi-dialect corpus achieves \textbf{76.50 BLEU} and \textbf{85.90 chrF++}, demonstrating that data expansion pulls out the latent capacity in mBART-50 architectures.
+    \item \textbf{mT5-Small Performance}: The synthetically expanded fine-tuned \texttt{mT5-small} model achieves 73.48 BLEU and 87.70 chrF++ on the overall test set.
+    \item \textbf{IndicBART Scaling}: Fine-tuning IndicBART on the synthetically expanded multi-dialect corpus achieves \textbf{76.50 BLEU} and \textbf{88.04 chrF++}, demonstrating that data expansion pulls out the latent capacity in mBART-50 architectures.
 \end{enumerate}
 
 
 
-\subsection{\textcolor{black}{Benchmark Results on Original and Synthetic Datasets}}
+\subsection{\textcolor{black}{\textbf{Single-Dialect} vs.\ \textbf{Multi-Dialect} Benchmark Results on Original and Synthetic Datasets}}
 
 Table~\ref{tab:results_original_single} presents the performance matrix on 5-fold cross-validated original single-dialect benchmarks, and Table~\ref{tab:results_original_multidialect} explains the dialect-wise breakdown of the multi-dialect model on original data.
 
@@ -376,7 +389,7 @@ Table~\ref{tab:results_original_single} presents the performance matrix on 5-fol
 \color{black}
 \centering
 \renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: Single-Dialect Models}}
+\caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: \textbf{Single-Dialect} Models}}
 \label{tab:results_original_single}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
@@ -385,9 +398,9 @@ Table~\ref{tab:results_original_single} presents the performance matrix on 5-fol
 \cline{4-7}
 \makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Southern Konkan & 5,576 & 836 & 48.52 & 78.49 & 46.31 & 74.43 \\
-Northern Konkan & 5,501 & 825 & 47.29 & 66.84 & \textbf{60.31} & \textbf{77.34} \\
-Varhadi & 5,086 & 762 & 72.87 & 85.72 & \textbf{80.99} & \textbf{91.21} \\
+Southern Konkan & 5,576 & 836 & \textbf{48.54} & \textbf{78.35} & 46.31 & 74.43 \\
+Northern Konkan & 5,501 & 825 & \textbf{60.58} & \textbf{80.30} & 60.31 & 77.34 \\
+Varhadi & 5,086 & 762 & 76.63 & 90.93 & \textbf{80.99} & \textbf{91.21} \\
 \hline
 \end{tabular}
 }
@@ -397,7 +410,7 @@ Varhadi & 5,086 & 762 & 72.87 & 85.72 & \textbf{80.99} & \textbf{91.21} \\
 \color{black}
 \centering
 \renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: Multi-Dialect Dialectwise Breakdown}}
+\caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: \textbf{Multi-Dialect} Dialectwise Breakdown}}
 \label{tab:results_original_multidialect}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
@@ -406,10 +419,9 @@ Varhadi & 5,086 & 762 & 72.87 & 85.72 & \textbf{80.99} & \textbf{91.21} \\
 \cline{4-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Southern Konkan & 16,163 & 836 & -- & -- & -- & -- \\
-Northern Konkan & 16,163 & 798 & -- & -- & -- & -- \\
-Varhadi & 16,163 & 790 & -- & -- & -- & -- \\
-Combined (All) & 16,163 & 2,424 & -- & -- & \textbf{63.29} & \textbf{81.37} \\
+Southern Konkan & 16,163 & 837 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
+Northern Konkan & 16,163 & 826 & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
+Varhadi & 16,163 & 763 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
 \hline
 \end{tabular}
 }
@@ -422,7 +434,7 @@ Table~\ref{tab:results_expanded_single} presents the performance matrix on synth
 \color{black}
 \centering
 \renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: Single-Dialect Models}}
+\caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: \textbf{Single-Dialect} Models}}
 \label{tab:results_expanded_single}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
@@ -443,7 +455,7 @@ Varhadi & 10,155 & 1,523 & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \color{black}
 \centering
 \renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: Multi-Dialect Dialectwise Breakdown}}
+\caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: \textbf{Multi-Dialect} Dialectwise Breakdown}}
 \label{tab:results_expanded_multidialect}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
@@ -452,20 +464,32 @@ Varhadi & 10,155 & 1,523 & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \cline{4-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Southern Konkan & 32,335 & 1,710 & -- & -- & -- & -- \\
-Northern Konkan & 32,335 & 1,627 & -- & -- & -- & -- \\
-Varhadi & 32,335 & 1,513 & -- & -- & -- & -- \\
-Combined (All) & 32,335 & 4,850 & -- & -- & \textbf{69.51} & \textbf{84.58} \\
+Southern Konkan & 32,335 & 1,672 & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
+Northern Konkan & 32,335 & 1,656 & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
+Varhadi & 32,335 & 1,524 & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
 \hline
 \end{tabular}
 }
 \end{table}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig4_single_dialect_cv.pdf}
+\caption{Single-dialect 5-fold cross-validation test BLEU comparison for IndicBART (244M) and mT5-small (300M) on (A) Original datasets and (B) Synthetically Expanded datasets.}
+\label{fig:single_dialect_cv}
+\end{figure}
+
+% \begin{figure}[t]
+% \centering
+% \includegraphics[width=0.85\textwidth]{figures/fig5_multidialect_heatmap.pdf}
+% \caption{Multi-dialect 5-fold cross-validation performance heatmap (sacreBLEU) across model architectures, dataset expansion sizes, and evaluated dialect partitions.}
+% \label{fig:multidialect_heatmap}
+% \end{figure}
+
 
 \subsection{\textcolor{black}{Impact of Synthetic Data Augmentation}}
 
-Table~\ref{tab:augmentation_impact} isolates the effect of dataset scaling by comparing performance across original and synthetically expanded corpora for each model.
-IndicBART benefits substantially from augmentation on the multi-dialect task (+13.52 BLEU), confirming that data scarcity rather than model capacity was the primary bottleneck. mT5-small shows a more modest improvement (+1.30 BLEU on multi-dialect data) but starts from a much higher baseline.
+Table~\ref{tab:augmentation_impact} isolates the effect of dataset scaling by comparing performance across original and synthetically expanded corpora for each model architecture. Overall, multi-dialect models exhibit significant net gains (+8.95 BLEU for IndicBART, +6.22 BLEU for mT5-small), confirming that data scarcity was a primary performance bottleneck. 
 
 \begin{table}[t]
 \color{black}
@@ -480,15 +504,27 @@ IndicBART benefits substantially from augmentation on the multi-dialect task (+1
 \cline{2-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ \\
 \hline
-Southern Konkan & -- & -- & -- & 40.94 & \textbf{43.88} & +2.94 \\
-Northern Konkan & -- & -- & -- & 77.50 & \textbf{78.16} & +0.66 \\
-Varhadi & -- & -- & -- & 73.47 & \textbf{74.74} & +1.27 \\
-\hline
-\textbf{Multi-Dialect (All)} & \textbf{62.98} & \textbf{76.50} & \textbf{+13.52} & \textbf{72.18} & \textbf{73.48} & \textbf{+1.30} \\
+Southern Konkan & 26.21 & 52.06 & \textbf{+25.85} & 48.28 & \textbf{66.62} & \textbf{+18.34} \\
+Northern Konkan & 47.59 & 49.08 & \textbf{+1.49} & 62.35 & \textbf{62.72} & \textbf{+0.37} \\
+Varhadi & \textbf{72.75} & 70.27 & $-$2.48 & \textbf{79.57} & 78.73 & $-$0.84 \\
 \hline
 \end{tabular}
 }
 \end{table}
+
+However, a fine-grained dialectwise breakdown reveals notable variance across sub-corpora. Southern Konkan benefits massively from expansion (+25.85 BLEU for IndicBART, +18.34 BLEU for mT5-small), while Northern Konkan sees consistent gains (+1.49 BLEU for IndicBART, +0.37 BLEU for mT5-small). Varhadi displays slight baseline saturation variance (-2.48 BLEU for IndicBART, -0.84 BLEU for mT5-small) due to its already high original baseline performance. We hypothesize several tentative contributing factors for this differential impact:
+\begin{enumerate}
+    \item \textbf{Baseline Saturation and Precision Dilution}: Varhadi already possessed a high original baseline (72.87--79.57 BLEU). We estimate that LLM-generated synthetic pairs may introduce minor stylistic variations or over-generalized suffix rules, slightly diluting exact N-gram matching against human reference texts.
+    \item \textbf{Lexical Drift and Subword Tokenization}: Northern Konkan exhibits distinct Gujarati and Ahirani lexical influences. We hypothesize that synthetic generation may introduce subtle lexical drift, which impacted IndicBART's narrower Devanagari subword vocabulary more noticeably than mT5-small's broader 250k multilingual SentencePiece vocabulary.
+    \item \textbf{Cross-Dialect Parameter Competition}: In multi-dialect training, we estimate that pooling synthetic data across distinct sub-dialects may cause capacity competition in shared attention weights, prioritizing recovery on severely sparse dialects (Southern Konkan) over already saturated partitions.
+\end{enumerate}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig6_augmentation_impact.pdf}
+\caption{Impact of LLM synthetic data expansion ($\Delta$ BLEU score comparing synthetically expanded vs.\ original 5-fold cross-validation benchmarks).}
+\label{fig:augmentation_impact}
+\end{figure}
 
 
 
@@ -511,14 +547,21 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
 \makecell[l]{\small\textbf{Model}} & \makecell[l]{\small\textbf{Pipeline State}} & \makecell[c]{\small\textbf{Total Pairs}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{$\Delta$ BLEU}} & \makecell[c]{\small\textbf{$\Delta$ chrF++}} \\
 \hline
 \multirow{2}{*}{IndicBART (244M)} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$14.03 & $-$10.95 \\
- & Filtered Clean Data & 32,335 & \textbf{57.12} & \textbf{75.49} & Baseline & Baseline \\
+ & Filtered Clean Data & 32,335 & \textbf{57.12} & \textbf{75.49} & \textbf{+14.03} & \textbf{+10.95} \\
 \hline
 \multirow{2}{*}{mT5-Small (300M)} & Raw Unverified Data & 19,914 & 61.21 & 80.18 & $-$8.30 & $-$4.40 \\
- & Filtered Clean Data & 32,335 & \textbf{69.51} & \textbf{84.58} & Baseline & Baseline \\
+ & Filtered Clean Data & 32,335 & \textbf{69.51} & \textbf{84.58} & \textbf{+8.30} & \textbf{+4.40} \\
 \hline
 \end{tabular}
 }
 \end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig7_verification_ablation.pdf}
+\caption{Multi-tier verification engine ablation: (A) BLEU score recovery and (B) chrF++ score enhancement comparing models trained on raw unverified synthetic outputs vs.\ filtered clean synthetic data.}
+\label{fig:verification_ablation}
+\end{figure}
 
 Key findings and insights from this evaluation include:
 \begin{enumerate}
@@ -575,8 +618,6 @@ Pre-training Data & 11 Indic + English & 101 languages (mC4) \\
 Script Approach & Devanagari-unified & Native multi-script \\
 Target Conditioning & Required \texttt{<2mr>} token & Raw text-to-text (no prefix) \\
 Learning Rate & $5 \times 10^{-5}$ (linear warmup) & $5 \times 10^{-4}$ (AdaFactor) \\
-Expanded BLEU & 57.12 & \textbf{69.51} (+12.39) \\
-Expanded chrF++ & 75.49 & \textbf{84.58} (+9.09) \\
 \hline
 \end{tabularx}
 \end{table}

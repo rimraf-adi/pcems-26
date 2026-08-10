@@ -4,11 +4,33 @@
 
 % --- Font: Arial via fontspec (XeLaTeX) ---
 \usepackage{fontspec}
-\setmainfont{Arial}
+\IfFontExistsTF{Arial}{
+    \setmainfont{Arial}
+}{
+    \IfFontExistsTF{DejaVu Sans}{
+        \setmainfont{DejaVu Sans}
+    }{
+        \IfFontExistsTF{Liberation Sans}{
+            \setmainfont{Liberation Sans}
+        }{}
+    }
+}
 
 % --- Devanagari support ---
 \usepackage{ucharclasses}
-\newfontfamily\devanagarifont{Devanagari Sangam MN}[Script=Devanagari]
+\IfFontExistsTF{Devanagari Sangam MN}{
+    \newfontfamily\devanagarifont{Devanagari Sangam MN}[Script=Devanagari]
+}{
+    \IfFontExistsTF{Noto Sans Devanagari}{
+        \newfontfamily\devanagarifont{Noto Sans Devanagari}[Script=Devanagari]
+    }{
+        \IfFontExistsTF{Lohit Devanagari}{
+            \newfontfamily\devanagarifont{Lohit Devanagari}[Script=Devanagari]
+        }{
+            \newfontfamily\devanagarifont{FreeSerif}[Script=Devanagari]
+        }
+    }
+}
 \setTransitionsForDevanagari{\devanagarifont}{\normalfont}
 
 % --- Packages ---
@@ -16,22 +38,29 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
 \usepackage{multirow}
 \usepackage{makecell}
 \usepackage{array}
 \usepackage{xcolor}
 \usepackage{colortbl}
 \usepackage{arydshln}
-\setlength\dashlinedash{1.2pt}
-\setlength\dashlinegap{1.5pt}
-\setlength\arrayrulewidth{0.4pt}
+\setlength\dashlinedash{2.8pt}
+\setlength\dashlinegap{0.8pt}
+\setlength\arrayrulewidth{1.1pt}
 \arrayrulecolor{black}
 \usepackage{hyperref}
 \usepackage{enumitem}
+\setlist{noitemsep, topsep=2pt, parsep=1pt, partopsep=0pt}
 \usepackage{titlesec}
 \usepackage{caption}
+\captionsetup{font=small, labelfont=bf, skip=4pt}
 \usepackage{float}
-\usepackage{natbib}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\usepackage[numbers,sort&compress]{natbib}
 \usepackage{setspace}
 \usepackage{tcolorbox}
 
@@ -73,7 +102,7 @@
 \setstretch{1.0}
 
 % --- Bibliography style (APA) ---
-\bibliographystyle{apalike}
+\bibliographystyle{unsrtnat}
 
 % --- Universal Keywords Macro Support ---
 \providecommand{\keywords}[1]{{\def\and{, }\par\vspace{14pt}\noindent{\fontsize{12pt}{16pt}\selectfont\bfseries Keywords:} {\fontsize{12pt}{16pt}\selectfont #1}}}
