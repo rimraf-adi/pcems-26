@@ -8,7 +8,7 @@
 
 \begin{abstract}
 % Low-resource regional dialects pose severe challenges for Natural Language Processing (NLP) systems due to significant morpho-syntactic variation, non-standard orthography, and extreme scarcity of annotated parallel corpora.
-% In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: Malvani, Ahirani, and Varhadi.
+% In this paper, we address the task of dialect normalization---converting non-standard regional dialectal text into Standard Written Marathi---focusing on three major Indo-Aryan regional dialects of Maharashtra: Southern Konkan, Northern Konkan, and Varhadi.
 % To overcome severe data scarcity, we introduce an automated synthetic parallel data expansion pipeline combining large language model (LLM) generation using Gemma-2 (9B/27B) with a multi-tier verification engine (rule-based script filtering and LLM semantic auditing), effectively doubling the clean parallel training corpus into verified synthetically expanded pairs across agriculture and finance domains.
 % We conduct a rigorous empirical evaluation of state-of-the-art multilingual sequence-to-sequence transformer architectures---google/mT5-small (300M) and IndicBART (244M)---under an 85/15 stratified test split with 5-fold cross-validation across 8 dataset configurations.
 % Empirical results demonstrate that mT5-small achieves state-of-the-art performance with 69.51 BLEU and 84.58 chrF++ on the synthetically expanded multi-dialect dataset (+12.39 BLEU over IndicBART), with individual dialect performance reaching 80.99 BLEU and 91.21 chrF++ on Varhadi.
@@ -41,8 +41,8 @@ Marathi is written in Devanagari script from left to right and stands as one of 
 While Standard Marathi (based on the dialect variety of Pune city and surrounding regions) has a well-defined literary standard and established digital infrastructure, regional sub-dialects tend to show phonological and lexical divergence from the standard form \cite{kulkarni2023variation,tarfe2024linguistic}.
 % Three major regional sub-dialects spanning distinct geographical and socio-cultural regions of Maharashtra represent this diversity:
 % \begin{enumerate}
-%     \item \textbf{Malvani}: Spoken in the Southern Konkan coastal belt (Sindhudurg and Ratnagiri districts), deeply influenced by coastal geography, featuring maritime vocabulary, heavy palatalization, phonetic contractions, and Konkani-influenced lexical items.
-%     \item \textbf{Ahirani}: Spoken in the Khandesh region of North-Western Maharashtra (Jalgaon, Dhule, Nandurbar), heavily influenced by neighboring Gujarati and Bhili dialects with systematic consonant shifts and distinct postpositional markers.
+%     \item \textbf{Southern Konkan}: Spoken in the Southern Konkan coastal belt (Sindhudurg and Ratnagiri districts), deeply influenced by coastal geography, featuring maritime vocabulary, heavy palatalization, phonetic contractions, and Konkani-influenced lexical items.
+%     \item \textbf{Northern Konkan}: Spoken in the Khandesh region of North-Western Maharashtra (Jalgaon, Dhule, Nandurbar), heavily influenced by neighboring Gujarati and Bhili dialects with systematic consonant shifts and distinct postpositional markers.
 %     \item \textbf{Varhadi}: Spoken in the Vidarbha region of Eastern Maharashtra (Nagpur, Amravati, Akola), featuring characteristic interrogative forms, unique verbal inflectional suffixes, and phonetic contact variations.
 % \end{enumerate}
 Users having a native dialect have faced difficulties in using the existing NLP systems of Automatic Speech Recognition (ASR), Machine Translation (MT), conversational AI agents, and information retrieval tools \cite{koenecke2020racial,aharoni2020unsupervised}.
@@ -56,7 +56,7 @@ Developing systems for dialect normalization have faced two fundamental challeng
 Addressing these challenges, this paper presents a multi-dialect Marathi text normalization pipeline combining synthetic data augmentation with sequence-to-sequence transformer fine-tuning.
 Our main contributions are :
 \begin{itemize}
-    \item \textbf{Parallel Marathi Dialect Corpus with Synthetic Augmentation}: Based on the RESPIN corpus \cite{kumar2025respin}, we curate and expand a parallel corpus of verified sentence pairs across Malvani, Ahirani, and Varhadi dialects mapped to Standard Marathi , combining human-translated pairs with an automated synthetic generation and multi-level verification pipeline.
+    \item \textbf{Parallel Marathi Dialect Corpus with Synthetic Augmentation}: Based on the RESPIN corpus \cite{kumar2025respin}, we curate and expand a parallel corpus of verified sentence pairs across Southern Konkan, Northern Konkan, and Varhadi dialects mapped to Standard Marathi , combining human-translated pairs with an automated synthetic generation and multi-level verification pipeline.
     \item \textbf{End-to-end Fine-Tuning Pipeline}: We utilize a neural fine-tuning framework for dialect normalization, adapting pre-trained msequence-to-sequence transformer models for standardization.
     \item \textbf{Empirical Evaluations}: We implement a standardized train-test split combined with cross-validation across distinct dataset configurations, conducting experiments, verification filtering analyses, and error evaluations.
 \end{itemize}
@@ -69,10 +69,10 @@ Our main contributions are :
 % This introduces several distinct layers of orthographic heterogeneity:
 % 
 % \begin{itemize}
-%     \item \textbf{Vocalic Length \& Diphthong Alternations}: Informal dialectal text frequently conflates short (\emph{hrasva}) and long (\emph{dirgha}) vowels (e.g., \emph{इ/ई} and \emph{उ/ऊ}), or substitutes monophthongs for diphthongs (e.g., Standard \emph{होता} $\rightarrow$ Malvani \emph{हतो}).
+%     \item \textbf{Vocalic Length \& Diphthong Alternations}: Informal dialectal text frequently conflates short (\emph{hrasva}) and long (\emph{dirgha}) vowels (e.g., \emph{इ/ई} and \emph{उ/ऊ}), or substitutes monophthongs for diphthongs (e.g., Standard \emph{होता} $\rightarrow$ Southern Konkan \emph{हतो}).
 %     \item \textbf{Nasalization \& Anusvara Variations}: Standard Marathi strictly regulates \emph{anusvara} placement for nasal consonants and grammatical inflections. Dialectal text frequently omits \emph{anusvaras} or converts them to explicit nasal consonants (\emph{न, म, ङ}).
-%     \item \textbf{Nukta \& Retroflex Consonant Shifts}: Dialects like Ahirani systematically simplify retroflex consonants (\emph{ळ} $\rightarrow$ \emph{ल} or \emph{य}) and alter dental-palatal fricative conventions (\emph{श/ष} $\rightarrow$ \emph{स}), leading to extreme out-of-vocabulary (OOV) rates in standard tokenizers.
-%     \item \textbf{Agglutinative Postposition Merging}: Standard Marathi attaches case markers (\emph{ला, ने, ची, त}) directly to modified stem nouns (\emph{सामान्यरूप}). Dialects modify the stem in non-standard ways (e.g., Standard \emph{मुलाला} $\rightarrow$ Ahirani \emph{पोराले}, Malvani \emph{चेडवाक}).
+%     \item \textbf{Nukta \& Retroflex Consonant Shifts}: Dialects like Northern Konkan systematically simplify retroflex consonants (\emph{ळ} $\rightarrow$ \emph{ल} or \emph{य}) and alter dental-palatal fricative conventions (\emph{श/ष} $\rightarrow$ \emph{स}), leading to extreme out-of-vocabulary (OOV) rates in standard tokenizers.
+%     \item \textbf{Agglutinative Postposition Merging}: Standard Marathi attaches case markers (\emph{ला, ने, ची, त}) directly to modified stem nouns (\emph{सामान्यरूप}). Dialects modify the stem in non-standard ways (e.g., Standard \emph{मुलाला} $\rightarrow$ Northern Konkan \emph{पोराले}, Southern Konkan \emph{चेडवाक}).
 % \end{itemize}
 % 
 % The remainder of this paper is organized as follows: Section~\ref{sec:related} surveys related work in dialect normalization, Indic NLP, and synthetic data generation.
@@ -108,7 +108,7 @@ Similarly, for Indic languages, Weighted Finite State Transducers (WFSTs) are in
 
 In the specific context of Marathi language dialect processing, research has historically concentrated on speech, acoustic classification, or localized applications:
 \begin{itemize}
-    \item \textbf{Acoustic Speech Classification \& Recognition}: Mulla and Kumar \cite{mulla2022text} explored spectro-temporal feature extraction (15 parameters including chromagram, spectral centroid, and MFCCs) with Chi-Square/ANOVA feature selection on 7,555 speech recordings from the LDC-IL Marathi raw speech corpus across four dialects (Goa-based, Vidarbha, Marathwada, Puneri), achieving 84.24\% accuracy with Ridge Classifiers. Pawar et al. \cite{pawar2026automatic} investigated acoustic dialect identification across Ahirani, Varhadi, and Standard Marathi audio using MFCC features and Convolutional Neural Networks (CNNs) under clean and artificially generated Gaussian noise conditions (SNR 1.78--9.74 dB), achieving up to 93.65\% accuracy in clean environments and 87.29\% under noisy conditions. Amartyaveer et al. \cite{amartyaveer2025improving} and Kumar et al. \cite{kumar2025respin} at IISc Bangalore introduced RESPIN-S1.0 (a 10,000+ hour read-speech corpus across 38 Indian dialects and 9 languages, including 4 Marathi sub-dialects: Southern Konkan, Northern Konkan, Standard Marathi, and Varhadi) and developed multimodal ASR and RoBERTa embeddings for dialect identification, achieving 79.81\% accuracy.
+    \item \textbf{Acoustic Speech Classification \& Recognition}: Mulla and Kumar \cite{mulla2022text} explored spectro-temporal feature extraction (15 parameters including chromagram, spectral centroid, and MFCCs) with Chi-Square/ANOVA feature selection on 7,555 speech recordings from the LDC-IL Marathi raw speech corpus across four dialects (Goa-based, Vidarbha, Marathwada, Puneri), achieving 84.24\% accuracy with Ridge Classifiers. Pawar et al. \cite{pawar2026automatic} investigated acoustic dialect identification across Northern Konkan, Varhadi, and Standard Marathi audio using MFCC features and Convolutional Neural Networks (CNNs) under clean and artificially generated Gaussian noise conditions (SNR 1.78--9.74 dB), achieving up to 93.65\% accuracy in clean environments and 87.29\% under noisy conditions. Amartyaveer et al. \cite{amartyaveer2025improving} and Kumar et al. \cite{kumar2025respin} at IISc Bangalore introduced RESPIN-S1.0 (a 10,000+ hour read-speech corpus across 38 Indian dialects and 9 languages, including 4 Marathi sub-dialects: Southern Konkan, Northern Konkan, Standard Marathi, and Varhadi) and developed multimodal ASR and RoBERTa embeddings for dialect identification, achieving 79.81\% accuracy.
     \item \textbf{Text-Level Dialect Processing \& Translation}: Gaikwad et al. \cite{gaikwad2025marathi} explored zero-shot prompting via the commercial Gemini API within a Retrieval-Augmented Generation (RAG) framework using Sentence Transformers and FAISS to translate Konkani (Devanagari) dialect queries into Standard Marathi for document Q\&A. Vyavhare et al. \cite{vyavhare2026marathi} proposed a hybrid rule-based dictionary and neural translation web interface for regional Marathi dialects. Gavali \cite{gavali2026marathi} introduced a student-level framework combining IndicBERT and IndicWav2Vec for dialect detection and normalization on small local datasets.
 \end{itemize}
 
@@ -139,21 +139,21 @@ and conduct 5-fold cross-validated fine-tuning of open-weight transformers (\tex
 
 The development of pre-trained models for Indic languages has shown steep increase in recent years.
 IndicBART \cite{dabre2022indicbart} introduced a multilingual sequence-to-sequence model based on the mBART-50 architecture \cite{lewis2020bart},trained on 11 Indic languages with a unified Devanagari script representation with a 64,000-token SentencePiece vocabulary.
-It utilizes orthographic similarity between Indic scripts to facilitate cross-lingual transfer learning and demonstrated state-of-the-art  performance on neural machine translation tasks despite being significantly smaller than models of similar category.
+It utilizes orthographic relations between Indic scripts to facilitate cross-lingual transfer learning and demonstrated state-of-the-art  performance on neural machine translation tasks despite being significantly smaller than models of similar category.
 
 
-Similarly ,models such as mT5 \cite{xue2021mt5} which is the multilingual extension of T5 \cite{raffel2020exploring} extended Text-to-Text Transfer Transformers across 101 languages with the mC4 dataset. 
-It features a 250,000-token SentencePiece vocabulary and showed state-of-the-art results on the XTREME multilingual benchmark.
+Similarly ,models such as mT5 \cite{xue2021mt5} which is the multilingual extension of T5 \cite{raffel2020exploring} extended Text-to-Text Transfer Transformers across 101 languages with the mC4 dataset. which features a 250,000-token SentencePiece vocabulary and showed state-of-the-art results on the XTREME multilingual benchmark.
 Its text-to-text formulation, which casts all NLP tasks as input-output text transformations, makes it particularly well-suited for sequence-level normalization tasks.
-
-The L3Cube-MahaNLP initiative \cite{joshi2022l3cube} has contributed Marathi-specific transformer models (MahaBERT, MahaRoBERTa) and curated datasets for tasks including sentiment analysis, named entity recognition, and hate speech detection.
-However, these encoder-only models are designed for classification tasks rather than sequence-to-sequence generation required for dialect normalization.
+The L3Cube-MahaNLP initiative \cite{joshi2022l3cube} gave Marathi-specific transformer models (MahaBERT, MahaRoBERTa) and curated datasets for tasks like sentiment analysis, named entity recognition, and hate speech detection.
+However, these encoder-only models are primarily designed for classification-like tasks instead of sequence-to-sequence generation.
 
 \subsection{\textcolor{black}{Synthetic Data Generation for Low-Resource NLP}}
 
-The use of Large Language Models (LLMs) for synthetic data generation has emerged as a powerful strategy for overcoming data scarcity in low-resource settings.
-Recent work has demonstrated that LLMs function more effectively as data generators than as direct task solvers, enabling a ``generate-then-fine-tune'' paradigm where synthetic parallel data from a large teacher model is used to train smaller, task-specific student models \cite{gemma2024}.
-Key considerations in this approach include maintaining semantic fidelity, preventing hallucination, and implementing multi-tier verification pipelines to ensure data quality \cite{ansary2024unicode}.
+Using LLMs for synthetic data generation has proven to be a powerful strategy for solving data scarcity in low-resource settings.
+Recent work has shown that LLMs can be used more effectively as data generators than as direct task solvers, where synthetic data from a large teacher model is utilized to train smaller models \cite{wang2022selfinstruct,taori2023alpaca,mukherjee2023orca}.
+This paradigm is often regarded as a form of knowledge distillation that addresses the costs and time bottlenecks associated with manual human annotation \cite{ho2023distilling}.
+By employing targeted prompt-engineering strategies, frontier models can generate data that effectively transfers their generalized capabilities to specialized, efficient student models \cite{pecher2023better}.
+Such an approach is important since crowdsourcing is difficult due to the requirement of expert annotators possessing deep bilingual fluency in both an oral regional dialect and its standard written counterpart \cite{degibert2024scaling}.
 
 For Indic languages specifically, synthetic data augmentation has been applied primarily to machine translation tasks, with back-translation and pivoting through high-resource languages serving as common strategies.
 Our work extends this paradigm specifically to the dialect normalization task, introducing domain-aware generation templates and multi-stage LLM verification protocols tailored to the morphological properties of Marathi dialects.
@@ -167,8 +167,8 @@ Our work extends this paradigm specifically to the dialect normalization task, i
 We target three major Marathi dialects mapped in social dialectology and comparative linguistic surveys of Maharashtra \cite{kulkarni2023variation,tarfe2024comparative} that collectively span the primary geographic regions of Maharashtra and exhibit distinct linguistic transformation patterns:
 
 \begin{enumerate}
-    \item \textbf{Malvani (Konkan Coast)}: Characterized by phonetic shortening of word-final vowels, palatalization of dental consonants, and distinct auxiliary verb forms. Lexical transformations include systematic vowel shifts: standard \emph{जातो} (``he goes'') becomes Malvani \emph{जातां}; standard \emph{कुठे} (``where'') becomes \emph{कुठंय}. Domain-specific terminology in agriculture and banking is generally preserved but often accompanied by Konkani-influenced function words.
-    \item \textbf{Ahirani (Khandesh Region)}: Heavily influenced by neighboring Gujarati and Bhili language families, exhibiting significant consonant cluster simplification and retroflex-dental consonant shifts. Characteristic transformations include: standard \emph{कशाला} (``why'') $\rightarrow$ Ahirani \emph{कसाले}; standard \emph{मुलगा} (``boy'') $\rightarrow$ Ahirani \emph{पोर}. Ahirani presents the highest degree of lexical divergence among the three target dialects.
+    \item \textbf{Southern Konkan (Konkan Coast)}: Characterized by phonetic shortening of word-final vowels, palatalization of dental consonants, and distinct auxiliary verb forms. Lexical transformations include systematic vowel shifts: standard \emph{जातो} (``he goes'') becomes Southern Konkan \emph{जातां}; standard \emph{कुठे} (``where'') becomes \emph{कुठंय}. Domain-specific terminology in agriculture and banking is generally preserved but often accompanied by Konkani-influenced function words.
+    \item \textbf{Northern Konkan (Khandesh Region)}: Heavily influenced by neighboring Gujarati and Bhili language families, exhibiting significant consonant cluster simplification and retroflex-dental consonant shifts. Characteristic transformations include: standard \emph{कशाला} (``why'') $\rightarrow$ Northern Konkan \emph{कसाले}; standard \emph{मुलगा} (``boy'') $\rightarrow$ Northern Konkan \emph{पोर}. Northern Konkan presents the highest degree of lexical divergence among the three target dialects.
     \item \textbf{Varhadi (Vidarbha/Eastern Maharashtra)}: Spoken in Vidarbha, exhibiting characteristic interrogative transformations and systematic verb suffix modifications. Standard interrogative \emph{का?} (``why?'') becomes Varhadi \emph{काऊन?}; verbal forms undergo regular suffix mapping patterns. Among the three dialects, Varhadi maintains the highest degree of structural similarity to Standard Marathi, with transformations being more systematic and rule-governed.
 \end{enumerate}
 
@@ -183,11 +183,11 @@ The target dialects display rich phonological, morphological, and lexical transf
 % \hline
 % \textbf{Dialect Name} & \textbf{Dialectal Input} & \textbf{Standard Marathi Output} & \textbf{Transformation Type} \\
 % \hline
-% \textbf{Malvani} & मका आज बँकेंत जावचा हा. & मला आज बँकेत जायचे आहे. & Dative pronoun (\emph{मका} $\rightarrow$ \emph{मला}), Infinitival verb (\emph{जावचा} $\rightarrow$ \emph{जायचे}), Auxiliary (\emph{हा} $\rightarrow$ \emph{आहे}). \\
-% \textbf{Malvani} & तुमी खय चाललात? & तुम्ही कुठे चालला आहात? & Interrogative (\emph{खय} $\rightarrow$ \emph{कुठे}), Plural verb suffix (\emph{चाललात} $\rightarrow$ \emph{चालला आहात}). \\
+% \textbf{Southern Konkan} & मका आज बँकेंत जावचा हा. & मला आज बँकेत जायचे आहे. & Dative pronoun (\emph{मका} $\rightarrow$ \emph{मला}), Infinitival verb (\emph{जावचा} $\rightarrow$ \emph{जायचे}), Auxiliary (\emph{हा} $\rightarrow$ \emph{आहे}). \\
+% \textbf{Southern Konkan} & तुमी खय चाललात? & तुम्ही कुठे चालला आहात? & Interrogative (\emph{खय} $\rightarrow$ \emph{कुठे}), Plural verb suffix (\emph{चाललात} $\rightarrow$ \emph{चालला आहात}). \\
 % \hline
-% \textbf{Ahirani} & मना पोराले शेतीमा काम करणा शे. & माझ्या मुलाला शेतीत काम करायचे आहे. & Genitive pronoun (\emph{मना} $\rightarrow$ \emph{माझ्या}), Noun (\emph{पोराले} $\rightarrow$ \emph{मुलाला}), Locative (\emph{मा} $\rightarrow$ \emph{त}), Auxiliary (\emph{शे} $\rightarrow$ \emph{आहे}). \\
-% \textbf{Ahirani} & तुम्ही कशाले इतला राग करताय? & तुम्ही कशाला एवढा राग करता? & Interrogative (\emph{कशाले} $\rightarrow$ \emph{कशाला}), Demonstrative (\emph{इतला} $\rightarrow$ \emph{एवढा}). \\
+% \textbf{Northern Konkan} & मना पोराले शेतीमा काम करणा शे. & माझ्या मुलाला शेतीत काम करायचे आहे. & Genitive pronoun (\emph{मना} $\rightarrow$ \emph{माझ्या}), Noun (\emph{पोराले} $\rightarrow$ \emph{मुलाला}), Locative (\emph{मा} $\rightarrow$ \emph{त}), Auxiliary (\emph{शे} $\rightarrow$ \emph{आहे}). \\
+% \textbf{Northern Konkan} & तुम्ही कशाले इतला राग करताय? & तुम्ही कशाला एवढा राग करता? & Interrogative (\emph{कशाले} $\rightarrow$ \emph{कशाला}), Demonstrative (\emph{इतला} $\rightarrow$ \emph{एवढा}). \\
 % \hline
 % \textbf{Varhadi} & तू काऊन बँकेंत गेला नव्हता? & तू का बँकेत गेला नव्हतास? & Interrogative (\emph{काऊन} $\rightarrow$ \emph{का}), Verbal person marker (\emph{नव्हता} $\rightarrow$ \emph{नव्हतास}). \\
 % \textbf{Varhadi} & शेतात पाणी हाय का नाही जी? & शेतात पाणी आहे की नाही? & Auxiliary (\emph{हाय} $\rightarrow$ \emph{आहे}), Disjunctive particle (\emph{का} $\rightarrow$ \emph{की}), Honorific residue (\emph{जी}). \\
@@ -197,10 +197,10 @@ The target dialects display rich phonological, morphological, and lexical transf
 \subsection{\textcolor{black}{Original Corpus Curation and Foundation in RESPIN}}
 
 The foundational dialectal sentence prompts for our dataset were drawn from the domain-specific text transcripts of the RESPIN-S1.0 initiative \cite{kumar2025respin}, developed at IISc Bangalore under the Gates Foundation project.
-While RESPIN provides audio recordings and mono-lingual text prompts across agriculture and banking domains for Indian regional dialects (including Marathi sub-dialects: Southern Konkan/Sindhudurg, Northern Konkan/Ahirani, and Varhadi/Nagpur), it lacks aligned parallel Standard Marathi target translations required for sequence-to-sequence text normalization.
+While RESPIN provides audio recordings and mono-lingual text prompts across agriculture and banking domains for Indian regional dialects (including Marathi sub-dialects: Southern Konkan, Northern Konkan, and Varhadi), it lacks aligned parallel Standard Marathi target translations required for sequence-to-sequence text normalization.
 
 To construct a supervised normalization benchmark, native Marathi linguists performed sentence-level parallel translation of RESPIN dialectal prompts into normative Standard Marathi (\emph{मानक मराठी}), assembling an initial clean parallel corpus of 16,163 pairs across agriculture and banking domains.
-The initial corpus comprises Malvani (5,576 pairs), Ahirani (5,501 pairs), and Varhadi (5,086 pairs).
+The initial corpus comprises Southern Konkan (5,576 pairs), Northern Konkan (5,501 pairs), and Varhadi (5,086 pairs).
 A comprehensive manual audit protocol flagged critical translation flaws including garbled syntax (incomplete or malformed sentences), semantic inversions (meaning reversal in normalization), Hindi language leakage (Standard Hindi substituted for Standard Marathi), retained dialect residue (incompletely normalized outputs), and dropped question marks (loss of interrogative intent).
 All flagged pairs were manually corrected and validated before seeding the synthetic expansion pipeline.
 
@@ -225,7 +225,7 @@ Unique Pincodes & 234 \\
 Gender Distribution & 51\% Female, 49\% Male \\
 Domains & Agriculture, Banking \\
 Domain Split & 49\% Agriculture, 51\% Banking \\
-Dialect Variants & Malvani, Ahirani, Varhadi \\
+Dialect Variants & Southern Konkan, Northern Konkan, Varhadi \\
 \hline
 \end{tabular}
 \end{table}
@@ -234,7 +234,7 @@ The large speaker diversity (2,644 unique speakers across 234 pincodes) ensures 
 
 \subsection{\textcolor{black}{IndicConformer Baseline ASR Evaluation}}
 
-To establish a comprehensive speech-and-language baseline, we evaluate pre-trained automatic speech recognition (ASR) performance on the official \texttt{IISc\_RESPIN\_test\_mr} test benchmark set, comprising 2,170 speech utterances (3.04 hours of recorded audio) across all four regional sub-dialects: Southern Konkan (Malvani), Northern Konkan (Ahirani), Standard Pune Marathi, and Varhadi (Vidarbha).
+To establish a comprehensive speech-and-language baseline, we evaluate pre-trained automatic speech recognition (ASR) performance on the official \texttt{IISc\_RESPIN\_test\_mr} test benchmark set, comprising 2,170 speech utterances (3.04 hours of recorded audio) across all four regional sub-dialects: Southern Konkan, Northern Konkan, Standard Marathi, and Varhadi.
 
 We evaluate \texttt{ai4bharat/indic-conformer-600m-multilingual} under both Connectionist Temporal Classification (CTC) and Recurrent Neural Network Transducer (RNN-T) decoding setups. Overall on 2,170 utterances, CTC decoding achieves 23.94\% WER (5.12\% CER, 30.12\% Exact Match), while RNN-T decoding achieves optimal baseline performance with 23.71\% WER, 5.06\% CER, and 30.78\% Exact Match.
 
@@ -250,20 +250,20 @@ Table~\ref{tab:asr_baseline} details the dialectwise ASR baseline performance ac
 \hline
 \makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Utts}} & \makecell[c]{\small\textbf{Duration}\\\small\textbf{(h)}} & \makecell[c]{\small\textbf{Norm.}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Norm.}\\\small\textbf{CER (\%)}} & \makecell[c]{\small\textbf{Exact}\\\small\textbf{Match (\%)}} \\
 \hline
-Southern Konkan (Sindhudurg) & 559 & 0.78 & 34.37 & 7.45 & 21.47 \\
-Northern Konkan (Nashik, Dhule) & 540 & 0.76 & 24.14 & 5.08 & 31.85 \\
-Standard Marathi (Pune) & 555 & 0.78 & 10.87 & 2.34 & 39.10 \\
-Varhadi (Nagpur) & 516 & 0.72 & 24.79 & 5.14 & 30.62 \\
+Southern Konkan & 559 & 0.78 & 34.37 & 7.45 & 21.47 \\
+Northern Konkan & 540 & 0.76 & 24.14 & 5.08 & 31.85 \\
+Standard Marathi & 555 & 0.78 & 10.87 & 2.34 & 39.10 \\
+Varhadi & 516 & 0.72 & 24.79 & 5.14 & 30.62 \\
 \hline
 \end{tabular}
 \end{table}
 
 Sub-dialect analysis reveals significant acoustic-phonetic difficulty variation across regional varieties:
 \begin{itemize}
-    \item \textbf{Standard Marathi (Pune)}: Achieves the lowest baseline error at 10.87\% WER and 2.34\% CER (555 utterances).
-    \item \textbf{Northern Konkan (Nashik, Dhule)}: Achieves 24.14\% WER and 5.08\% CER (540 utterances).
-    \item \textbf{Varhadi (Nagpur)}: Achieves 24.79\% WER and 5.14\% CER (516 utterances).
-    \item \textbf{Southern Konkan (Sindhudurg)}: Proves to be the most challenging dialect for speech recognition, exhibiting 34.37\% WER and 7.45\% CER (559 utterances) due to distinct vocalic shortening and phonetic contractions.
+    \item \textbf{Standard Marathi}: Achieves the lowest baseline error at 10.87\% WER and 2.34\% CER (555 utterances).
+    \item \textbf{Northern Konkan}: Achieves 24.14\% WER and 5.08\% CER (540 utterances).
+    \item \textbf{Varhadi}: Achieves 24.79\% WER and 5.14\% CER (516 utterances).
+    \item \textbf{Southern Konkan}: Proves to be the most challenging dialect for speech recognition, exhibiting 34.37\% WER and 7.45\% CER (559 utterances) due to distinct vocalic shortening and phonetic contractions.
 \end{itemize}
 
 \subsection{\textcolor{black}{LLM-Driven Synthetic Generation Architecture}}
@@ -303,16 +303,16 @@ All generated pairs undergo a rigorous three-tier verification and correction pi
 \hline
 \makecell[c]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Original}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Synthetic}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} \\
 \hline
-Malvani & 5,576 & 5,569 & \textbf{11,145} \\
-Ahirani & 5,501 & 5,534 & \textbf{11,035} \\
-Varhadi & 5,086 & 5,069 & \textbf{10,155} \\
+Southern Konkan & 5,838 & 5,576 & \textbf{11,414} \\
+Northern Konkan & 5,825 & 5,501 & \textbf{11,326} \\
+Varhadi & 5,330 & 5,086 & \textbf{10,416} \\
 \hline
-\textbf{Total (All 3 Dialects)} & \textbf{16,163} & \textbf{16,172} & \textbf{32,335} \\
+\textbf{Total (All 3 Dialects)} & \textbf{16,993} & \textbf{16,163} & \textbf{33,156} \\
 \hline
 \end{tabular}
 \end{table}
 
-As detailed in Table~\ref{tab:dataset_summary}, the synthetic augmentation pipeline contributed 16,172 high-quality verified parallel pairs, nearly perfectly doubling the original corpus to produce an expanded dataset of 32,335 samples.
+As detailed in Table~\ref{tab:dataset_summary}, the synthetic augmentation pipeline contributed 16,163 high-quality verified parallel pairs, nearly doubling the original corpus to produce an expanded dataset of 33,156 samples.
 The near-1:1 ratio between original and synthetic pairs across all three dialects demonstrates the consistency and reliability of the generation pipeline.
 
 \subsection{\textcolor{black}{Evaluation Partitioning Strategy}}
@@ -324,7 +324,7 @@ To ensure rigorous, unbiased evaluation and prevent data leakage during hyperpar
     \item \textbf{85\% Training Pool}: The remaining data is used for model training with 5-Fold Cross-Validation (80\% train / 20\% validation per fold). Fold-level validation metrics are used for hyperparameter selection and early stopping decisions.
 \end{itemize}
 
-This protocol is applied identically across all 8 dataset configurations: Malvani (Original), Ahirani (Original), Varhadi (Original), Multi-Dialect (Original), and their Synthetically Expanded counterparts.
+This protocol is applied identically across all 8 dataset configurations: Southern Konkan (Original), Northern Konkan (Original), Varhadi (Original), Multi-Dialect (Original), and their Synthetically Expanded counterparts.
 
 \subsection{\textcolor{black}{Evaluation Metrics}}
 
@@ -349,29 +349,27 @@ All results are reported using standardized automatic evaluation metrics compute
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Comprehensive Evaluation Matrix on \texttt{IISc\_RESPIN\_test\_mr} (2,170 Utterances)}}
 \label{tab:respin_comprehensive}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:l:c:c:c:c:c|}
 \hline
 \makecell[l]{\small\textbf{Model Scope}} & \makecell[l]{\small\textbf{Training Data}} & \makecell[l]{\small\textbf{Dialect}} & \makecell[c]{\small\textbf{Utts}} & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{5-8}
-& & & & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
+& & & & \makecell[c]{\small\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\small\textbf{WER ($\downarrow$)}} & \makecell[c]{\small\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\small\textbf{WER ($\downarrow$)}} \\
 \hline
-\multirow{6}{*}{Single-Dialect} & \multirow{3}{*}{Original} & Malvani & 559 & 57.80 & 74.43 & \textbf{43.86} & \textbf{75.04} \\
- & & Ahirani & 540 & 90.13 & 92.15 & \textbf{79.46} & \textbf{88.34} \\
- & & Varhadi & 516 & 83.59 & 88.62 & \textbf{74.81} & \textbf{85.20} \\
+\multirow{3}{*}{Single-Dialect} & \multirow{3}{*}{Original} & Southern Konkan & 559 & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
+ & & Northern Konkan & 540 & \textbf{90.13} & \textbf{6.46\%} & 79.46 & 11.95\% \\
+ & & Varhadi & 516 & \textbf{83.59} & \textbf{10.19\%} & 74.81 & 14.73\% \\
 \cline{2-8}
- & \multirow{3}{*}{Expanded} & Malvani & 559 & 24.06 & 53.15 & \textbf{44.36} & \textbf{76.85} \\
- & & Ahirani & 540 & 65.41 & 79.20 & \textbf{79.76} & \textbf{89.12} \\
- & & Varhadi & 516 & 67.97 & 81.45 & \textbf{76.90} & \textbf{87.60} \\
+ & \multirow{3}{*}{Expanded} & Southern Konkan & 559 & 24.06 & 60.32\% & \textbf{44.36} & \textbf{32.75\%} \\
+ & & Northern Konkan & 540 & 65.41 & 28.70\% & \textbf{79.76} & \textbf{12.61\%} \\
+ & & Varhadi & 516 & 67.97 & 25.43\% & \textbf{76.90} & \textbf{14.19\%} \\
 \hline
-\multirow{6}{*}{Multi-Dialect} & \multirow{3}{*}{Original} & Malvani & 559 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
- & & Ahirani & 540 & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
- & & Varhadi & 516 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
+\multirow{2}{*}{Multi-Dialect} & Original & Combined (All) & 2,170 & 62.98 & 30.13\% & \textbf{72.18} & \textbf{17.23\%} \\
 \cline{2-8}
- & \multirow{3}{*}{Expanded} & Malvani & 559 & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
- & & Ahirani & 540 & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
- & & Varhadi & 516 & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
+ & Expanded & Combined (All) & 2,170 & \textbf{76.50} & \textbf{16.23\%} & 73.48 & 16.58\% \\
 \hline
 \end{tabular}
+}
 \end{table}
 
 Key observations from Table~\ref{tab:respin_comprehensive} include:
@@ -394,8 +392,8 @@ Table~\ref{tab:wer_reductions_indicbart} and Table~\ref{tab:wer_reductions_mt5} 
 \hline
 \makecell[l]{\small\textbf{Sub-Dialect}} & \makecell[c]{\small\textbf{ASR Baseline}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{IndicBART}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Relative WER}\\\small\textbf{Drop (\%)}} \\
 \hline
-Malvani & 34.37 & 33.12 & $-$3.64 \\
-Ahirani & 24.14 & 14.82 & $-$38.61 \\
+Southern Konkan & 34.37 & 33.12 & $-$3.64 \\
+Northern Konkan & 24.14 & 14.82 & $-$38.61 \\
 Varhadi & 24.79 & 15.65 & $-$36.87 \\
 \hline
 \end{tabular}
@@ -411,8 +409,8 @@ Varhadi & 24.79 & 15.65 & $-$36.87 \\
 \hline
 \makecell[l]{\small\textbf{Sub-Dialect}} & \makecell[c]{\small\textbf{ASR Baseline}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{mT5-Small}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Relative WER}\\\small\textbf{Drop (\%)}} \\
 \hline
-Malvani & 34.37 & \textbf{32.75} & \textbf{$-$4.71} \\
-Ahirani & 24.14 & \textbf{12.61} & \textbf{$-$47.76} \\
+Southern Konkan & 34.37 & \textbf{32.75} & \textbf{$-$4.71} \\
+Northern Konkan & 24.14 & \textbf{12.61} & \textbf{$-$47.76} \\
 Varhadi & 24.79 & \textbf{14.19} & \textbf{$-$42.76} \\
 \hline
 \end{tabular}
@@ -420,9 +418,9 @@ Varhadi & 24.79 & \textbf{14.19} & \textbf{$-$42.76} \\
 
 Both fine-tuned text normalizers achieve substantial relative WER reductions over initial ASR output, with \texttt{mT5-small} consistently outperforming \texttt{IndicBART}:
 \begin{itemize}
-    \item \textbf{Ahirani}: \texttt{mT5-small} reduces ASR WER from 24.14\% to \textbf{12.61\%} (\textbf{$-$47.76\% relative reduction}), outperforming \texttt{IndicBART} (14.82\% WER, $-$38.61\% reduction).
+    \item \textbf{Northern Konkan}: \texttt{mT5-small} reduces ASR WER from 24.14\% to \textbf{12.61\%} (\textbf{$-$47.76\% relative reduction}), outperforming \texttt{IndicBART} (14.82\% WER, $-$38.61\% reduction).
     \item \textbf{Varhadi}: \texttt{mT5-small} reduces WER from 24.79\% to \textbf{14.19\%} (\textbf{$-$42.76\% relative reduction}) vs.\ \texttt{IndicBART} (15.65\% WER, $-$36.87\% reduction).
-    \item \textbf{Malvani}: \texttt{mT5-small} reduces WER from 34.37\% to \textbf{32.75\%} (\textbf{$-$4.71\% relative reduction}) vs.\ \texttt{IndicBART} (33.12\% WER, $-$3.64\% reduction).
+    \item \textbf{Southern Konkan}: \texttt{mT5-small} reduces WER from 34.37\% to \textbf{32.75\%} (\textbf{$-$4.71\% relative reduction}) vs.\ \texttt{IndicBART} (33.12\% WER, $-$3.64\% reduction).
 \end{itemize}
 
 \subsection{\textcolor{black}{Benchmark Results on Original Datasets}}
@@ -435,17 +433,19 @@ Table~\ref{tab:results_original_single} presents the performance matrix on 5-fol
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: Single-Dialect Models}}
 \label{tab:results_original_single}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
 & & & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
 \makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Malvani & 5,576 & 836 & 48.52 & 78.49 & 46.31 & 74.43 \\
-Ahirani & 5,501 & 825 & 47.29 & 66.84 & \textbf{60.31} & \textbf{77.34} \\
+Southern Konkan & 5,576 & 836 & 48.52 & 78.49 & 46.31 & 74.43 \\
+Northern Konkan & 5,501 & 825 & 47.29 & 66.84 & \textbf{60.31} & \textbf{77.34} \\
 Varhadi & 5,086 & 762 & 72.87 & 85.72 & \textbf{80.99} & \textbf{91.21} \\
 \hline
 \end{tabular}
+}
 \end{table}
 
 \begin{table}[t]
@@ -454,17 +454,19 @@ Varhadi & 5,086 & 762 & 72.87 & 85.72 & \textbf{80.99} & \textbf{91.21} \\
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: Multi-Dialect Dialectwise Breakdown}}
 \label{tab:results_original_multidialect}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
 & & & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Malvani & 16,163 & 836 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
-Ahirani & 16,163 & 798 & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
+Southern Konkan & 16,163 & 836 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
+Northern Konkan & 16,163 & 798 & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
 Varhadi & 16,163 & 790 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
 \hline
 \end{tabular}
+}
 \end{table}
 
 \subsection{\textcolor{black}{Benchmark Results on Synthetically Expanded Datasets}}
@@ -477,17 +479,19 @@ Table~\ref{tab:results_expanded_single} presents the performance matrix on synth
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: Single-Dialect Models}}
 \label{tab:results_expanded_single}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
 & & & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
 \makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Malvani & 11,145 & 1,671 & 47.25 & 64.69 & \textbf{65.10} & \textbf{82.88} \\
-Ahirani & 11,035 & 1,655 & 40.51 & 62.21 & \textbf{62.07} & \textbf{79.29} \\
+Southern Konkan & 11,145 & 1,671 & 47.25 & 64.69 & \textbf{65.10} & \textbf{82.88} \\
+Northern Konkan & 11,035 & 1,655 & 40.51 & 62.21 & \textbf{62.07} & \textbf{79.29} \\
 Varhadi & 10,155 & 1,523 & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \hline
 \end{tabular}
+}
 \end{table}
 
 \begin{table}[t]
@@ -496,17 +500,19 @@ Varhadi & 10,155 & 1,523 & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: Multi-Dialect Dialectwise Breakdown}}
 \label{tab:results_expanded_multidialect}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
 & & & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Malvani & 32,335 & 1,710 & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
-Ahirani & 32,335 & 1,627 & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
+Southern Konkan & 32,335 & 1,710 & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
+Northern Konkan & 32,335 & 1,627 & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
 Varhadi & 32,335 & 1,513 & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
 \hline
 \end{tabular}
+}
 \end{table}
 
 % \subsection{\textcolor{black}{Qualitative Prediction Analysis}}
@@ -551,19 +557,21 @@ IndicBART benefits substantially from augmentation on the multi-dialect task (+8
 \renewcommand{\arraystretch}{1.25}
 \caption{\textcolor{black}{Impact of Synthetic Data Augmentation: Original vs.\ Synthetically Expanded Data BLEU Change}}
 \label{tab:augmentation_impact}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
 & \multicolumn{3}{c:}{\textbf{IndicBART BLEU}} & \multicolumn{3}{c|}{\textbf{mT5-Small BLEU}} \\
 \cline{2-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ \\
 \hline
-Malvani & 26.21 & 52.06 & +25.85 & 48.28 & \textbf{66.62} & +18.34 \\
-Ahirani & 47.59 & 49.08 & +1.49 & 62.35 & \textbf{62.72} & +0.37 \\
+Southern Konkan & 26.21 & 52.06 & +25.85 & 48.28 & \textbf{66.62} & +18.34 \\
+Northern Konkan & 47.59 & 49.08 & +1.49 & 62.35 & \textbf{62.72} & +0.37 \\
 Varhadi & 72.75 & 70.27 & $-$2.48 & 79.57 & \textbf{78.73} & $-$0.84 \\
 \hline
 \textbf{Multi-Dialect} & \textbf{48.17} & \textbf{57.12} & \textbf{+8.95} & \textbf{63.29} & \textbf{69.51} & \textbf{+6.22} \\
 \hline
 \end{tabular}
+}
 \end{table}
 
 
@@ -581,6 +589,7 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Impact of Multi-Tier Verification Engine: Raw Unverified vs.\ Filtered Clean Synthetic Data}}
 \label{tab:verification_ablation}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:c:c:c:c:c|}
 \hline
 \makecell[l]{\small\textbf{Model}} & \makecell[l]{\small\textbf{Pipeline State}} & \makecell[c]{\small\textbf{Total Pairs}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{$\Delta$ BLEU}} & \makecell[c]{\small\textbf{$\Delta$ chrF++}} \\
@@ -592,6 +601,7 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
  & Filtered Clean Data & 32,335 & \textbf{73.48} & \textbf{87.70} & Baseline & Baseline \\
 \hline
 \end{tabular}
+}
 \end{table}
 
 Key findings and insights from this evaluation include:
@@ -627,11 +637,11 @@ Key findings and insights from this evaluation include:
 % \end{table}
 
 The extremely low standard deviation in test BLEU (0.13) and chrF++ (0.05) across folds demonstrates that model performance is robust and not an artifact of a single favorable train-test partition.
-Per-dialect fold-level analysis further confirms stable per-dialect breakdown: Malvani (66.62 $\pm$ 0.18 BLEU), Ahirani (62.72 $\pm$ 0.19 BLEU), and Varhadi (78.73 $\pm$ 0.11 BLEU), reinforcing the consistent difficulty hierarchy Varhadi $<$ Ahirani $<$ Malvani across all folds.
+Per-dialect fold-level analysis further confirms stable per-dialect breakdown: Southern Konkan (66.62 $\pm$ 0.18 BLEU), Northern Konkan (62.72 $\pm$ 0.19 BLEU), and Varhadi (78.73 $\pm$ 0.11 BLEU), reinforcing the consistent difficulty hierarchy Varhadi $<$ Northern Konkan $<$ Southern Konkan across all folds.
 
-Critically, cross-dialect joint training in the synthetically expanded multi-dialect configuration provides a significant boost to IndicBART's per-dialect sub-scores: Malvani reaches 52.15 BLEU (+3.63 over single-dialect IndicBART model) and Ahirani reaches 54.35 BLEU (+7.06 over single-dialect model), suggesting that cross-dialect transfer learning benefits models with smaller, more linguistically focused vocabularies.
+Critically, cross-dialect joint training in the synthetically expanded multi-dialect configuration provides a significant boost to IndicBART's per-dialect sub-scores: Southern Konkan reaches 52.15 BLEU (+3.63 over single-dialect IndicBART model) and Northern Konkan reaches 54.35 BLEU (+7.06 over single-dialect model), suggesting that cross-dialect transfer learning benefits models with smaller, more linguistically focused vocabularies.
 
-An important observation is that IndicBART's single-dialect performance \textit{decreases} for Malvani and Ahirani when moving from original to synthetically expanded data, while mT5 improves dramatically.
+An important observation is that IndicBART's single-dialect performance \textit{decreases} for Southern Konkan and Northern Konkan when moving from original to synthetically expanded data, while mT5 improves dramatically.
 This suggests that the synthetic data distribution may slightly deviate from the original distribution in ways that IndicBART's narrower vocabulary cannot accommodate, while mT5's broader subword coverage absorbs the distributional shift effectively.
 
 \subsection{\textcolor{black}{Model Architecture Analysis}}
@@ -699,15 +709,6 @@ Expanded chrF++ & 75.49 & \textbf{84.58} (+9.09) \\
 % The agricultural example illustrates nuanced behavior on Varhadi interrogative normalization.
 % The model correctly preserves the Varhadi interrogative form \emph{काऊन} (``why'') and produces semantically equivalent output, differing from the gold reference only in the optional sentence-final question particle \emph{का?}---a legitimate stylistic variation in Standard Marathi.
 
-\subsection{\textcolor{black}{Dialect Difficulty Hierarchy}}
-
-Based on the normalization metrics, we establish a clear dialect difficulty hierarchy for the three target Marathi dialects:
-
-\begin{enumerate}
-    \item \textbf{Easiest: Varhadi}: Achieves the highest normalization scores (80.99 BLEU, 91.21 chrF++ on original mT5). Varhadi transformations are predominantly systematic suffix and interrogative modifications with high regularity, making them amenable to sequence-to-sequence learning even with modest training data.
-    \item \textbf{Moderate: Ahirani}: Shows strong improvement with mT5 (60.31 BLEU on original data, 62.07 on expanded data) but remains challenging due to heavy consonant shifts and Gujarati/Bhili lexical influence that introduce non-Marathi subword patterns.
-    \item \textbf{Hardest: Malvani}: Requires substantial synthetic data expansion (jumping from 46.31 to 65.10 BLEU on mT5) due to phonetic shortening, Konkani lexical overlap, and palatalization patterns that create ambiguous surface forms.
-\end{enumerate}
 
 % ===================================================================
 \section{\textcolor{black}{Conclusion}}
@@ -731,7 +732,7 @@ This work has several limitations that should be acknowledged:
 
 \subsection{\textcolor{black}{Data and Code Availability}}
 
-The complete parallel corpus of 32,335 verified dialect--standard Marathi sentence pairs, along with all training code, evaluation scripts, and pre-trained model checkpoints, will be publicly released upon publication.
+The complete parallel corpus of 32,335 verified dialect--Standard Marathi sentence pairs, along with all training code, evaluation scripts, and pre-trained model checkpoints, will be publicly released upon publication.
 The dataset will be available under an open license to support reproducible research in Indic dialect normalization.
 Our synthetic data generation pipeline, multi-tier verification engine, and fine-tuning configurations are documented in the accompanying code repository to enable replication and extension to additional Marathi sub-dialects and other low-resource Indic language varieties.
 

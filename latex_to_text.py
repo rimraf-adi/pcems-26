@@ -35,6 +35,27 @@ def strip_latex(text: str) -> str:
     
     return text.strip()
 
+def chunk_text(text: str, chunk_size: int = 2000) -> str:
+    """Chunks text into paragraphs of up to chunk_size characters, breaking at word boundaries."""
+    words = text.split()
+    chunks = []
+    current_chunk = []
+    current_length = 0
+    
+    for word in words:
+        if current_length + len(word) + 1 > chunk_size and current_chunk:
+            chunks.append(' '.join(current_chunk))
+            current_chunk = [word]
+            current_length = len(word)
+        else:
+            current_chunk.append(word)
+            current_length += len(word) + 1
+            
+    if current_chunk:
+        chunks.append(' '.join(current_chunk))
+        
+    return '\n\n'.join(chunks)
+
 def main():
     parser = argparse.ArgumentParser(description="Convert a LaTeX (.tex) file to a plain text (.txt) file.")
     parser.add_argument("input_file", help="Path to the input .tex file")
@@ -50,6 +71,7 @@ def main():
         content = f.read()
         
     plain_text = strip_latex(content)
+    chunked_text = chunk_text(plain_text, 2000)
     
     # Determine output file path
     out_path = args.output_file
@@ -58,7 +80,7 @@ def main():
         out_path = base_name + ".txt"
         
     with open(out_path, 'w', encoding='utf-8') as f:
-        f.write(plain_text)
+        f.write(chunked_text)
         
     print(f"✅ Successfully converted '{args.input_file}' to plain text.")
     print(f"📄 Output saved to: {out_path}")
