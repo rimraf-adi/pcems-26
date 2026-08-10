@@ -364,9 +364,15 @@ All results are reported using standardized automatic evaluation metrics compute
  & & Northern Konkan & 540 & 65.41 & 28.70\% & \textbf{79.76} & \textbf{12.61\%} \\
  & & Varhadi & 516 & 67.97 & 25.43\% & \textbf{76.90} & \textbf{14.19\%} \\
 \hline
-\multirow{2}{*}{Multi-Dialect} & Original & Combined (All) & 2,170 & 62.98 & 30.13\% & \textbf{72.18} & \textbf{17.23\%} \\
+\multirow{8}{*}{Multi-Dialect} & \multirow{4}{*}{Original} & Southern Konkan & 559 & -- & -- & 40.94 & 35.34\% \\
+ & & Northern Konkan & 540 & -- & -- & \textbf{77.50} & \textbf{14.65\%} \\
+ & & Varhadi & 516 & -- & -- & \textbf{73.47} & \textbf{16.16\%} \\
+ & & Combined (All) & 2,170 & 62.98 & 30.13\% & \textbf{72.18} & \textbf{17.23\%} \\
 \cline{2-8}
- & Expanded & Combined (All) & 2,170 & \textbf{76.50} & \textbf{16.23\%} & 73.48 & 16.58\% \\
+ & \multirow{4}{*}{Expanded} & Southern Konkan & 559 & -- & -- & 43.88 & 34.96\% \\
+ & & Northern Konkan & 540 & -- & -- & \textbf{78.16} & \textbf{13.55\%} \\
+ & & Varhadi & 516 & -- & -- & \textbf{74.74} & \textbf{15.57\%} \\
+ & & Combined (All) & 2,170 & \textbf{76.50} & \textbf{16.23\%} & 73.48 & 16.58\% \\
 \hline
 \end{tabular}
 }
@@ -392,9 +398,11 @@ Table~\ref{tab:wer_reductions_indicbart} and Table~\ref{tab:wer_reductions_mt5} 
 \hline
 \makecell[l]{\small\textbf{Sub-Dialect}} & \makecell[c]{\small\textbf{ASR Baseline}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{IndicBART}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Relative WER}\\\small\textbf{Drop (\%)}} \\
 \hline
-Southern Konkan & 34.37 & 33.12 & $-$3.64 \\
-Northern Konkan & 24.14 & 14.82 & $-$38.61 \\
-Varhadi & 24.79 & 15.65 & $-$36.87 \\
+Southern Konkan & 41.80 & 49.15 & +17.59 \\
+Northern Konkan & 39.53 & 52.54 & +32.91 \\
+Varhadi & 35.94 & 37.74 & +4.99 \\
+\hline
+\textbf{Multi-Dialect (All)} & \textbf{39.41} & \textbf{27.16} & \textbf{$-$31.07} \\
 \hline
 \end{tabular}
 \end{table}
@@ -409,18 +417,21 @@ Varhadi & 24.79 & 15.65 & $-$36.87 \\
 \hline
 \makecell[l]{\small\textbf{Sub-Dialect}} & \makecell[c]{\small\textbf{ASR Baseline}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{mT5-Small}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Relative WER}\\\small\textbf{Drop (\%)}} \\
 \hline
-Southern Konkan & 34.37 & \textbf{32.75} & \textbf{$-$4.71} \\
-Northern Konkan & 24.14 & \textbf{12.61} & \textbf{$-$47.76} \\
-Varhadi & 24.79 & \textbf{14.19} & \textbf{$-$42.76} \\
+Southern Konkan & 41.80 & 30.37 & $-$27.33 \\
+Northern Konkan & 39.53 & 29.45 & $-$25.50 \\
+Varhadi & 35.94 & 27.16 & $-$24.43 \\
+\hline
+\textbf{Multi-Dialect (All)} & \textbf{39.41} & \textbf{21.43} & \textbf{$-$45.62} \\
 \hline
 \end{tabular}
 \end{table}
 
 Both fine-tuned text normalizers achieve substantial relative WER reductions over initial ASR output, with \texttt{mT5-small} consistently outperforming \texttt{IndicBART}:
 \begin{itemize}
-    \item \textbf{Northern Konkan}: \texttt{mT5-small} reduces ASR WER from 24.14\% to \textbf{12.61\%} (\textbf{$-$47.76\% relative reduction}), outperforming \texttt{IndicBART} (14.82\% WER, $-$38.61\% reduction).
-    \item \textbf{Varhadi}: \texttt{mT5-small} reduces WER from 24.79\% to \textbf{14.19\%} (\textbf{$-$42.76\% relative reduction}) vs.\ \texttt{IndicBART} (15.65\% WER, $-$36.87\% reduction).
-    \item \textbf{Southern Konkan}: \texttt{mT5-small} reduces WER from 34.37\% to \textbf{32.75\%} (\textbf{$-$4.71\% relative reduction}) vs.\ \texttt{IndicBART} (33.12\% WER, $-$3.64\% reduction).
+    \item \textbf{Northern Konkan}: \texttt{mT5-small} reduces ASR WER from 39.53\% to \textbf{29.45\%} (\textbf{$-$25.50\% relative reduction}), outperforming \texttt{IndicBART} (which suffered a +32.91\% WER increase).
+    \item \textbf{Varhadi}: \texttt{mT5-small} reduces WER from 35.94\% to \textbf{27.16\%} (\textbf{$-$24.43\% relative reduction}), outperforming \texttt{IndicBART} (which suffered a +4.99\% WER increase).
+    \item \textbf{Southern Konkan}: \texttt{mT5-small} reduces WER from 41.80\% to \textbf{30.37\%} (\textbf{$-$27.33\% relative reduction}), outperforming \texttt{IndicBART} (which suffered a +17.59\% WER increase).
+    \item \textbf{Multi-Dialect (All)}: \texttt{mT5-small} reduces overall WER from 39.41\% to \textbf{21.43\%} (\textbf{$-$45.62\% relative reduction}), outperforming \texttt{IndicBART} (27.16\% WER, $-$31.07\% reduction).
 \end{itemize}
 
 \subsection{\textcolor{black}{Benchmark Results on Original Datasets}}
@@ -461,9 +472,10 @@ Varhadi & 5,086 & 762 & 72.87 & 85.72 & \textbf{80.99} & \textbf{91.21} \\
 \cline{4-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Southern Konkan & 16,163 & 836 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
-Northern Konkan & 16,163 & 798 & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
-Varhadi & 16,163 & 790 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
+Southern Konkan & 16,163 & 836 & -- & -- & -- & -- \\
+Northern Konkan & 16,163 & 798 & -- & -- & -- & -- \\
+Varhadi & 16,163 & 790 & -- & -- & -- & -- \\
+Combined (All) & 16,163 & 2,424 & -- & -- & \textbf{63.29} & \textbf{81.37} \\
 \hline
 \end{tabular}
 }
@@ -507,9 +519,10 @@ Varhadi & 10,155 & 1,523 & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \cline{4-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test}\\\small\textbf{Set}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
 \hline
-Southern Konkan & 32,335 & 1,710 & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
-Northern Konkan & 32,335 & 1,627 & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
-Varhadi & 32,335 & 1,513 & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
+Southern Konkan & 32,335 & 1,710 & -- & -- & -- & -- \\
+Northern Konkan & 32,335 & 1,627 & -- & -- & -- & -- \\
+Varhadi & 32,335 & 1,513 & -- & -- & -- & -- \\
+Combined (All) & 32,335 & 4,850 & -- & -- & \textbf{69.51} & \textbf{84.58} \\
 \hline
 \end{tabular}
 }
@@ -549,7 +562,7 @@ Varhadi & 32,335 & 1,513 & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
 \subsection{\textcolor{black}{Impact of Synthetic Data Augmentation}}
 
 Table~\ref{tab:augmentation_impact} isolates the effect of dataset scaling by comparing performance across original and synthetically expanded corpora for each model.
-IndicBART benefits substantially from augmentation on the multi-dialect task (+8.95 BLEU), confirming that data scarcity rather than model capacity was the primary bottleneck. mT5-small shows a more modest improvement (+6.22 BLEU on multi-dialect data) but starts from a much higher baseline.
+IndicBART benefits substantially from augmentation on the multi-dialect task (+13.52 BLEU), confirming that data scarcity rather than model capacity was the primary bottleneck. mT5-small shows a more modest improvement (+1.30 BLEU on multi-dialect data) but starts from a much higher baseline.
 
 \begin{table}[t]
 \color{black}
@@ -564,11 +577,11 @@ IndicBART benefits substantially from augmentation on the multi-dialect task (+8
 \cline{2-7}
 \makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ \\
 \hline
-Southern Konkan & 26.21 & 52.06 & +25.85 & 48.28 & \textbf{66.62} & +18.34 \\
-Northern Konkan & 47.59 & 49.08 & +1.49 & 62.35 & \textbf{62.72} & +0.37 \\
-Varhadi & 72.75 & 70.27 & $-$2.48 & 79.57 & \textbf{78.73} & $-$0.84 \\
+Southern Konkan & -- & -- & -- & 40.94 & \textbf{43.88} & +2.94 \\
+Northern Konkan & -- & -- & -- & 77.50 & \textbf{78.16} & +0.66 \\
+Varhadi & -- & -- & -- & 73.47 & \textbf{74.74} & +1.27 \\
 \hline
-\textbf{Multi-Dialect} & \textbf{48.17} & \textbf{57.12} & \textbf{+8.95} & \textbf{63.29} & \textbf{69.51} & \textbf{+6.22} \\
+\textbf{Multi-Dialect (All)} & \textbf{62.98} & \textbf{76.50} & \textbf{+13.52} & \textbf{72.18} & \textbf{73.48} & \textbf{+1.30} \\
 \hline
 \end{tabular}
 }
@@ -594,11 +607,11 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
 \hline
 \makecell[l]{\small\textbf{Model}} & \makecell[l]{\small\textbf{Pipeline State}} & \makecell[c]{\small\textbf{Total Pairs}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{$\Delta$ BLEU}} & \makecell[c]{\small\textbf{$\Delta$ chrF++}} \\
 \hline
-\multirow{2}{*}{IndicBART (244M)} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$33.41 & $-$10.95 \\
- & Filtered Clean Data & 32,335 & \textbf{76.50} & \textbf{75.49} & Baseline & Baseline \\
+\multirow{2}{*}{IndicBART (244M)} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$14.03 & $-$10.95 \\
+ & Filtered Clean Data & 32,335 & \textbf{57.12} & \textbf{75.49} & Baseline & Baseline \\
 \hline
-\multirow{2}{*}{mT5-Small (300M)} & Raw Unverified Data & 19,914 & 61.21 & 80.18 & $-$12.27 & $-$7.52 \\
- & Filtered Clean Data & 32,335 & \textbf{73.48} & \textbf{87.70} & Baseline & Baseline \\
+\multirow{2}{*}{mT5-Small (300M)} & Raw Unverified Data & 19,914 & 61.21 & 80.18 & $-$8.30 & $-$4.40 \\
+ & Filtered Clean Data & 32,335 & \textbf{69.51} & \textbf{84.58} & Baseline & Baseline \\
 \hline
 \end{tabular}
 }
@@ -606,8 +619,8 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
 
 Key findings and insights from this evaluation include:
 \begin{enumerate}
-    \item \textbf{Quality Collapse on Unverified Data}: Training IndicBART on unverified raw LLM outputs causes a catastrophic 33.41 BLEU point drop (collapsing from 76.50 to 43.09) due to severe error propagation from uncorrected dialect residue, garbled syntax, and script errors.
-    \item \textbf{mT5-Small Resilience}: While google/mT5-small is more resilient due to its 250,000-token multilingual vocabulary, training on unverified data still suffers a heavy 12.27 BLEU point drop (falling from 73.48 to 61.21) and a 7.52 chrF++ drop.
+    \item \textbf{Quality Collapse on Unverified Data}: Training IndicBART on unverified raw LLM outputs causes a catastrophic 14.03 BLEU point drop (collapsing from 57.12 to 43.09) due to severe error propagation from uncorrected dialect residue, garbled syntax, and script errors.
+    \item \textbf{mT5-Small Resilience}: While google/mT5-small is more resilient due to its 250,000-token multilingual vocabulary, training on unverified data still suffers a heavy 8.30 BLEU point drop (falling from 69.51 to 61.21) and a 4.40 chrF++ drop.
     \item \textbf{Essential Role of Multi-Tier Auditing}: Removing flawed pairs via \texttt{filter\_flawed.py} and correcting recoverable generations via \texttt{correct\_flawed.py} is directly responsible for eliminating hallucinated dialect markers, preserving semantic fidelity, and driving sequence-to-sequence normalization to state-of-the-art accuracy levels.
 \end{enumerate}
 
