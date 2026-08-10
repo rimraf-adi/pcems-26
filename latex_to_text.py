@@ -35,24 +35,13 @@ def strip_latex(text: str) -> str:
     
     return text.strip()
 
-def chunk_text(text: str, chunk_size: int = 2000) -> str:
-    """Chunks text into paragraphs of up to chunk_size characters, breaking at word boundaries."""
+def chunk_text(text: str, max_words: int = 2000) -> str:
+    """Chunks text into paragraphs of up to max_words words."""
     words = text.split()
     chunks = []
-    current_chunk = []
-    current_length = 0
     
-    for word in words:
-        if current_length + len(word) + 1 > chunk_size and current_chunk:
-            chunks.append(' '.join(current_chunk))
-            current_chunk = [word]
-            current_length = len(word)
-        else:
-            current_chunk.append(word)
-            current_length += len(word) + 1
-            
-    if current_chunk:
-        chunks.append(' '.join(current_chunk))
+    for i in range(0, len(words), max_words):
+        chunks.append(' '.join(words[i:i + max_words]))
         
     return '\n\n'.join(chunks)
 
@@ -60,6 +49,7 @@ def main():
     parser = argparse.ArgumentParser(description="Convert a LaTeX (.tex) file to a plain text (.txt) file.")
     parser.add_argument("input_file", help="Path to the input .tex file")
     parser.add_argument("-o", "--output_file", help="Path to the output .txt file (Optional, defaults to input filename with .txt)")
+    parser.add_argument("-w", "--words", type=int, default=2000, help="Maximum number of words per paragraph chunk (default: 2000)")
     
     args = parser.parse_args()
     
@@ -71,7 +61,7 @@ def main():
         content = f.read()
         
     plain_text = strip_latex(content)
-    chunked_text = chunk_text(plain_text, 2000)
+    chunked_text = chunk_text(plain_text, args.words)
     
     # Determine output file path
     out_path = args.output_file
