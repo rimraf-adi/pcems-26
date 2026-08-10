@@ -209,7 +209,7 @@ def generate_fig3():
 # FIGURE 4: Single-Dialect 5-Fold Cross-Validation Matrix (Table 4 & Table 6)
 # ==============================================================================
 # ==============================================================================
-# FIGURE 4 OPTIONS: Dumbbell, Slope, Radar, and Grouped Bar
+# FIGURE 4: Single-Dialect 5-Fold Cross-Validation (Table 4 & Table 6)
 # ==============================================================================
 def generate_fig4():
     print("Generating Figure 4: Single-Dialect Cross-Validation Vertical Grouped Bar Chart...")
@@ -223,14 +223,14 @@ def generate_fig4():
     mt5_orig = [46.31, 60.31, 80.99]
     mt5_exp  = [65.10, 62.07, 78.89]
     
-    fig, axes = plt.subplots(2, 1, figsize=(11.0, 7.8), dpi=300)
+    fig, axes = plt.subplots(2, 1, figsize=(11.0, 5.8), dpi=300)
     
     # Subplot A: IndicBART (244M)
     rects1 = axes[0].bar(x - width/2, ib_orig, width, label='Original', color='#2b5c8f', edgecolor='black', linewidth=1.1)
     rects2 = axes[0].bar(x + width/2, ib_exp, width, label='Synthetically Expanded', color='#41b6c4', edgecolor='black', linewidth=1.1)
     
     axes[0].set_ylabel('5-Fold CV BLEU Score', fontsize=12, fontweight='bold')
-    axes[0].set_title('A. IndicBART (244M) Single-Dialect CV BLEU', fontsize=13, fontweight='bold', pad=12)
+    axes[0].set_title('A. IndicBART (244M) Single-Dialect CV BLEU', fontsize=13, fontweight='bold', pad=10)
     axes[0].set_xticks(x)
     axes[0].set_xticklabels(dialects, fontsize=11.5, fontweight='bold')
     axes[0].set_ylim(0, 98)
@@ -249,7 +249,7 @@ def generate_fig4():
     rects4 = axes[1].bar(x + width/2, mt5_exp, width, label='Synthetically Expanded', color='#fe9929', edgecolor='black', linewidth=1.1)
     
     axes[1].set_ylabel('5-Fold CV BLEU Score', fontsize=12, fontweight='bold')
-    axes[1].set_title('B. mT5-Small (300M) Single-Dialect CV BLEU', fontsize=13, fontweight='bold', pad=12)
+    axes[1].set_title('B. mT5-Small (300M) Single-Dialect CV BLEU', fontsize=13, fontweight='bold', pad=10)
     axes[1].set_xticks(x)
     axes[1].set_xticklabels(dialects, fontsize=11.5, fontweight='bold')
     axes[1].set_ylim(0, 98)
@@ -294,7 +294,7 @@ def generate_fig5():
     ib_delta  = [25.85, 1.49, -2.48]
     mt5_delta = [18.34, 0.37, -0.84]
     
-    fig, axes = plt.subplots(2, 1, figsize=(11.0, 8.2), dpi=300)
+    fig, axes = plt.subplots(2, 1, figsize=(11.0, 5.8), dpi=300)
     
     # Subplot A: Absolute BLEU Scores across Multi-Dialect Models
     rects1 = axes[0].bar(x - 1.5*width, ib_orig, width, label='IndicBART (Original)', color='#2b5c8f', edgecolor='black', linewidth=1.1)
@@ -303,7 +303,7 @@ def generate_fig5():
     rects4 = axes[0].bar(x + 1.5*width, mt5_exp, width, label='mT5-Small (Expanded)', color='#fe9929', edgecolor='black', linewidth=1.1)
     
     axes[0].set_ylabel('5-Fold CV BLEU Score', fontsize=12, fontweight='bold')
-    axes[0].set_title('A. Multi-Dialect Performance Matrix (BLEU)', fontsize=13, fontweight='bold', pad=12)
+    axes[0].set_title('A. Multi-Dialect Performance Matrix (BLEU)', fontsize=13, fontweight='bold', pad=10)
     axes[0].set_xticks(x)
     axes[0].set_xticklabels(dialects, fontsize=11.5, fontweight='bold')
     axes[0].set_ylim(0, 98)
@@ -322,7 +322,7 @@ def generate_fig5():
     
     axes[1].axhline(0, color='black', linewidth=1.2, linestyle='-')
     axes[1].set_ylabel('Net BLEU Gain (Δ BLEU)', fontsize=12, fontweight='bold')
-    axes[1].set_title('B. Synthetic Expansion Net Impact Across Dialects', fontsize=13, fontweight='bold', pad=12)
+    axes[1].set_title('B. Synthetic Expansion Net Impact Across Dialects', fontsize=13, fontweight='bold', pad=10)
     axes[1].set_xticks(x)
     axes[1].set_xticklabels(dialects, fontsize=11.5, fontweight='bold')
     axes[1].set_ylim(-6, 32)
