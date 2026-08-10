@@ -68,48 +68,27 @@ Our core contributions are:
 \section{\textcolor{black}{Related Work}}
 \label{sec:related}
 
-% ===================================================================
-\section{\textcolor{black}{Related Work}}
-\label{sec:related}
+\subsection{\textcolor{black}{Text Transduction in Historical and User-Generated Corpora}}
 
-\subsection{\textcolor{black}{Historical and User-Generated Text Normalization}}
+Text normalization traditionally addresses two main forms of orthographic non-standardness: archaic spelling variation in historical manuscripts and unconstrained noise in digital User-Generated Content (UGC). Early historical normalization relied heavily on Levenshtein alignment, dictionary lookup, and Character-level Statistical Machine Translation (CSMT) \cite{pettersson2014multilingual,scherrer2016normalising}. Subsequent evaluations across European languages demonstrated that subword tokenization via Byte-Pair Encoding (BPE) and sentence-level contextual modeling significantly reduce disambiguation errors compared to character-level transducers \cite{tang2018evaluation,bollmann2019historical,bawden2022automatic}.
 
-Text normalization encompasses both historical spelling modernization and the transduction of User-Generated Content (UGC).
-Early comparative evaluations by Pettersson et al. \cite{pettersson2014multilingual} and Scherrer and Erjavec \cite{scherrer2016normalising} established Character-level Statistical Machine Translation (CSMT) as an effective baseline for modernizing archaic European text.
-Multilingual evaluations by Tang et al. \cite{tang2018evaluation} and Bollmann \cite{bollmann2019historical} across seven languages revealed that subword modeling via Byte-Pair Encoding (BPE) consistently outperforms character-level models, while Bawden et al. \cite{bawden2022automatic} confirmed that sentence-level context resolves ambiguous historical spelling variants.
+In the domain of digital communication (SMS, social media platforms, and online forums), orthographic noise exhibits complex combinations of informal slang, phonetic abbreviations, creative spellings, and unconstrained typos \cite{declercq2013normalization,matosveliz2019data}. Methodological paradigms transitioned from candidate edit-operation rankers like MoNoise \cite{vandergoot2019monoise} to standardized multilingual benchmarks such as MultiLexNorm \cite{vandergoot2021multilexnorm}, which confirmed that pre-processing via lexical normalization directly improves downstream dependency parsing and POS tagging. Recent work demonstrates that fine-tuning pre-trained byte-level models (byT5) and subword text-to-text transformers outperforms traditional statistical edit models for word-level sequence transduction \cite{samuel2021ufal,xue2021mt5}.
 
-In digital social media text, De Clercq et al. \cite{declercq2013normalization} demonstrated that combining character- and word-level SMT architectures addresses informal slang and phonetic typos.
-Matos Veliz et al. \cite{matosveliz2019data} showed that data augmentation is vital for enabling neural models to normalize noisy user input.
-Frameworks such as MoNoise \cite{vandergoot2019monoise} modeled noisy text as edit operations, while the MultiLexNorm benchmark \cite{vandergoot2021multilexnorm} confirmed that lexical normalization directly enhances downstream parsing and POS tagging.
-Samuel and Straka \cite{samuel2021ufal} further established the efficacy of fine-tuning byte-level architectures (byT5 \cite{xue2021mt5}) for word-level sequence transduction.
+\subsection{\textcolor{black}{Regional Dialect Standardization across Language Families}}
 
-\subsection{\textcolor{black}{Global Dialect-to-Standard Text Normalization}}
+Unlike UGC normalization, dialect-to-standard normalization maps coherent, systematic regional variations---encompassing distinct phonological, lexical, and morpho-syntactic features---into normative standard registers. In European languages, initial efforts benchmarked CSMT and statistical phrase-based models on Swiss German \cite{scherrer2016swiss}, which were subsequently surpassed by neural sequence-to-sequence architectures and pre-trained language models like \texttt{mT5-small} \cite{lusetti2018impact,kresic2024normalizing}. Similar neural transduction approaches have been developed for Finnish, Swedish, and Estonian dialects \cite{partanen2019dialect,hamalainen2020normalizing,hamalainen2022generating}. A broad multi-lingual study across four language families by Kuparinen et al. \cite{kuparinen2023dialect} established that fine-tuning sequence-to-sequence transformers systematically outperforms rule-based and SMT baselines.
 
-Dialect-to-standard normalization transduces non-standard regional varieties into normative standard forms.
-In European languages, Scherrer and Ljube{\v{s}}i{\'c} \cite{scherrer2016swiss} applied CSMT to Swiss German, demonstrating that sentence context resolves ambiguous dialectal word forms, while Lusetti et al. \cite{lusetti2018impact} showed neural encoder-decoder architectures surpass SMT when augmented with target language models.
-Kresic and Abbas \cite{kresic2024normalizing} benchmarked \texttt{mT5-small} fine-tuning on the SwissDial corpus, showing performance competitive with larger models.
-Partanen et al. \cite{partanen2019dialect} normalized 23 Finnish dialects using sliding-window LSTMs and character Transformers, while H{\"a}m{\"a}l{\"a}inen et al. \cite{hamalainen2020normalizing,hamalainen2022generating} explored Swedish and Estonian dialect normalization.
-Kuparinen et al. \cite{kuparinen2023dialect} conducted a multi-lingual evaluation across four language families, proving that fine-tuned sequence-to-sequence transformers and byte-level models (byT5) consistently outperform statistical baselines.
+Beyond Europe, dialect processing has addressed structural divergence across East Asian and Afroasiatic varieties. Japanese regional dialects have been normalized using phrase-level LSTM transducers \cite{abe2018multi}, while Mandarin studies focused on acoustic-phonetic mapping \cite{zhao2022mandarin}. In Arabic NLP, the Conventional Orthography for Dialectal Arabic (CODA) framework \cite{habash2012coda} provided standardized guidelines for Modern Standard Arabic (MSA), paving the way for multi-city dialect translation benchmarks (MADAR \cite{bouamor2018madar}, NADI \cite{abdulmageed2023nadi}) and morphological rule-guided LLM prompting \cite{eryani2020arabic,dimakis2025dialect}.
 
-In East Asian and Afroasiatic varieties, Abe et al. \cite{abe2018multi} translated Japanese regional dialects using multi-dialectal LSTMs operating on \emph{bunsetsu} phrases.
-For Arabic dialects, CODA \cite{habash2012coda} codified conventional orthography for Modern Standard Arabic (MSA), extended by MADAR \cite{bouamor2018madar} across 25 Arab cities, Eryani et al. \cite{eryani2020arabic}, and NADI shared tasks \cite{abdulmageed2023nadi}.
-Zhao and Chodroff \cite{zhao2022mandarin} analyzed Mandarin dialect variation, and Dimakis et al. \cite{dimakis2025dialect} combined morphological rules with LLM few-shot prompting for Greek dialect proverbs.
+\subsection{\textcolor{black}{Indic Dialect Landscape and Marathi NLP}}
 
-\subsection{\textcolor{black}{Indic NLP and Marathi Regional Dialects}}
+Despite extreme linguistic heterogeneity and over 1.4 billion speakers, Indic regional dialects remain severely underserved in language technology \cite{joshi2020state,zampieri2020nlp,joshi2025survey}. While pre-trained multilingual sequence-to-sequence models such as IndicBART \cite{dabre2022indicbart} and mT5 \cite{xue2021mt5} cover major scheduled languages via unified Devanagari scripts or mC4 corpora, they lack domain-specific fine-tuning on regional sub-dialects. Monolingual initiatives like L3Cube-MahaNLP \cite{joshi2022l3cube} offer Marathi encoder representations for classification, but do not support generative text standardization.
 
-Despite high linguistic heterogeneity, dialect normalization remains critically underexplored for Indic languages \cite{joshi2020state,joshi2025survey,zampieri2020nlp}.
-Pre-trained sequence-to-sequence architectures like IndicBART \cite{dabre2022indicbart} leverage mBART-50 \cite{lewis2020bart} with unified Devanagari representation across 11 languages, while mT5 \cite{xue2021mt5} extends T5 \cite{raffel2020exploring} across 101 languages, making its subword vocabulary suitable for dialectal transformations.
-Monolingual Marathi initiatives like L3Cube-MahaNLP \cite{joshi2022l3cube} provided classification encoders (MahaBERT) but lack generative sequence transduction capabilities.
-Benchmarks like INDIC-DIALECT \cite{kumar2024indicdialect} evaluate Hindi regional varieties (Bhojpuri, Magahi, Maithili), while WFST hybrid systems \cite{pratap2024wfst} handle semiotic text normalization.
-Prior Marathi research focused on speech/acoustic classification \cite{mulla2022text,pawar2026automatic}, read-speech transcripts such as RESPIN-S1.0 \cite{amartyaveer2025improving,kumar2025respin}, or zero-shot RAG prompting \cite{gaikwad2025marathi,vyavhare2026marathi}.
-We bridge this gap by establishing the first 5-fold cross-validated parallel text normalization benchmark for regional Marathi sub-dialects.
+Recent benchmark initiatives such as INDIC-DIALECT \cite{kumar2024indicdialect} evaluate Hindi varieties (Bhojpuri, Magahi, Maithili), and WFST frameworks handle semiotic text normalization \cite{pratap2024wfst}. However, Marathi dialect processing has remained confined to acoustic/ASR classification \cite{mulla2022text,pawar2026automatic}, read-speech transcripts (RESPIN \cite{amartyaveer2025improving,kumar2025respin}), or zero-shot LLM retrieval \cite{gaikwad2025marathi,vyavhare2026marathi}. Our work fills this gap by establishing the first parallel corpus and 5-fold cross-validated sequence-to-sequence benchmark for regional Marathi dialects.
 
-\subsection{\textcolor{black}{Synthetic Data Generation and Multi-Tier Verification}}
+\subsection{\textcolor{black}{LLM Distillation and Multi-Tier Verification}}
 
-LLM-driven synthetic data generation mitigates extreme data scarcity in low-resource settings.
-Self-instruct mechanisms \cite{wang2022selfinstruct} and instruction tuning (Alpaca \cite{taori2023alpaca}, Orca \cite{mukherjee2023orca}) demonstrate that strong teacher models can distill capabilities into compact student transformers \cite{ho2023distilling,pecher2023better,degibert2024scaling}.
-However, naive synthetic generation for unstandardized dialects risks language leakage, hallucinated entities, and uncorrected dialect residue.
-We address this by combining domain-constrained 1-prompt-per-sentence generation via Gemma-4 \cite{gemma2024} with a multi-tier verification engine incorporating Devanagari script filtering and LLaMA-3.1-8B \cite{dubey2024llama3} semantic auditing, ensuring verified parallel training corpora.
+To overcome severe parallel data scarcity, synthetic data generation using Large Language Models (LLMs) has gained widespread adoption \cite{wang2022selfinstruct,taori2023alpaca,mukherjee2023orca}. Knowledge distillation strategies demonstrate that outputs generated by proprietary teacher models can effectively train compact student transformers \cite{ho2023distilling,pecher2023better,degibert2024scaling}. However, unconstrained LLM generation for low-resource regional dialects introduces significant noise, including Hindi script leakage, entity hallucination, and unnormalized dialect residue. We extend synthetic augmentation by introducing a domain-constrained generation pipeline via Gemma-4 \cite{gemma2024} coupled with a multi-tier verification engine (Devanagari script filtering and LLaMA-3.1-8B \cite{dubey2024llama3} semantic auditing), ensuring high data fidelity for transformer fine-tuning.
 
 
 % ===================================================================
