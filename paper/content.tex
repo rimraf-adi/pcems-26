@@ -220,16 +220,14 @@ The large speaker diversity ensures broad coverage of intra-dialect phonetic and
 \node[font=\small\sffamily\bfseries\color{green!40!black}, anchor=south, yshift=2pt] at (verbox.north) {\textbf{Multi-Tier Verification Engine}};
 \end{scope}
 
-% Row 3: Expanded Corpus & Seq2Seq Fine-Tuning (Left to Right)
-\node (corpus) [box, fill=cyan!12, below=1.4cm of tier2] {\textbf{Verified Parallel Corpus}\\[3pt]32,335 Clean Sentence Pairs};
-\node (seq2seq) [model, right=3.5cm of corpus] {\textbf{Seq2Seq Model Training}\\[3pt]IndicBART \& mT5-Small Evaluation};
+% Row 3: Seq2Seq Fine-Tuning
+\node (seq2seq) [model, below=1.5cm of tier2] {\textbf{Seq2Seq Model Training}\\[3pt]IndicBART \& mT5-Small Evaluation};
 
 % Straight Flow Connections with Wide Spacing & Concise Scriptsize Labels
 \draw [arrow] (input) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Dialect Text} (gen);
 \draw [arrow] (gen) -- node[right=6pt, font=\scriptsize\sffamily\bfseries] {Raw Pairs} (tier1);
 \draw [arrow] (tier1) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Filtered} (tier2);
-\draw [arrow] (tier2) -- node[left=6pt, font=\scriptsize\sffamily\bfseries] {Audited Data} (corpus);
-\draw [arrow] (corpus) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Training Data} (seq2seq);
+\draw [arrow] (tier2) -- node[right=6pt, font=\scriptsize\sffamily\bfseries] {Raw + Verified Synthetic Data} (seq2seq);
 
 \end{tikzpicture}%
 }
