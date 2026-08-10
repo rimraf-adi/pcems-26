@@ -149,14 +149,14 @@ However, these encoder-only models are primarily designed for classification-lik
 
 \subsection{\textcolor{black}{Synthetic Data Generation for Low-Resource NLP}}
 
-Using LLMs for synthetic data generation has proven to be a powerful strategy for solving data scarcity in low-resource settings.
+Using LLMs for synthetic data generation has proven to be a useful strategy for solving data scarcity in low-resource settings.
 Recent work has shown that LLMs can be used more effectively as data generators than as direct task solvers, where synthetic data from a large teacher model is utilized to train smaller models \cite{wang2022selfinstruct,taori2023alpaca,mukherjee2023orca}.
-This paradigm is often regarded as a form of knowledge distillation that addresses the costs and time bottlenecks associated with manual human annotation \cite{ho2023distilling}.
-By employing targeted prompt-engineering strategies, frontier models can generate data that effectively transfers their generalized capabilities to specialized, efficient student models \cite{pecher2023better}.
-Such an approach is important since crowdsourcing is difficult due to the requirement of expert annotators possessing deep bilingual fluency in both an oral regional dialect and its standard written counterpart \cite{degibert2024scaling}.
-
+This paradigm is often regarded as a form of knowledge distillation that tries to compensate the costs and time bottlenecks associated with human annotation procedures \cite{ho2023distilling}.
+By the use of appropriate prompt-engineering techniques, frontier models can generate data that effectively transfers their capabilities to specialized and efficient student models \cite{pecher2023better}.
 For Indic languages specifically, synthetic data augmentation has been applied primarily to machine translation tasks, with back-translation and pivoting through high-resource languages serving as common strategies.
-Our work extends this paradigm specifically to the dialect normalization task, introducing domain-aware generation templates and multi-stage LLM verification protocols tailored to the morphological properties of Marathi dialects.
+
+Our work extends this paradigm specifically to the dialect normalization task, introducing domain-aware generation and multi-stage LLM verification tailored to Marathi dialects.
+
 
 % ===================================================================
 \section{\textcolor{black}{Methodology}}
@@ -164,15 +164,15 @@ Our work extends this paradigm specifically to the dialect normalization task, i
 
 \subsection{\textcolor{black}{Target Dialects and Linguistic Properties}}
 
-We target three major Marathi dialects mapped in social dialectology and comparative linguistic surveys of Maharashtra \cite{kulkarni2023variation,tarfe2024comparative} that collectively span the primary geographic regions of Maharashtra and exhibit distinct linguistic transformation patterns:
+We target the following major Marathi dialects that span the primary regions of Maharashtra and exhibit distinct linguistic and phonetic patterns:
 
 \begin{enumerate}
-    \item \textbf{Southern Konkan (Konkan Coast)}: Characterized by phonetic shortening of word-final vowels, palatalization of dental consonants, and distinct auxiliary verb forms. Lexical transformations include systematic vowel shifts: standard \emph{जातो} (``he goes'') becomes Southern Konkan \emph{जातां}; standard \emph{कुठे} (``where'') becomes \emph{कुठंय}. Domain-specific terminology in agriculture and banking is generally preserved but often accompanied by Konkani-influenced function words.
-    \item \textbf{Northern Konkan (Khandesh Region)}: Heavily influenced by neighboring Gujarati and Bhili language families, exhibiting significant consonant cluster simplification and retroflex-dental consonant shifts. Characteristic transformations include: standard \emph{कशाला} (``why'') $\rightarrow$ Northern Konkan \emph{कसाले}; standard \emph{मुलगा} (``boy'') $\rightarrow$ Northern Konkan \emph{पोर}. Northern Konkan presents the highest degree of lexical divergence among the three target dialects.
-    \item \textbf{Varhadi (Vidarbha/Eastern Maharashtra)}: Spoken in Vidarbha, exhibiting characteristic interrogative transformations and systematic verb suffix modifications. Standard interrogative \emph{का?} (``why?'') becomes Varhadi \emph{काऊन?}; verbal forms undergo regular suffix mapping patterns. Among the three dialects, Varhadi maintains the highest degree of structural similarity to Standard Marathi, with transformations being more systematic and rule-governed.
+    \item \textbf{Southern Konkan (Konkan Coast)}: Characterized by shortening of final-word vowels, softening of dental consonants, and different auxiliary verb forms. 
+    Lexical differences include systematic vowel shifts: standard \emph{जातो} (``he goes'') becomes Southern Konkan \emph{जातां}; standard \emph{कुठे} (``where'') becomes \emph{कुठंय}. Domain-specific terminology generally remains untouched but often accompanied by Konkani words.
+    \item \textbf{Northern Konkan (Khandesh Region)}: Heavily influenced by neighboring Gujarati and Bhili language families,thus it exhibits significant consonant simplification and dental consonant shifts. 
+    Notabel transformations include: standard \emph{कशाला} (``why'') $\rightarrow$ Northern Konkan \emph{कसाले}; standard \emph{मुलगा} (``boy'') $\rightarrow$ Northern Konkan \emph{पोर}. Northern Konkan posseses the highest degree of lexical divergence among the three target dialects.
+    \item \textbf{Varhadi (Vidarbha/Eastern Maharashtra)}: Spoken in Vidarbha, It exhibits characteristic differences and verb suffix modifications. Standard interrogative \emph{का?} (``why?'') becomes Varhadi \emph{काऊन?}; verbal forms undergo regular suffix mapping patterns. Among the three dialects, Varhadi maintains closest structural similarity to Standard Marathi as transformations are more systematic.
 \end{enumerate}
-
-The target dialects display rich phonological, morphological, and lexical transformation paradigms across representative sentence structures alongside Standard Marathi.
 
 % \begin{table}[t]
 % \color{black}
@@ -196,18 +196,9 @@ The target dialects display rich phonological, morphological, and lexical transf
 % \end{table}
 \subsection{\textcolor{black}{Original Corpus Curation and Foundation in RESPIN}}
 
-The foundational dialectal sentence prompts for our dataset were drawn from the domain-specific text transcripts of the RESPIN-S1.0 initiative \cite{kumar2025respin}, developed at IISc Bangalore under the Gates Foundation project.
-While RESPIN provides audio recordings and mono-lingual text prompts across agriculture and banking domains for Indian regional dialects (including Marathi sub-dialects: Southern Konkan, Northern Konkan, and Varhadi), it lacks aligned parallel Standard Marathi target translations required for sequence-to-sequence text normalization.
+Base sentences for our task are drawn from the domain-specific transcripts of the RESPIN-S1.0 initiative \cite{kumar2025respin}, developed at IISc Bangalore under the Gates Foundation project.
+While RESPIN has audio recordings and their transcripts across agriculture and banking domains for Indian languages and their dialects, it lacks aligned parallel dialect-to-target language translations required for efficient normalisation.
 
-To construct a supervised normalization benchmark, native Marathi linguists performed sentence-level parallel translation of RESPIN dialectal prompts into normative Standard Marathi (\emph{मानक मराठी}), assembling an initial clean parallel corpus of 16,163 pairs across agriculture and banking domains.
-The initial corpus comprises Southern Konkan (5,576 pairs), Northern Konkan (5,501 pairs), and Varhadi (5,086 pairs).
-A comprehensive manual audit protocol flagged critical translation flaws including garbled syntax (incomplete or malformed sentences), semantic inversions (meaning reversal in normalization), Hindi language leakage (Standard Hindi substituted for Standard Marathi), retained dialect residue (incompletely normalized outputs), and dropped question marks (loss of interrogative intent).
-All flagged pairs were manually corrected and validated before seeding the synthetic expansion pipeline.
-
-\subsubsection{\textcolor{black}{RESPIN Source Corpus Statistics}}
-
-The RESPIN-S1.0 Marathi partition, from which our dialect sentence prompts were sourced, represents a large-scale collection of read speech across rural Maharashtra.
-Table~\ref{tab:respin_stats} summarizes key corpus statistics.
 
 \begin{table}[t]
 \color{black}
@@ -230,68 +221,66 @@ Dialect Variants & Southern Konkan, Northern Konkan, Varhadi \\
 \end{tabular}
 \end{table}
 
-The large speaker diversity (2,644 unique speakers across 234 pincodes) ensures broad coverage of intra-dialect phonetic and lexical variation, while the balanced gender and domain splits reduce systematic bias in our derived parallel corpus.
+The large speaker diversity ensures broad coverage of intra-dialect phonetic and lexical variation, while the balanced gender and domain splits reduce systematic bias in our derived parallel corpus.
 
-\subsection{\textcolor{black}{IndicConformer Baseline ASR Evaluation}}
+% \subsection{\textcolor{black}{IndicConformer Baseline ASR Evaluation}}
 
-To establish a comprehensive speech-and-language baseline, we evaluate pre-trained automatic speech recognition (ASR) performance on the official \texttt{IISc\_RESPIN\_test\_mr} test benchmark set, comprising 2,170 speech utterances (3.04 hours of recorded audio) across all four regional sub-dialects: Southern Konkan, Northern Konkan, Standard Marathi, and Varhadi.
+% To establish a comprehensive speech-and-language baseline, we evaluate pre-trained automatic speech recognition (ASR) performance on the official \texttt{IISc\_RESPIN\_test\_mr} test benchmark set, comprising 2,170 speech utterances (3.04 hours of recorded audio) across all four regional sub-dialects: Southern Konkan, Northern Konkan, Standard Marathi, and Varhadi.
 
-We evaluate \texttt{ai4bharat/indic-conformer-600m-multilingual} under both Connectionist Temporal Classification (CTC) and Recurrent Neural Network Transducer (RNN-T) decoding setups. Overall on 2,170 utterances, CTC decoding achieves 23.94\% WER (5.12\% CER, 30.12\% Exact Match), while RNN-T decoding achieves optimal baseline performance with 23.71\% WER, 5.06\% CER, and 30.78\% Exact Match.
+% We evaluate \texttt{ai4bharat/indic-conformer-600m-multilingual} under both Connectionist Temporal Classification (CTC) and Recurrent Neural Network Transducer (RNN-T) decoding setups. Overall on 2,170 utterances, CTC decoding achieves 23.94\% WER (5.12\% CER, 30.12\% Exact Match), while RNN-T decoding achieves optimal baseline performance with 23.71\% WER, 5.06\% CER, and 30.78\% Exact Match.
 
-Table~\ref{tab:asr_baseline} details the dialectwise ASR baseline performance across all four regional sub-dialects using the primary RNN-T decoder.
+% Table~\ref{tab:asr_baseline} details the dialectwise ASR baseline performance across all four regional sub-dialects using the primary RNN-T decoder.
 
-\begin{table}[t]
-\color{black}
-\centering
-\renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Baseline ASR Performance (\texttt{indic-conformer-600m}) Dialectwise Breakdown on \texttt{IISc\_RESPIN\_test\_mr}}}
-\label{tab:asr_baseline}
-\begin{tabular}{|l:c:c:c:c:c|}
-\hline
-\makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Utts}} & \makecell[c]{\small\textbf{Duration}\\\small\textbf{(h)}} & \makecell[c]{\small\textbf{Norm.}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Norm.}\\\small\textbf{CER (\%)}} & \makecell[c]{\small\textbf{Exact}\\\small\textbf{Match (\%)}} \\
-\hline
-Southern Konkan & 559 & 0.78 & 34.37 & 7.45 & 21.47 \\
-Northern Konkan & 540 & 0.76 & 24.14 & 5.08 & 31.85 \\
-Standard Marathi & 555 & 0.78 & 10.87 & 2.34 & 39.10 \\
-Varhadi & 516 & 0.72 & 24.79 & 5.14 & 30.62 \\
-\hline
-\end{tabular}
-\end{table}
+% \begin{table}[t]
+% \color{black}
+% \centering
+% \renewcommand{\arraystretch}{1.2}
+% \caption{\textcolor{black}{Baseline ASR Performance (\texttt{indic-conformer-600m}) Dialectwise Breakdown on \texttt{IISc\_RESPIN\_test\_mr}}}
+% \label{tab:asr_baseline}
+% \begin{tabular}{|l:c:c:c:c:c|}
+% \hline
+% \makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Utts}} & \makecell[c]{\small\textbf{Duration}\\\small\textbf{(h)}} & \makecell[c]{\small\textbf{Norm.}\\\small\textbf{WER (\%)}} & \makecell[c]{\small\textbf{Norm.}\\\small\textbf{CER (\%)}} & \makecell[c]{\small\textbf{Exact}\\\small\textbf{Match (\%)}} \\
+% \hline
+% Southern Konkan & 559 & 0.78 & 34.37 & 7.45 & 21.47 \\
+% Northern Konkan & 540 & 0.76 & 24.14 & 5.08 & 31.85 \\
+% Standard Marathi & 555 & 0.78 & 10.87 & 2.34 & 39.10 \\
+% Varhadi & 516 & 0.72 & 24.79 & 5.14 & 30.62 \\
+% \hline
+% \end{tabular}
+% \end{table}
 
-Sub-dialect analysis reveals significant acoustic-phonetic difficulty variation across regional varieties:
+% Sub-dialect analysis reveals significant acoustic-phonetic difficulty variation across regional varieties:
+% \begin{itemize}
+%     \item \textbf{Standard Marathi}: Achieves the lowest baseline error at 10.87\% WER and 2.34\% CER (555 utterances).
+%     \item \textbf{Northern Konkan}: Achieves 24.14\% WER and 5.08\% CER (540 utterances).
+%     \item \textbf{Varhadi}: Achieves 24.79\% WER and 5.14\% CER (516 utterances).
+%     \item \textbf{Southern Konkan}: Proves to be the most challenging dialect for speech recognition, exhibiting 34.37\% WER and 7.45\% CER (559 utterances) due to distinct vocalic shortening and phonetic contractions.
+% \end{itemize}
+
+\subsection{\textcolor{black}{LLM-Driven Parallel Corpus Genaration and Verification}}
+
+To deal with data scarcity, we developed an automated synthetic data generation pipeline powered by Gemma-4 \cite{gemma2024} in 9B-instruction-tuned (\texttt{gemma-2-9b-it}) configurations, accessed via Ollama.
+We considered several design decisions to ensure generation quality to be maximised:
+
 \begin{itemize}
-    \item \textbf{Standard Marathi}: Achieves the lowest baseline error at 10.87\% WER and 2.34\% CER (555 utterances).
-    \item \textbf{Northern Konkan}: Achieves 24.14\% WER and 5.08\% CER (540 utterances).
-    \item \textbf{Varhadi}: Achieves 24.79\% WER and 5.14\% CER (516 utterances).
-    \item \textbf{Southern Konkan}: Proves to be the most challenging dialect for speech recognition, exhibiting 34.37\% WER and 7.45\% CER (559 utterances) due to distinct vocalic shortening and phonetic contractions.
+    \item \textbf{1-Prompt-Per-Sentence Architecture}: Instead of generating batches of parallel pairs per API call (which risks array length mismatches and context contamination), each dialectal sentence is processed separately with a self-contained prompt.
+    \item \textbf{Detailed Prompting Strategy}: The generation prompt enforces semantic fidelity rules: the standard output must preserve exact meaning, domain terminology (agriculture/banking), named entities, and numerical values from the input. The prompt includes dialect-specific lexical mapping tables and 5-8 few-shot examples per dialect.
+    \item \textbf{Temperature Control}: Generation temperature is set to 0.3 with top-$p$ = 0.9 to balance diversity with fidelity.
 \end{itemize}
 
-\subsection{\textcolor{black}{LLM-Driven Synthetic Generation Architecture}}
 
-To address data scarcity, we developed an automated synthetic parallel data generation pipeline powered by Gemma-2 \cite{gemma2024} in both 9B-instruction-tuned (\texttt{gemma-2-9b-it}) and 27B-instruction-tuned (\texttt{gemma-2-27b-it}) configurations, accessed via the Google AI Studio API.
-The pipeline architecture incorporates several design decisions to ensure generation quality:
-
-\begin{itemize}
-    \item \textbf{1-Prompt-Per-Sentence Architecture}: Rather than generating batches of parallel pairs per API call (which risks array length mismatches and cross-sentence context contamination), each dialectal sentence is processed individually with a self-contained prompt.
-    \item \textbf{Zero-Hallucination Prompting}: The generation prompt enforces strict semantic fidelity rules: the standard output must preserve exact meaning, domain terminology (agriculture/banking), named entities, and numerical values from the dialectal input. The prompt includes dialect-specific lexical mapping tables and 5--8 few-shot reference examples per dialect.
-    \item \textbf{Temperature Control}: Generation temperature is set to 0.3 with top-$p$ = 0.9 to balance diversity with fidelity. Multiple candidate generations are produced and ranked by verification scores.
-    \item \textbf{Domain Preservation}: Generation prompts explicitly enumerate 100\% preservation rules for domain-specific entities including crop names (शेती, कापूस, ज्वारी), banking terminology (कर्ज, खाते, व्याजदर), and geographical references.
-\end{itemize}
-
-\subsection{\textcolor{black}{Multi-Tier Verification and Quality Filtering}}
-
-All generated pairs undergo a rigorous three-tier verification and correction pipeline:
+All generated pairs undergo a three-tier verification and correction pipeline:
 
 \begin{enumerate}
     \item \textbf{Tier 1: Rule-Based Syntactic Filter.} Automated validation checks implement Indic Abugida script normalization principles \cite{ansary2024unicode}, including:
     \begin{itemize}
-        \item \emph{Devanagari Script Integrity}: Both source and target must contain $>$90\% Devanagari Unicode characters within the \texttt{U+0900--U+097F} range, automatically normalizing broken nuktas (\texttt{U+093C}), invalid halants (\texttt{U+094D}), and orphan matras.
-        \item \emph{Length Ratio Constraint}: $0.5 \le |S_{\text{dialect}}| / |S_{\text{standard}}| \le 2.0$ to eliminate hallucinated sentence expansions or accidental truncations.
-        \item \emph{Non-Identity Constraint}: $S_{\text{dialect}} \neq S_{\text{standard}}$ to exclude trivially un-normalized identical string copies.
+        \item \emph{Devanagari Script Integrity}: Both source and target must possess $>$90\% Devanagari Unicode characters within the \texttt{U+0900--U+097F} range, automatically discarding unnecessary characters.
+        \item \emph{Length Ratio Constraint}: $0.5 \le |L_{\text{dialect}}| / |L_{\text{standard}}| \le 2.0$ to avoid hallucinations.
+        \item \emph{Non-Identity Constraint}: $L_{\text{dialect}} \neq L_{\text{standard}}$ to exclude identical string copies.
         \item \emph{Minimum Token Count}: Both source and target must contain $\ge 3$ whitespace-separated tokens.
     \end{itemize}
-    \item \textbf{Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} (accessed via Groq API with key rotation pool and NVIDIA NIM fallback for rate limit resilience) performs semantic equivalence verification. The verifier rates candidates on a 1--5 score scale assessing: (a) exact semantic preservation; (b) absence of hallucinated entities; (c) absence of Hindi/English contamination; and (d) complete normalization of dialectal inflections. Pairs scoring $< 4.0$ are rejected or routed to correction.
-    \item \textbf{Closed-Loop Correction Engine.} Pairs flagged by Tier 1 or Tier 2 enter a two-step correction loop: Step~1 generates corrected candidate translations using feedback-aware prompts highlighting the specific failure reason (e.g., ``Hindi leakage detected'' or ``Incomplete normalization''); Step~2 (QA Auditor) re-verifies corrected candidates, discarding pairs that fail a second audit pass.
+    \item \textbf{Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} (accessed via Groq API) performs semantic equivalence verification. The verifier rates on a 1-5 score scale considering: (a) semantic preservation; (b) absence of hallucinated entities; (c) absence of Hindi/English contamination; and (d) complete standardization of dialects. Pairs scoring $< 4.0$ are rejected or routed to correction.
+    \item \textbf{Closed-Loop Correction Engine.} Pairs flagged by Tier 1 or Tier 2 enter a two-step correction loop: Step~1 generates corrected translations using specialised prompts highlighting the specific failure reason (e.g., ``Hindi leakage detected'' or ``Incomplete normalization''); Step~2 verifies the corrected sentences again,completely discarding pairs that fail a second audit pass.
 \end{enumerate}
 
 \begin{table}[t]
@@ -312,27 +301,20 @@ Varhadi & 5,330 & 5,086 & \textbf{10,416} \\
 \end{tabular}
 \end{table}
 
-As detailed in Table~\ref{tab:dataset_summary}, the synthetic augmentation pipeline contributed 16,163 high-quality verified parallel pairs, nearly doubling the original corpus to produce an expanded dataset of 33,156 samples.
-The near-1:1 ratio between original and synthetic pairs across all three dialects demonstrates the consistency and reliability of the generation pipeline.
+As mentioned in Table~\ref{tab:dataset_summary}, the synthetic augmentation pipeline contributed 16,163 high-quality verified parallel pairs, almost doubling the original dataset to produce an expanded version of 33,156 samples.
+The near-1:1 ratio between original and synthetic pairs across all three dialects demonstrates the consistency and reliability of the entire pipeline.
 
-\subsection{\textcolor{black}{Evaluation Partitioning Strategy}}
+\subsection{\textcolor{black}{Evaluation Protocol}}
 
-To ensure rigorous, unbiased evaluation and prevent data leakage during hyperparameter selection, all datasets are partitioned using a strict 85/15 stratified split protocol:
+To verify model training and ensure hyperparameter stability during development, models were initially validated using 5-Fold Cross-Validation on an 85/15 stratified split of the training pool.
+For final benchmark reporting, models were trained on the complete dataset (combining original and synthetically expanded pairs) and evaluated on the official held-out RESPIN test set (\texttt{IISc\_RESPIN\_test\_mr}, comprising 2,170 utterances across target dialects).
 
-\begin{itemize}
-    \item \textbf{15\% Held-Out Test Set}: Completely isolated \textit{prior} to any model training. This partition is reserved exclusively for final metric reporting and is never exposed to the model during training or validation. Stratification ensures proportional representation of dialect labels and domain categories.
-    \item \textbf{85\% Training Pool}: The remaining data is used for model training with 5-Fold Cross-Validation (80\% train / 20\% validation per fold). Fold-level validation metrics are used for hyperparameter selection and early stopping decisions.
-\end{itemize}
-
-This protocol is applied identically across all 8 dataset configurations: Southern Konkan (Original), Northern Konkan (Original), Varhadi (Original), Multi-Dialect (Original), and their Synthetically Expanded counterparts.
-
-\subsection{\textcolor{black}{Evaluation Metrics}}
-
-All results are reported using standardized automatic evaluation metrics computed via SacreBLEU \cite{post2018sacrebleu} and Word Error Rate (WER) scripts:
+This setup is applied across all dataset configurations: Southern Konkan (Original), Northern Konkan (Original), Varhadi (Original), Combined-data (Original), and their Synthetically Expanded counterparts.
+All results are reported using standard automatic metrics computed via SacreBLEU \cite{post2018sacrebleu} and Word Error Rate (WER) scripts:
 
 \begin{itemize}
-    \item \textbf{BLEU} (Bilingual Evaluation Understudy): Corpus-level BLEU-4 with 4-gram precision, brevity penalty, and smoothing method ``exp''.
-    \item \textbf{chrF++}: Character n-gram F-score augmented with word unigrams and bigrams, capturing subword morphological variations in agglutinative Marathi text.
+    \item \textbf{BLEU} (Bilingual Evaluation Understudy): BLEU-4 with 4-gram precision, brevity penalty, and smoothing method ``exp''.
+    \item \textbf{chrF++}: Character n-gram F-score combined with word unigrams and bigrams, capturing subword morphological variations in Marathi text.
     \item \textbf{Normalized WER / CER}: Word Error Rate and Character Error Rate computed after Devanagari Unicode script standardization.
 \end{itemize}
 
@@ -380,7 +362,7 @@ All results are reported using standardized automatic evaluation metrics compute
 
 Key observations from Table~\ref{tab:respin_comprehensive} include:
 \begin{enumerate}
-    \item \textbf{mT5-Small Performance}: The synthetically expanded fine-tuned \texttt{mT5-small} model achieves 73.48 BLEU and 84.58 chrF++ on the overall multi-dialect test set, demonstrating robust multi-dialect transfer learning.
+    \item \textbf{mT5-Small Performance}: The synthetically expanded fine-tuned \texttt{mT5-small} model achieves 73.48 BLEU and 84.58 chrF++ on the overall test set, demonstrating robust multi-dialect transfer learning.
     \item \textbf{IndicBART Scaling}: Fine-tuning IndicBART on the synthetically expanded multi-dialect corpus achieves \textbf{76.50 BLEU} and \textbf{85.90 chrF++}, demonstrating that synthetic data expansion activates latent capacity in mBART-50 architectures.
 \end{enumerate}
 
