@@ -207,19 +207,19 @@ The large speaker diversity ensures broad coverage of intra-dialect phonetic and
 ]
 
 % Row 1: Source & LLM Generator (Left to Right)
-\node (input) [box] {\textbf{RESPIN Source Corpus}\\[3pt]809k Utterances (1,026 Hours)};
-\node (gen) [engine, right=3.5cm of input] {\textbf{LLM Generation Engine}\\[3pt]Gemma-4 (16,163 Synthetic Pairs)};
+\node (input) [box] {\textbf{RESPIN Source Corpus}\\[3pt]16,163 Original Parallel Pairs\\[2pt]\scriptsize(809k Utterances / 1,026 Hours)};
+\node (gen) [engine, right=3.5cm of input] {\textbf{Raw Parallel Pair Generation}\\[3pt]Gemma-4 LLM Translation\\[2pt]\scriptsize(16,993 Raw Synthetic Pairs)};
 
 % Row 2: Verification Engine (Right to Left)
 \node (tier1) [stage, below=1.4cm of gen] {\textbf{Tier 1: Rule-Based Filter}\\[3pt]Script Integrity \& Length Ratio};
-\node (tier2) [stage, left=3.5cm of tier1] {\textbf{Tier 2: LLM Semantic Auditor}\\[3pt]Llama-3.1-8B Verification Pass};
+\node (tier2) [stage, left=3.5cm of tier1] {\textbf{Tier 2: LLM Semantic Auditor}\\[3pt]LLaMA-3.1-8B Verification Pass};
 
 % Row 3: Expanded Corpus & Seq2Seq Fine-Tuning (Left to Right)
-\node (corpus) [box, fill=cyan!12, below=1.4cm of tier2] {\textbf{Verified Parallel Corpus}\\[3pt]33,156 Clean Sentence Pairs};
+\node (corpus) [box, fill=cyan!12, below=1.4cm of tier2] {\textbf{Verified Parallel Corpus}\\[3pt]32,335 Clean Sentence Pairs};
 \node (seq2seq) [model, right=3.5cm of corpus] {\textbf{Seq2Seq Model Training}\\[3pt]IndicBART \& mT5-Small Evaluation};
 
 % Straight Flow Connections with Wide Spacing & Concise Scriptsize Labels
-\draw [arrow] (input) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Source Text} (gen);
+\draw [arrow] (input) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Dialect Text} (gen);
 \draw [arrow] (gen) -- node[right=6pt, font=\scriptsize\sffamily\bfseries] {Raw Pairs} (tier1);
 \draw [arrow] (tier1) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Filtered} (tier2);
 \draw [arrow] (tier2) -- node[left=6pt, font=\scriptsize\sffamily\bfseries] {Audited Data} (corpus);
