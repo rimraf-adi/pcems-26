@@ -211,10 +211,11 @@ def generate_fig3():
 # ==============================================================================
 # FIGURE 4 OPTIONS: Dumbbell, Slope, Radar, and Grouped Bar
 # ==============================================================================
-def generate_fig4_dumbbell():
-    print("Generating Figure 4 Option 1: Dumbbell / Cleveland Dot Plot...")
+def generate_fig4():
+    print("Generating Figure 4: Single-Dialect Cross-Validation Grouped Bar Chart...")
     dialects = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
-    y_pos = np.arange(len(dialects))
+    x = np.arange(len(dialects))
+    width = 0.35
     
     ib_orig = [48.54, 60.58, 76.63]
     ib_exp  = [47.25, 40.51, 73.62]
@@ -225,148 +226,56 @@ def generate_fig4_dumbbell():
     fig, axes = plt.subplots(1, 2, figsize=(15.0, 4.8), dpi=300)
     
     # Subplot A: IndicBART (244M)
-    for i in range(len(dialects)):
-        axes[0].plot([ib_orig[i], ib_exp[i]], [y_pos[i], y_pos[i]], color='#777777', linewidth=2.5, alpha=0.8, zorder=1)
-    axes[0].scatter(ib_orig, y_pos, color='#1f77b4', s=160, label='Original', zorder=3, edgecolors='black', linewidth=1.2)
-    axes[0].scatter(ib_exp, y_pos, color='#00a896', s=160, marker='s', label='Synthetically Expanded', zorder=3, edgecolors='black', linewidth=1.2)
+    rects1 = axes[0].bar(x - width/2, ib_orig, width, label='Original', color='#2b5c8f', edgecolor='black', linewidth=1.1)
+    rects2 = axes[0].bar(x + width/2, ib_exp, width, label='Synthetically Expanded', color='#41b6c4', edgecolor='black', linewidth=1.1)
     
-    for i in range(len(dialects)):
-        left_val = min(ib_orig[i], ib_exp[i])
-        right_val = max(ib_orig[i], ib_exp[i])
-        axes[0].annotate(f'{left_val:.1f}', (left_val - 1.6, y_pos[i]), va='center', ha='right', fontsize=11, fontweight='bold', color='#1f77b4' if left_val == ib_orig[i] else '#00a896')
-        axes[0].annotate(f'{right_val:.1f}', (right_val + 1.6, y_pos[i]), va='center', ha='left', fontsize=11, fontweight='bold', color='#1f77b4' if right_val == ib_orig[i] else '#00a896')
+    axes[0].set_ylabel('5-Fold CV BLEU Score', fontsize=12, fontweight='bold')
+    axes[0].set_title('A. IndicBART (244M) Single-Dialect CV BLEU', fontsize=13, fontweight='bold', pad=15)
+    axes[0].set_xticks(x)
+    axes[0].set_xticklabels(dialects, fontsize=11, fontweight='bold')
+    axes[0].set_ylim(0, 95)
+    axes[0].legend(loc='upper right', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5)
+    axes[0].grid(axis='y', linestyle='--', alpha=0.5)
+    
+    for rect in rects1:
+        h = rect.get_height()
+        axes[0].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=10.5, fontweight='bold')
+    for rect in rects2:
+        h = rect.get_height()
+        axes[0].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=10.5, fontweight='bold')
         
-    axes[0].set_yticks(y_pos)
-    axes[0].set_yticklabels(dialects, fontsize=13, fontweight='bold')
-    axes[0].set_xlabel('5-Fold CV Test BLEU', fontsize=13, fontweight='bold')
-    axes[0].set_title('A. IndicBART (244M) Performance Shift', fontsize=14, fontweight='bold', pad=14)
-    axes[0].set_xlim(34, 88)
-    axes[0].set_ylim(-0.5, 2.5)
-    axes[0].grid(axis='x', linestyle='--', alpha=0.5)
-    axes[0].legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
-    
     # Subplot B: mT5-Small (300M)
-    for i in range(len(dialects)):
-        axes[1].plot([mt5_orig[i], mt5_exp[i]], [y_pos[i], y_pos[i]], color='#777777', linewidth=2.5, alpha=0.8, zorder=1)
-    axes[1].scatter(mt5_orig, y_pos, color='#8b263e', s=160, label='Original', zorder=3, edgecolors='black', linewidth=1.2)
-    axes[1].scatter(mt5_exp, y_pos, color='#ff6f00', s=160, marker='s', label='Synthetically Expanded', zorder=3, edgecolors='black', linewidth=1.2)
+    rects3 = axes[1].bar(x - width/2, mt5_orig, width, label='Original', color='#8c2d19', edgecolor='black', linewidth=1.1)
+    rects4 = axes[1].bar(x + width/2, mt5_exp, width, label='Synthetically Expanded', color='#fe9929', edgecolor='black', linewidth=1.1)
     
-    for i in range(len(dialects)):
-        left_val = min(mt5_orig[i], mt5_exp[i])
-        right_val = max(mt5_orig[i], mt5_exp[i])
-        axes[1].annotate(f'{left_val:.1f}', (left_val - 1.6, y_pos[i]), va='center', ha='right', fontsize=11, fontweight='bold', color='#8b263e' if left_val == mt5_orig[i] else '#ff6f00')
-        axes[1].annotate(f'{right_val:.1f}', (right_val + 1.6, y_pos[i]), va='center', ha='left', fontsize=11, fontweight='bold', color='#8b263e' if right_val == mt5_orig[i] else '#ff6f00')
+    axes[1].set_ylabel('5-Fold CV BLEU Score', fontsize=12, fontweight='bold')
+    axes[1].set_title('B. mT5-Small (300M) Single-Dialect CV BLEU', fontsize=13, fontweight='bold', pad=15)
+    axes[1].set_xticks(x)
+    axes[1].set_xticklabels(dialects, fontsize=11, fontweight='bold')
+    axes[1].set_ylim(0, 95)
+    axes[1].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5)
+    axes[1].grid(axis='y', linestyle='--', alpha=0.5)
+    
+    for rect in rects3:
+        h = rect.get_height()
+        axes[1].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=10.5, fontweight='bold')
+    for rect in rects4:
+        h = rect.get_height()
+        axes[1].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=10.5, fontweight='bold')
         
-    axes[1].set_yticks(y_pos)
-    axes[1].set_yticklabels(dialects, fontsize=13, fontweight='bold')
-    axes[1].set_xlabel('5-Fold CV Test BLEU', fontsize=13, fontweight='bold')
-    axes[1].set_title('B. mT5-Small (300M) Performance Shift', fontsize=14, fontweight='bold', pad=14)
-    axes[1].set_xlim(38, 92)
-    axes[1].set_ylim(-0.5, 2.5)
-    axes[1].grid(axis='x', linestyle='--', alpha=0.5)
-    axes[1].legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
-    
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_single_dialect_cv.png'), bbox_inches='tight')
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_single_dialect_cv.pdf'), bbox_inches='tight')
-    plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_dumbbell.png'), bbox_inches='tight')
-    plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_dumbbell.pdf'), bbox_inches='tight')
     plt.close()
+
+def generate_fig4_dumbbell():
+    generate_fig4()
 
 def generate_fig4_slope():
-    print("Generating Figure 4 Option 2: Slope Chart...")
-    fig, axes = plt.subplots(1, 2, figsize=(14, 4.8), dpi=300)
-    
-    dialects = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
-    
-    # IndicBART
-    ib_orig = [48.54, 60.58, 76.63]
-    ib_exp  = [47.25, 40.51, 73.62]
-    
-    for i in range(3):
-        axes[0].plot([0, 1], [ib_orig[i], ib_exp[i]], marker='o', markersize=8, linewidth=2.5, label=dialects[i], color=colors[i])
-        axes[0].annotate(f'{ib_orig[i]:.1f}', (-0.04, ib_orig[i]), ha='right', va='center', fontweight='bold', fontsize=11)
-        axes[0].annotate(f'{ib_exp[i]:.1f}', (1.04, ib_exp[i]), ha='left', va='center', fontweight='bold', fontsize=11)
-        
-    axes[0].set_xticks([0, 1])
-    axes[0].set_xticklabels(['Original', 'Synthetically Expanded'], fontsize=12, fontweight='bold')
-    axes[0].set_ylabel('5-Fold CV BLEU', fontsize=13, fontweight='bold')
-    axes[0].set_title('A. IndicBART (244M) Slope Chart', fontsize=14, fontweight='bold', pad=14)
-    axes[0].set_xlim(-0.25, 1.25)
-    axes[0].set_ylim(35, 85)
-    axes[0].grid(axis='y', linestyle='--', alpha=0.5)
-    axes[0].legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5)
-    
-    # mT5-Small
-    mt5_orig = [46.31, 60.31, 80.99]
-    mt5_exp  = [65.10, 62.07, 78.89]
-    
-    for i in range(3):
-        axes[1].plot([0, 1], [mt5_orig[i], mt5_exp[i]], marker='s', markersize=8, linewidth=2.5, label=dialects[i], color=colors[i])
-        axes[1].annotate(f'{mt5_orig[i]:.1f}', (-0.04, mt5_orig[i]), ha='right', va='center', fontweight='bold', fontsize=11)
-        axes[1].annotate(f'{mt5_exp[i]:.1f}', (1.04, mt5_exp[i]), ha='left', va='center', fontweight='bold', fontsize=11)
-        
-    axes[1].set_xticks([0, 1])
-    axes[1].set_xticklabels(['Original', 'Synthetically Expanded'], fontsize=12, fontweight='bold')
-    axes[1].set_ylabel('5-Fold CV BLEU', fontsize=13, fontweight='bold')
-    axes[1].set_title('B. mT5-Small (300M) Slope Chart', fontsize=14, fontweight='bold', pad=14)
-    axes[1].set_xlim(-0.25, 1.25)
-    axes[1].set_ylim(35, 85)
-    axes[1].grid(axis='y', linestyle='--', alpha=0.5)
-    axes[1].legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5)
-    
-    plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_slope.png'), bbox_inches='tight')
-    plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_slope.pdf'), bbox_inches='tight')
-    plt.close()
+    generate_fig4()
 
 def generate_fig4_radar():
-    print("Generating Figure 4 Option 3: Radar / Spider Chart...")
-    categories = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
-    N = len(categories)
-    angles = [n / float(N) * 2 * np.pi for n in range(N)]
-    angles += angles[:1]
-    
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5.2), subplot_kw=dict(polar=True), dpi=300)
-    
-    # IndicBART
-    ib_orig = [48.54, 60.58, 76.63]
-    ib_exp  = [47.25, 40.51, 73.62]
-    ib_orig_r = ib_orig + ib_orig[:1]
-    ib_exp_r  = ib_exp + ib_exp[:1]
-    
-    axes[0].plot(angles, ib_orig_r, linewidth=2.5, linestyle='solid', label='Original', color='#1f77b4')
-    axes[0].fill(angles, ib_orig_r, color='#1f77b4', alpha=0.2)
-    axes[0].plot(angles, ib_exp_r, linewidth=2.5, linestyle='solid', label='Synthetically Expanded', color='#00a896')
-    axes[0].fill(angles, ib_exp_r, color='#00a896', alpha=0.2)
-    axes[0].set_xticks(angles[:-1])
-    axes[0].set_xticklabels(categories, fontsize=12, fontweight='bold')
-    axes[0].set_title('A. IndicBART Radar Profile', fontsize=14, fontweight='bold', pad=20)
-    axes[0].legend(loc='lower left', bbox_to_anchor=(-0.1, -0.1), fontsize=11)
-    
-    # mT5-Small
-    mt5_orig = [46.31, 60.31, 80.99]
-    mt5_exp  = [65.10, 62.07, 78.89]
-    mt5_orig_r = mt5_orig + mt5_orig[:1]
-    mt5_exp_r  = mt5_exp + mt5_exp[:1]
-    
-    axes[1].plot(angles, mt5_orig_r, linewidth=2.5, linestyle='solid', label='Original', color='#8b263e')
-    axes[1].fill(angles, mt5_orig_r, color='#8b263e', alpha=0.2)
-    axes[1].plot(angles, mt5_exp_r, linewidth=2.5, linestyle='solid', label='Synthetically Expanded', color='#ff6f00')
-    axes[1].fill(angles, mt5_exp_r, color='#ff6f00', alpha=0.2)
-    axes[1].set_xticks(angles[:-1])
-    axes[1].set_xticklabels(categories, fontsize=12, fontweight='bold')
-    axes[1].set_title('B. mT5-Small Radar Profile', fontsize=14, fontweight='bold', pad=20)
-    axes[1].legend(loc='lower left', bbox_to_anchor=(-0.1, -0.1), fontsize=11)
-    
-    plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_radar.png'), bbox_inches='tight')
-    plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_radar.pdf'), bbox_inches='tight')
-    plt.close()
-
-def generate_fig4():
-    generate_fig4_dumbbell()
+    generate_fig4()
 
 # ==============================================================================
 # FIGURE 5: Multi-Dialect 5-Fold CV Heatmap (Table 5 & Table 7)
@@ -381,39 +290,44 @@ def generate_fig5():
     ])
     
     matrix_delta = np.array([
-        [+25.85, +1.49, -2.48],  # IndicBART Expansion Gain
-        [+18.34, +0.37, -0.84]   # mT5-Small Expansion Gain
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [25.85, 1.49, -2.48],
+        [18.34, 0.37, -0.84]
     ])
     
-    y_labels_a = [
+    y_labels = [
         'IndicBART (Original)',
         'mT5-Small (Original)',
         'IndicBART (Expanded)',
         'mT5-Small (Expanded)'
     ]
-    y_labels_b = [
-        'IndicBART (244M)',
-        'mT5-Small (300M)'
-    ]
     x_labels = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
     
-    fig, axes = plt.subplots(1, 2, figsize=(15.5, 4.8), dpi=300, gridspec_kw={'width_ratios': [1.2, 1]})
+    fig, axes = plt.subplots(1, 2, figsize=(15.5, 4.8), dpi=300)
     
     # Subplot A: Absolute BLEU Heatmap
-    sns.heatmap(matrix_bleu, annot=True, fmt=".2f", cmap="YlGnBu", xticklabels=x_labels, yticklabels=y_labels_a,
+    sns.heatmap(matrix_bleu, annot=True, fmt=".2f", cmap="YlGnBu", xticklabels=x_labels, yticklabels=y_labels,
                 cbar_kws={'label': '5-Fold CV BLEU Score'}, ax=axes[0], linewidths=2.0, linecolor='white',
-                annot_kws={"size": 12.5, "weight": "bold"})
-    axes[0].set_title("A. Multi-Dialect Performance Heatmap (BLEU)", fontsize=13.5, fontweight='bold', pad=14)
-    axes[0].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=11.5, fontweight='bold')
-    axes[0].set_yticklabels(y_labels_a, rotation=0, fontsize=11, fontweight='bold')
+                annot_kws={"size": 12, "weight": "bold"})
+    axes[0].set_title("A. Multi-Dialect Performance Heatmap (BLEU)", fontsize=13, fontweight='bold', pad=14)
+    axes[0].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=11, fontweight='bold')
+    axes[0].set_yticklabels(y_labels, rotation=0, fontsize=10.5, fontweight='bold')
     
-    # Subplot B: Net BLEU Gain Heatmap (Expanded - Original)
-    sns.heatmap(matrix_delta, annot=True, fmt="+.2f", cmap="PiYG", center=0, xticklabels=x_labels, yticklabels=y_labels_b,
+    # Subplot B: Net BLEU Gain Heatmap (Aligned 4 Rows)
+    annot_b = np.array([
+        ["Baseline", "Baseline", "Baseline"],
+        ["Baseline", "Baseline", "Baseline"],
+        ["+25.85", "+1.49", "-2.48"],
+        ["+18.34", "+0.37", "-0.84"]
+    ])
+    
+    sns.heatmap(matrix_delta, annot=annot_b, fmt="", cmap="PiYG", center=0, xticklabels=x_labels, yticklabels=y_labels,
                 cbar_kws={'label': 'Net BLEU Gain (Δ BLEU)'}, ax=axes[1], linewidths=2.0, linecolor='white',
-                annot_kws={"size": 12.5, "weight": "bold"})
-    axes[1].set_title("B. Synthetic Expansion Net Impact (Δ BLEU)", fontsize=13.5, fontweight='bold', pad=14)
-    axes[1].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=11.5, fontweight='bold')
-    axes[1].set_yticklabels(y_labels_b, rotation=0, fontsize=11, fontweight='bold')
+                annot_kws={"size": 11.5, "weight": "bold"})
+    axes[1].set_title("B. Synthetic Expansion Net Impact (Δ BLEU)", fontsize=13, fontweight='bold', pad=14)
+    axes[1].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=11, fontweight='bold')
+    axes[1].set_yticklabels(y_labels, rotation=0, fontsize=10.5, fontweight='bold')
     
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig5_multidialect_heatmap.png'), bbox_inches='tight')
