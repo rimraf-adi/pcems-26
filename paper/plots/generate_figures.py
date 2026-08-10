@@ -46,33 +46,39 @@ def generate_fig1():
     dialects = ['Southern Konkan', 'Northern Konkan', 'Standard Marathi', 'Varhadi']
     dialect_hours = [247.31, 265.25, 255.79, 257.70]
     
-    fig, axes = plt.subplots(1, 3, figsize=(18, 6.2), dpi=300)
+    fig = plt.figure(figsize=(15, 9.5), dpi=300)
+    gs = fig.add_gridspec(2, 2, height_ratios=[1, 0.9])
+    
+    ax0 = fig.add_subplot(gs[0, 0])
+    ax1 = fig.add_subplot(gs[0, 1])
+    ax2 = fig.add_subplot(gs[1, :])
     
     # 1. Domain Donut
-    wedges, texts = axes[0].pie(domain_counts, labels=['Banking (51.3%)', 'Agriculture (48.7%)'], 
-                               colors=['#2b5c8f', '#2ecc71'], wedgeprops=dict(width=0.45, edgecolor='w'),
-                               textprops={'fontsize': 13.5, 'weight': 'bold'})
-    axes[0].set_title("A. Domain Split (Utterances)", fontsize=16, fontweight='bold', pad=14)
+    wedges, texts = ax0.pie(domain_counts, labels=['Banking (51.3%)', 'Agriculture (48.7%)'], 
+                           colors=['#2b5c8f', '#2ecc71'], wedgeprops=dict(width=0.45, edgecolor='w', linewidth=2.0),
+                           textprops={'fontsize': 14.5, 'weight': 'bold'})
+    ax0.set_title("A. Domain Split (Utterances)", fontsize=16.5, fontweight='bold', pad=14)
     
     # 2. Gender Donut
-    wedges, texts = axes[1].pie(gender_counts[:2], labels=['Female (51.0%)', 'Male (49.0%)'], 
-                               colors=['#e74c3c', '#3498db'], wedgeprops=dict(width=0.45, edgecolor='w'),
-                               textprops={'fontsize': 13.5, 'weight': 'bold'})
-    axes[1].set_title("B. Gender Distribution", fontsize=16, fontweight='bold', pad=14)
+    wedges, texts = ax1.pie(gender_counts[:2], labels=['Female (51.0%)', 'Male (49.0%)'], 
+                           colors=['#e74c3c', '#3498db'], wedgeprops=dict(width=0.45, edgecolor='w', linewidth=2.0),
+                           textprops={'fontsize': 14.5, 'weight': 'bold'})
+    ax1.set_title("B. Gender Distribution", fontsize=16.5, fontweight='bold', pad=14)
     
     # 3. Dialect Hours Bar
     bar_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#9467bd']
-    bars = axes[2].bar(dialects, dialect_hours, color=bar_colors, width=0.6, edgecolor='black', linewidth=1.0)
-    axes[2].set_title("C. Audio Duration per Dialect (Hours)", fontsize=16, fontweight='bold', pad=14)
-    axes[2].set_ylabel("Hours", fontsize=14.5, fontweight='bold')
-    axes[2].set_xticks(range(len(dialects)))
-    axes[2].set_xticklabels(dialects, rotation=20, ha='right', fontsize=12.5, fontweight='bold')
-    axes[2].set_ylim(0, 310)
+    bars = ax2.bar(dialects, dialect_hours, color=bar_colors, width=0.5, edgecolor='black', linewidth=1.4)
+    ax2.set_title("C. Audio Duration per Dialect (Hours)", fontsize=16.5, fontweight='bold', pad=14)
+    ax2.set_ylabel("Audio Duration (Hours)", fontsize=15, fontweight='bold')
+    ax2.set_xticks(range(len(dialects)))
+    ax2.set_xticklabels(dialects, fontsize=14, fontweight='bold')
+    ax2.set_ylim(0, 310)
+    ax2.grid(axis='y', linestyle='--', alpha=0.6)
     
     for p in bars:
         h = p.get_height()
-        axes[2].annotate(f"{h:.1f}h", (p.get_x() + p.get_width() / 2., h + 7),
-                         ha='center', va='bottom', fontsize=13, color='black', fontweight='bold')
+        ax2.annotate(f"{h:.1f}h", (p.get_x() + p.get_width() / 2., h + 7),
+                     ha='center', va='bottom', fontsize=14, color='black', fontweight='bold')
         
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig1_respin_demographics.png'), bbox_inches='tight')
@@ -216,46 +222,49 @@ def generate_fig4_dumbbell():
     mt5_orig = [46.31, 60.31, 80.99]
     mt5_exp  = [65.10, 62.07, 78.89]
     
-    fig, axes = plt.subplots(1, 2, figsize=(15.5, 5.5), dpi=300)
+    fig, axes = plt.subplots(1, 2, figsize=(15.0, 4.8), dpi=300)
     
     # Subplot A: IndicBART (244M)
     for i in range(len(dialects)):
-        axes[0].plot([ib_orig[i], ib_exp[i]], [y_pos[i], y_pos[i]], color='gray', linewidth=2.5, alpha=0.7, zorder=1)
-    axes[0].scatter(ib_orig, y_pos, color='#1f77b4', s=180, label='Original', zorder=2, edgecolors='black', linewidth=1.2)
-    axes[0].scatter(ib_exp, y_pos, color='#00a896', s=180, marker='s', label='Synthetically Expanded', zorder=2, edgecolors='black', linewidth=1.2)
+        axes[0].plot([ib_orig[i], ib_exp[i]], [y_pos[i], y_pos[i]], color='#777777', linewidth=2.5, alpha=0.8, zorder=1)
+    axes[0].scatter(ib_orig, y_pos, color='#1f77b4', s=160, label='Original', zorder=3, edgecolors='black', linewidth=1.2)
+    axes[0].scatter(ib_exp, y_pos, color='#00a896', s=160, marker='s', label='Synthetically Expanded', zorder=3, edgecolors='black', linewidth=1.2)
     
     for i in range(len(dialects)):
-        axes[0].annotate(f'{ib_orig[i]:.1f}', (ib_orig[i], y_pos[i] + 0.18), ha='center', fontsize=11, fontweight='bold', color='#1f77b4')
-        axes[0].annotate(f'{ib_exp[i]:.1f}', (ib_exp[i], y_pos[i] - 0.28), ha='center', fontsize=11, fontweight='bold', color='#00a896')
+        left_val = min(ib_orig[i], ib_exp[i])
+        right_val = max(ib_orig[i], ib_exp[i])
+        axes[0].annotate(f'{left_val:.1f}', (left_val - 1.6, y_pos[i]), va='center', ha='right', fontsize=11, fontweight='bold', color='#1f77b4' if left_val == ib_orig[i] else '#00a896')
+        axes[0].annotate(f'{right_val:.1f}', (right_val + 1.6, y_pos[i]), va='center', ha='left', fontsize=11, fontweight='bold', color='#1f77b4' if right_val == ib_orig[i] else '#00a896')
         
     axes[0].set_yticks(y_pos)
     axes[0].set_yticklabels(dialects, fontsize=13, fontweight='bold')
-    axes[0].set_xlabel('5-Fold CV Test BLEU', fontsize=13.5, fontweight='bold')
-    axes[0].set_title('A. IndicBART (244M) Single-Dialect Performance Shift', fontsize=14, fontweight='bold', pad=12)
-    axes[0].set_xlim(35, 90)
+    axes[0].set_xlabel('5-Fold CV Test BLEU', fontsize=13, fontweight='bold')
+    axes[0].set_title('A. IndicBART (244M) Performance Shift', fontsize=14, fontweight='bold', pad=14)
+    axes[0].set_xlim(34, 88)
+    axes[0].set_ylim(-0.5, 2.5)
     axes[0].grid(axis='x', linestyle='--', alpha=0.5)
-    axes[0].legend(fontsize=12, loc='lower right')
+    axes[0].legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
     
     # Subplot B: mT5-Small (300M)
     for i in range(len(dialects)):
-        axes[1].plot([mt5_orig[i], mt5_exp[i]], [y_pos[i], y_pos[i]], color='gray', linewidth=2.5, alpha=0.7, zorder=1)
-    axes[1].scatter(mt5_orig, y_pos, color='#8b263e', s=180, label='Original', zorder=2, edgecolors='black', linewidth=1.2)
-    axes[1].scatter(mt5_exp, y_pos, color='#ff6f00', s=180, marker='s', label='Synthetically Expanded', zorder=2, edgecolors='black', linewidth=1.2)
+        axes[1].plot([mt5_orig[i], mt5_exp[i]], [y_pos[i], y_pos[i]], color='#777777', linewidth=2.5, alpha=0.8, zorder=1)
+    axes[1].scatter(mt5_orig, y_pos, color='#8b263e', s=160, label='Original', zorder=3, edgecolors='black', linewidth=1.2)
+    axes[1].scatter(mt5_exp, y_pos, color='#ff6f00', s=160, marker='s', label='Synthetically Expanded', zorder=3, edgecolors='black', linewidth=1.2)
     
     for i in range(len(dialects)):
-        axes[1].annotate(f'{mt5_orig[i]:.1f}', (mt5_orig[i], y_pos[i] + 0.18), ha='center', fontsize=11, fontweight='bold', color='#8b263e')
-        axes[1].annotate(f'{mt5_exp[i]:.1f}', (mt5_exp[i], y_pos[i] - 0.28), ha='center', fontsize=11, fontweight='bold', color='#ff6f00')
-        diff = mt5_exp[i] - mt5_orig[i]
-        if diff > 10:
-            axes[1].annotate(f'(+{diff:.1f})', (mt5_exp[i] + 3.8, y_pos[i]), va='center', fontsize=11, fontweight='bold', color='#007700')
+        left_val = min(mt5_orig[i], mt5_exp[i])
+        right_val = max(mt5_orig[i], mt5_exp[i])
+        axes[1].annotate(f'{left_val:.1f}', (left_val - 1.6, y_pos[i]), va='center', ha='right', fontsize=11, fontweight='bold', color='#8b263e' if left_val == mt5_orig[i] else '#ff6f00')
+        axes[1].annotate(f'{right_val:.1f}', (right_val + 1.6, y_pos[i]), va='center', ha='left', fontsize=11, fontweight='bold', color='#8b263e' if right_val == mt5_orig[i] else '#ff6f00')
         
     axes[1].set_yticks(y_pos)
     axes[1].set_yticklabels(dialects, fontsize=13, fontweight='bold')
-    axes[1].set_xlabel('5-Fold CV Test BLEU', fontsize=13.5, fontweight='bold')
-    axes[1].set_title('B. mT5-Small (300M) Single-Dialect Performance Shift', fontsize=14, fontweight='bold', pad=12)
-    axes[1].set_xlim(35, 90)
+    axes[1].set_xlabel('5-Fold CV Test BLEU', fontsize=13, fontweight='bold')
+    axes[1].set_title('B. mT5-Small (300M) Performance Shift', fontsize=14, fontweight='bold', pad=14)
+    axes[1].set_xlim(38, 92)
+    axes[1].set_ylim(-0.5, 2.5)
     axes[1].grid(axis='x', linestyle='--', alpha=0.5)
-    axes[1].legend(fontsize=12, loc='lower right')
+    axes[1].legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
     
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_single_dialect_cv.png'), bbox_inches='tight')
@@ -266,7 +275,7 @@ def generate_fig4_dumbbell():
 
 def generate_fig4_slope():
     print("Generating Figure 4 Option 2: Slope Chart...")
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6), dpi=300)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 4.8), dpi=300)
     
     dialects = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
     colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
@@ -277,16 +286,17 @@ def generate_fig4_slope():
     
     for i in range(3):
         axes[0].plot([0, 1], [ib_orig[i], ib_exp[i]], marker='o', markersize=8, linewidth=2.5, label=dialects[i], color=colors[i])
-        axes[0].annotate(f'{ib_orig[i]:.1f}', (-0.05, ib_orig[i]), ha='right', va='center', fontweight='bold', fontsize=11)
-        axes[0].annotate(f'{ib_exp[i]:.1f}', (1.05, ib_exp[i]), ha='left', va='center', fontweight='bold', fontsize=11)
+        axes[0].annotate(f'{ib_orig[i]:.1f}', (-0.04, ib_orig[i]), ha='right', va='center', fontweight='bold', fontsize=11)
+        axes[0].annotate(f'{ib_exp[i]:.1f}', (1.04, ib_exp[i]), ha='left', va='center', fontweight='bold', fontsize=11)
         
     axes[0].set_xticks([0, 1])
     axes[0].set_xticklabels(['Original', 'Synthetically Expanded'], fontsize=12, fontweight='bold')
     axes[0].set_ylabel('5-Fold CV BLEU', fontsize=13, fontweight='bold')
-    axes[0].set_title('A. IndicBART (244M) Slope Chart', fontsize=14, fontweight='bold', pad=12)
-    axes[0].legend(fontsize=11, loc='lower left')
+    axes[0].set_title('A. IndicBART (244M) Slope Chart', fontsize=14, fontweight='bold', pad=14)
+    axes[0].set_xlim(-0.25, 1.25)
     axes[0].set_ylim(35, 85)
     axes[0].grid(axis='y', linestyle='--', alpha=0.5)
+    axes[0].legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5)
     
     # mT5-Small
     mt5_orig = [46.31, 60.31, 80.99]
@@ -294,16 +304,17 @@ def generate_fig4_slope():
     
     for i in range(3):
         axes[1].plot([0, 1], [mt5_orig[i], mt5_exp[i]], marker='s', markersize=8, linewidth=2.5, label=dialects[i], color=colors[i])
-        axes[1].annotate(f'{mt5_orig[i]:.1f}', (-0.05, mt5_orig[i]), ha='right', va='center', fontweight='bold', fontsize=11)
-        axes[1].annotate(f'{mt5_exp[i]:.1f}', (1.05, mt5_exp[i]), ha='left', va='center', fontweight='bold', fontsize=11)
+        axes[1].annotate(f'{mt5_orig[i]:.1f}', (-0.04, mt5_orig[i]), ha='right', va='center', fontweight='bold', fontsize=11)
+        axes[1].annotate(f'{mt5_exp[i]:.1f}', (1.04, mt5_exp[i]), ha='left', va='center', fontweight='bold', fontsize=11)
         
     axes[1].set_xticks([0, 1])
     axes[1].set_xticklabels(['Original', 'Synthetically Expanded'], fontsize=12, fontweight='bold')
     axes[1].set_ylabel('5-Fold CV BLEU', fontsize=13, fontweight='bold')
-    axes[1].set_title('B. mT5-Small (300M) Slope Chart', fontsize=14, fontweight='bold', pad=12)
-    axes[1].legend(fontsize=11, loc='lower left')
+    axes[1].set_title('B. mT5-Small (300M) Slope Chart', fontsize=14, fontweight='bold', pad=14)
+    axes[1].set_xlim(-0.25, 1.25)
     axes[1].set_ylim(35, 85)
     axes[1].grid(axis='y', linestyle='--', alpha=0.5)
+    axes[1].legend(loc='lower left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5)
     
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig4_slope.png'), bbox_inches='tight')
@@ -317,7 +328,7 @@ def generate_fig4_radar():
     angles = [n / float(N) * 2 * np.pi for n in range(N)]
     angles += angles[:1]
     
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6.5), subplot_kw=dict(polar=True), dpi=300)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.2), subplot_kw=dict(polar=True), dpi=300)
     
     # IndicBART
     ib_orig = [48.54, 60.58, 76.63]
@@ -331,7 +342,7 @@ def generate_fig4_radar():
     axes[0].fill(angles, ib_exp_r, color='#00a896', alpha=0.2)
     axes[0].set_xticks(angles[:-1])
     axes[0].set_xticklabels(categories, fontsize=12, fontweight='bold')
-    axes[0].set_title('A. IndicBART Radar Profile', fontsize=14, fontweight='bold', pad=15)
+    axes[0].set_title('A. IndicBART Radar Profile', fontsize=14, fontweight='bold', pad=20)
     axes[0].legend(loc='lower left', bbox_to_anchor=(-0.1, -0.1), fontsize=11)
     
     # mT5-Small
@@ -346,7 +357,7 @@ def generate_fig4_radar():
     axes[1].fill(angles, mt5_exp_r, color='#ff6f00', alpha=0.2)
     axes[1].set_xticks(angles[:-1])
     axes[1].set_xticklabels(categories, fontsize=12, fontweight='bold')
-    axes[1].set_title('B. mT5-Small Radar Profile', fontsize=14, fontweight='bold', pad=15)
+    axes[1].set_title('B. mT5-Small Radar Profile', fontsize=14, fontweight='bold', pad=20)
     axes[1].legend(loc='lower left', bbox_to_anchor=(-0.1, -0.1), fontsize=11)
     
     plt.tight_layout()
@@ -386,23 +397,23 @@ def generate_fig5():
     ]
     x_labels = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
     
-    fig, axes = plt.subplots(1, 2, figsize=(16.5, 6.2), dpi=300, gridspec_kw={'width_ratios': [1.2, 1]})
+    fig, axes = plt.subplots(1, 2, figsize=(15.5, 4.8), dpi=300, gridspec_kw={'width_ratios': [1.2, 1]})
     
     # Subplot A: Absolute BLEU Heatmap
     sns.heatmap(matrix_bleu, annot=True, fmt=".2f", cmap="YlGnBu", xticklabels=x_labels, yticklabels=y_labels_a,
                 cbar_kws={'label': '5-Fold CV BLEU Score'}, ax=axes[0], linewidths=2.0, linecolor='white',
-                annot_kws={"size": 13, "weight": "bold"})
-    axes[0].set_title("A. Multi-Dialect Performance Heatmap (BLEU)", fontsize=14.5, fontweight='bold', pad=12)
-    axes[0].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=12, fontweight='bold')
-    axes[0].set_yticklabels(y_labels_a, rotation=0, fontsize=11.5, fontweight='bold')
+                annot_kws={"size": 12.5, "weight": "bold"})
+    axes[0].set_title("A. Multi-Dialect Performance Heatmap (BLEU)", fontsize=13.5, fontweight='bold', pad=14)
+    axes[0].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=11.5, fontweight='bold')
+    axes[0].set_yticklabels(y_labels_a, rotation=0, fontsize=11, fontweight='bold')
     
     # Subplot B: Net BLEU Gain Heatmap (Expanded - Original)
     sns.heatmap(matrix_delta, annot=True, fmt="+.2f", cmap="PiYG", center=0, xticklabels=x_labels, yticklabels=y_labels_b,
                 cbar_kws={'label': 'Net BLEU Gain (Δ BLEU)'}, ax=axes[1], linewidths=2.0, linecolor='white',
-                annot_kws={"size": 13.5, "weight": "bold"})
-    axes[1].set_title("B. Synthetic Expansion Net Impact (Δ BLEU)", fontsize=14.5, fontweight='bold', pad=12)
-    axes[1].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=12, fontweight='bold')
-    axes[1].set_yticklabels(y_labels_b, rotation=0, fontsize=11.5, fontweight='bold')
+                annot_kws={"size": 12.5, "weight": "bold"})
+    axes[1].set_title("B. Synthetic Expansion Net Impact (Δ BLEU)", fontsize=13.5, fontweight='bold', pad=14)
+    axes[1].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=11.5, fontweight='bold')
+    axes[1].set_yticklabels(y_labels_b, rotation=0, fontsize=11, fontweight='bold')
     
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig5_multidialect_heatmap.png'), bbox_inches='tight')
@@ -421,25 +432,26 @@ def generate_fig6():
     x = np.arange(len(subsets))
     width = 0.35
     
-    fig, ax = plt.subplots(figsize=(11, 6.5), dpi=300)
+    fig, ax = plt.subplots(figsize=(12, 4.6), dpi=300)
     
-    rects1 = ax.bar(x - width/2, delta_ib, width, label='IndicBART Δ BLEU', color='#2b5c8f', edgecolor='black', linewidth=1.0)
-    rects2 = ax.bar(x + width/2, delta_mt5, width, label='mT5-Small Δ BLEU', color='#27ae60', edgecolor='black', linewidth=1.0)
+    rects1 = ax.bar(x - width/2, delta_ib, width, label='IndicBART Δ BLEU', color='#2b5c8f', edgecolor='black', linewidth=1.2)
+    rects2 = ax.bar(x + width/2, delta_mt5, width, label='mT5-Small Δ BLEU', color='#27ae60', edgecolor='black', linewidth=1.2)
     
     ax.axhline(0, color='black', linewidth=1.8)
-    ax.set_ylabel('Δ BLEU Score (Expanded vs Original 5-Fold CV)', fontsize=14.5, fontweight='bold')
-    ax.set_title('Impact of LLM Synthetic Data Expansion across Dialects (Δ BLEU)', fontsize=16, fontweight='bold', pad=14)
+    ax.set_ylabel('Δ BLEU Score', fontsize=13.5, fontweight='bold')
+    ax.set_title('Impact of LLM Synthetic Data Expansion across Dialects (Δ BLEU)', fontsize=15, fontweight='bold', pad=14)
     ax.set_xticks(x)
     ax.set_xticklabels(subsets, fontsize=13, fontweight='bold')
-    ax.legend(loc='upper right', frameon=True, fontsize=13)
-    ax.set_ylim(-15, 26)
+    ax.legend(loc='upper right', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=12)
+    ax.set_ylim(-6.0, 31.0)
+    ax.grid(axis='y', linestyle='--', alpha=0.5)
     
     for rect in rects1 + rects2:
         val = rect.get_height()
         va = 'bottom' if val >= 0 else 'top'
-        offset = 0.7 if val >= 0 else -2.0
+        offset = 0.8 if val >= 0 else -0.8
         ax.annotate(f'{val:+.2f}', (rect.get_x() + rect.get_width() / 2., val + offset),
-                    ha='center', va=va, fontsize=12.5, fontweight='bold', color='black')
+                    ha='center', va=va, fontsize=12, fontweight='bold', color='black')
         
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig6_augmentation_impact.png'), bbox_inches='tight')
@@ -458,37 +470,39 @@ def generate_fig7():
     raw_chrf = [64.54, 80.18]
     clean_chrf = [75.49, 84.58]
     
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6.5), dpi=300)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.0), dpi=300)
     x = np.arange(len(models))
     width = 0.35
     
     # Panel 1: BLEU Comparison
-    axes[0].bar(x - width/2, raw_bleu, width, label='Raw Unverified Data (19,914 pairs)', color='#e74c3c', edgecolor='black', linewidth=1.0)
-    axes[0].bar(x + width/2, clean_bleu, width, label='Filtered Clean Data (32,335 pairs)', color='#2ecc71', edgecolor='black', linewidth=1.0)
-    axes[0].set_ylabel('BLEU Score', fontsize=14.5, fontweight='bold')
-    axes[0].set_title('A. BLEU Score Recovery via Verification', fontsize=15.5, fontweight='bold', pad=12)
+    axes[0].bar(x - width/2, raw_bleu, width, label='Raw Unverified Data (19,914 pairs)', color='#e74c3c', edgecolor='black', linewidth=1.2)
+    axes[0].bar(x + width/2, clean_bleu, width, label='Filtered Clean Data (32,335 pairs)', color='#2ecc71', edgecolor='black', linewidth=1.2)
+    axes[0].set_ylabel('BLEU Score', fontsize=13.5, fontweight='bold')
+    axes[0].set_title('A. BLEU Score Recovery via Verification', fontsize=14.5, fontweight='bold', pad=14)
     axes[0].set_xticks(x)
-    axes[0].set_xticklabels(models, fontsize=13, fontweight='bold')
-    axes[0].legend(fontsize=12.5)
-    axes[0].set_ylim(0, 92)
+    axes[0].set_xticklabels(models, fontsize=12.5, fontweight='bold')
+    axes[0].legend(fontsize=11.5, loc='upper left')
+    axes[0].set_ylim(0, 82)
+    axes[0].grid(axis='y', linestyle='--', alpha=0.5)
     
     for i in range(len(models)):
-        axes[0].annotate(f'{raw_bleu[i]:.2f}', (x[i] - width/2, raw_bleu[i] + 2.0), ha='center', fontsize=12.5, fontweight='bold', color='black')
-        axes[0].annotate(f'{clean_bleu[i]:.2f}\n(+{clean_bleu[i]-raw_bleu[i]:.2f})', (x[i] + width/2, clean_bleu[i] + 2.0), ha='center', fontsize=12.5, fontweight='bold', color='green')
+        axes[0].annotate(f'{raw_bleu[i]:.2f}', (x[i] - width/2, raw_bleu[i] + 1.5), ha='center', fontsize=11.5, fontweight='bold', color='black')
+        axes[0].annotate(f'{clean_bleu[i]:.2f}\n(+{clean_bleu[i]-raw_bleu[i]:.2f})', (x[i] + width/2, clean_bleu[i] + 1.5), ha='center', fontsize=11.5, fontweight='bold', color='#006600')
         
     # Panel 2: chrF++ Comparison
-    axes[1].bar(x - width/2, raw_chrf, width, label='Raw Unverified Data', color='#e74c3c', edgecolor='black', linewidth=1.0)
-    axes[1].bar(x + width/2, clean_chrf, width, label='Filtered Clean Data', color='#2ecc71', edgecolor='black', linewidth=1.0)
-    axes[1].set_ylabel('chrF++ Score', fontsize=14.5, fontweight='bold')
-    axes[1].set_title('B. chrF++ Score Enhancement via Verification', fontsize=15.5, fontweight='bold', pad=12)
+    axes[1].bar(x - width/2, raw_chrf, width, label='Raw Unverified Data', color='#e74c3c', edgecolor='black', linewidth=1.2)
+    axes[1].bar(x + width/2, clean_chrf, width, label='Filtered Clean Data', color='#2ecc71', edgecolor='black', linewidth=1.2)
+    axes[1].set_ylabel('chrF++ Score', fontsize=13.5, fontweight='bold')
+    axes[1].set_title('B. chrF++ Score Enhancement via Verification', fontsize=14.5, fontweight='bold', pad=14)
     axes[1].set_xticks(x)
-    axes[1].set_xticklabels(models, fontsize=13, fontweight='bold')
-    axes[1].legend(fontsize=12.5)
-    axes[1].set_ylim(0, 102)
+    axes[1].set_xticklabels(models, fontsize=12.5, fontweight='bold')
+    axes[1].legend(fontsize=11.5, loc='upper left')
+    axes[1].set_ylim(0, 98)
+    axes[1].grid(axis='y', linestyle='--', alpha=0.5)
     
     for i in range(len(models)):
-        axes[1].annotate(f'{raw_chrf[i]:.2f}', (x[i] - width/2, raw_chrf[i] + 2.0), ha='center', fontsize=12.5, fontweight='bold', color='black')
-        axes[1].annotate(f'{clean_chrf[i]:.2f}\n(+{clean_chrf[i]-raw_chrf[i]:.2f})', (x[i] + width/2, clean_chrf[i] + 2.0), ha='center', fontsize=12.5, fontweight='bold', color='green')
+        axes[1].annotate(f'{raw_chrf[i]:.2f}', (x[i] - width/2, raw_chrf[i] + 1.5), ha='center', fontsize=11.5, fontweight='bold', color='black')
+        axes[1].annotate(f'{clean_chrf[i]:.2f}\n(+{clean_chrf[i]-raw_chrf[i]:.2f})', (x[i] + width/2, clean_chrf[i] + 1.5), ha='center', fontsize=11.5, fontweight='bold', color='#006600')
 
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig7_verification_ablation.png'), bbox_inches='tight')
