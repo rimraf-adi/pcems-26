@@ -92,43 +92,50 @@ def generate_fig1():
 def generate_fig2():
     print("Generating Figure 2: Parallel Dataset Composition...")
     dialects = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
-    orig_pairs = [5838, 5825, 5330]
-    synth_pairs = [5576, 5501, 5086]
+    orig_pairs = [5576, 5501, 5086]
+    synth_verified = [5569, 5534, 5069]
+    rejected_pairs = [269, 291, 261]
     
     df = pd.DataFrame({
         'Dialect': dialects,
-        'Original Pairs': orig_pairs,
-        'Synthetic Verified Pairs': synth_pairs
+        'Original Clean Pairs': orig_pairs,
+        'Clean Synthetic Verified Pairs': synth_verified,
+        'Rejected Pairs': rejected_pairs
     })
     
     fig, ax = plt.subplots(figsize=(11, 6.5), dpi=300)
     x = np.arange(len(dialects))
     width = 0.45
     
-    p1 = ax.bar(x, orig_pairs, width, label='Original Parallel Pairs', color='#34495e', edgecolor='black', linewidth=1.0)
-    p2 = ax.bar(x, synth_pairs, width, bottom=orig_pairs, label='Synthetically Augmented Pairs (Gemma-4 via Ollama)', color='#2ecc71', edgecolor='black', linewidth=1.0)
+    p1 = ax.bar(x, orig_pairs, width, label='Original Clean Pairs', color='#2c3e50', edgecolor='black', linewidth=1.0)
+    p2 = ax.bar(x, synth_verified, width, bottom=orig_pairs, label='Clean Synthetic Verified Pairs (Gemma-4)', color='#27ae60', edgecolor='black', linewidth=1.0)
     
     ax.set_ylabel('Total Parallel Sentence Pairs', fontsize=14.5, fontweight='bold')
-    ax.set_title('Parallel Dataset Expansion & Synthetic Yield per Dialect Partition', fontsize=16, fontweight='bold', pad=14)
+    ax.set_title('Parallel Dataset Expansion & Verification Yield per Dialect', fontsize=16, fontweight='bold', pad=14)
     ax.set_xticks(x)
     ax.set_xticklabels(dialects, fontsize=13, fontweight='bold')
-    ax.legend(loc='upper left', frameon=True, fontsize=13)
+    ax.legend(loc='upper left', frameon=True, fontsize=12.5)
     
     for i in range(len(dialects)):
-        tot = orig_pairs[i] + synth_pairs[i]
-        ax.annotate(f"{tot:,}\n({tot/orig_pairs[i]:.2f}x expansion)", (x[i], tot + 250), ha='center', fontsize=13, fontweight='bold')
+        tot = orig_pairs[i] + synth_verified[i]
+        mult = tot / orig_pairs[i]
+        ax.annotate(f"{tot:,} Clean Pairs\n({mult:.2f}x expansion)", (x[i], tot + 250), ha='center', fontsize=12, fontweight='bold', color='#1e8449')
+        # Annotate original and synthetic values inside bars
+        ax.text(x[i], orig_pairs[i] / 2, f"Orig: {orig_pairs[i]:,}", ha='center', va='center', color='white', fontsize=11, fontweight='bold')
+        ax.text(x[i], orig_pairs[i] + synth_verified[i] / 2, f"Synth: {synth_verified[i]:,}", ha='center', va='center', color='white', fontsize=11, fontweight='bold')
         
-    ax.set_ylim(0, 14500)
+    ax.set_ylim(0, 13800)
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig2_dataset_composition.png'), bbox_inches='tight')
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig2_dataset_composition.pdf'), bbox_inches='tight')
     plt.close()
     
     # Plotly Interactive
-    df_long = pd.melt(df, id_vars=['Dialect'], value_vars=['Original Pairs', 'Synthetic Verified Pairs'],
+    df_long = pd.melt(df, id_vars=['Dialect'], value_vars=['Original Clean Pairs', 'Clean Synthetic Verified Pairs'],
                       var_name='Pair Source', value_name='Sentence Pairs')
     fig_px = px.bar(df_long, x='Dialect', y='Sentence Pairs', color='Pair Source',
-                    title='Parallel Dataset Expansion across Dialects', barmode='stack', text_auto=True)
+                    title='Parallel Dataset Expansion across Dialects', barmode='stack', text_auto=True,
+                    color_discrete_map={'Original Clean Pairs': '#2c3e50', 'Clean Synthetic Verified Pairs': '#27ae60'})
     fig_px.update_layout(font=dict(size=16))
     fig_px.write_html(os.path.join(INTERACTIVE_DIR, 'fig2_dataset_composition.html'))
 
