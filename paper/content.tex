@@ -214,6 +214,12 @@ The large speaker diversity ensures broad coverage of intra-dialect phonetic and
 \node (tier1) [stage, below=1.4cm of gen] {\textbf{Tier 1: Rule-Based Filter}\\[3pt]Script Integrity \& Length Ratio};
 \node (tier2) [stage, left=3.5cm of tier1] {\textbf{Tier 2: LLM Semantic Auditor}\\[3pt]LLaMA-3.1-8B Verification Pass};
 
+% External Bounding Box for Multi-Tier Verification Engine
+\begin{scope}[on background layer]
+\node (verbox) [draw=green!60!black, dashed, line width=1.4pt, fill=green!4, rounded corners=8pt, fit=(tier1) (tier2), inner sep=12pt] {};
+\node[font=\small\sffamily\bfseries\color{green!40!black}, anchor=south, yshift=2pt] at (verbox.north) {\textbf{Multi-Tier Verification Engine}};
+\end{scope}
+
 % Row 3: Expanded Corpus & Seq2Seq Fine-Tuning (Left to Right)
 \node (corpus) [box, fill=cyan!12, below=1.4cm of tier2] {\textbf{Verified Parallel Corpus}\\[3pt]32,335 Clean Sentence Pairs};
 \node (seq2seq) [model, right=3.5cm of corpus] {\textbf{Seq2Seq Model Training}\\[3pt]IndicBART \& mT5-Small Evaluation};
