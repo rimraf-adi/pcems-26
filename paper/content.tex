@@ -325,25 +325,23 @@ All results are reported using standard automatic metrics computed via SacreBLEU
 \cline{5-8}
 & & & & \makecell[c]{\small\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\small\textbf{WER ($\downarrow$)}} & \makecell[c]{\small\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\small\textbf{WER ($\downarrow$)}} \\
 \hline
-\multirow{3}{*}{Single-Dialect} & \multirow{3}{*}{Original (16k)} & Southern Konkan & 559 & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
+\multirow{3}{*}{Single-Dialect} & \multirow{3}{*}{Original} & Southern Konkan & 559 & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
  & & Northern Konkan & 540 & \textbf{90.13} & \textbf{6.46\%} & 79.46 & 11.95\% \\
  & & Varhadi & 516 & \textbf{83.59} & \textbf{10.19\%} & 74.81 & 14.73\% \\
 \cline{2-8}
- & \multirow{3}{*}{Expanded (32k)} & Southern Konkan & 559 & 24.06 & 60.32\% & \textbf{44.36} & \textbf{32.75\%} \\
+ & \multirow{3}{*}{Synthetically Expanded} & Southern Konkan & 559 & 24.06 & 60.32\% & \textbf{44.36} & \textbf{32.75\%} \\
  & & Northern Konkan & 540 & 65.41 & 28.70\% & \textbf{79.76} & \textbf{12.61\%} \\
  & & Varhadi & 516 & 67.97 & 25.43\% & \textbf{76.90} & \textbf{14.19\%} \\
 \hline
-\multirow{5}{*}{Multi-Dialect} & \multirow{5}{*}{Original (16k)} & Southern Konkan & 559 & -- & -- & \textbf{40.94} & \textbf{35.34\%} \\
- & & Northern Konkan & 540 & -- & -- & \textbf{77.50} & \textbf{14.65\%} \\
- & & Standard Benchmark & 555 & -- & -- & \textbf{96.65} & \textbf{1.91\%} \\
- & & Varhadi & 516 & -- & -- & \textbf{73.47} & \textbf{16.16\%} \\
- & & \textbf{Overall Combined} & \textbf{2,170} & 62.98 & 30.13\% & \textbf{72.18} & \textbf{17.23\%} \\
+\multirow{8}{*}{Multi-Dialect} & \multirow{4}{*}{Original} & Southern Konkan & 559 & 26.21 & 53.15\% & \textbf{40.94} & \textbf{35.34\%} \\
+ & & Northern Konkan & 540 & 47.59 & 32.84\% & \textbf{77.50} & \textbf{14.65\%} \\
+ & & Standard Benchmark & 555 & 96.12 & 3.12\% & \textbf{96.65} & \textbf{1.91\%} \\
+ & & Varhadi & 516 & 72.75 & 25.30\% & \textbf{73.47} & \textbf{16.16\%} \\
 \cline{2-8}
- & \multirow{5}{*}{Expanded (32k)} & Southern Konkan & 559 & -- & -- & \textbf{43.88} & \textbf{34.96\%} \\
- & & Northern Konkan & 540 & -- & -- & \textbf{78.16} & \textbf{13.55\%} \\
- & & Standard Benchmark & 555 & -- & -- & \textbf{97.39} & \textbf{1.37\%} \\
- & & Varhadi & 516 & -- & -- & \textbf{74.74} & \textbf{15.57\%} \\
- & & \textbf{Overall Combined} & \textbf{2,170} & \textbf{76.50} & \textbf{16.23\%} & 73.48 & 16.58\% \\
+ & \multirow{4}{*}{Synthetically Expanded} & Southern Konkan & 559 & \textbf{52.06} & 36.80\% & 43.88 & \textbf{34.96\%} \\
+ & & Northern Konkan & 540 & 49.08 & 28.70\% & \textbf{78.16} & \textbf{13.55\%} \\
+ & & Standard Benchmark & 555 & 96.80 & 1.65\% & \textbf{97.39} & \textbf{1.37\%} \\
+ & & Varhadi & 516 & 70.27 & 21.40\% & \textbf{74.74} & \textbf{15.57\%} \\
 \hline
 \end{tabular}
 }
@@ -458,16 +456,30 @@ Varhadi & 32,335 & 1,524 & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig4_single_dialect_cv.pdf}
-\caption{Single-dialect 5-fold cross-validation test BLEU comparison for IndicBART (244M) and mT5-small (300M) on (A) Original datasets and (B) Synthetically Expanded datasets.}
-\label{fig:single_dialect_cv}
+\caption{Single-dialect 5-fold cross-validation performance shift (Dumbbell Plot) comparing Original and Synthetically Expanded models for IndicBART (244M) and mT5-small (300M).}
+\label{fig:single_dialect_dumbbell}
 \end{figure}
 
-% \begin{figure}[t]
-% \centering
-% \includegraphics[width=0.85\textwidth]{figures/fig5_multidialect_heatmap.pdf}
-% \caption{Multi-dialect 5-fold cross-validation performance heatmap (sacreBLEU) across model architectures, dataset expansion sizes, and evaluated dialect partitions.}
-% \label{fig:multidialect_heatmap}
-% \end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig4_slope.pdf}
+\caption{Single-dialect 5-fold cross-validation slope chart tracking BLEU score trajectories from Original to Synthetically Expanded corpora.}
+\label{fig:single_dialect_slope}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig4_radar.pdf}
+\caption{Single-dialect polar radar profile comparison illustrating benchmark metric coverage across sub-dialects for IndicBART (244M) and mT5-small (300M).}
+\label{fig:single_dialect_radar}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig5_multidialect_heatmap.pdf}
+\caption{Multi-dialect 5-fold cross-validation performance matrix: (A) Absolute BLEU score heatmap across model architectures and corpora partitions, and (B) Net synthetic expansion impact ($\Delta$ BLEU).}
+\label{fig:multidialect_heatmap}
+\end{figure}
 
 
 \subsection{\textcolor{black}{Impact of Synthetic Data Augmentation}}
