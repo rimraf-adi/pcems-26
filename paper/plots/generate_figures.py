@@ -278,57 +278,69 @@ def generate_fig4_radar():
     generate_fig4()
 
 # ==============================================================================
-# FIGURE 5: Multi-Dialect 5-Fold CV Heatmap (Table 5 & Table 7)
+# FIGURE 5: Multi-Dialect 5-Fold CV Performance Matrix & Net Impact
 # ==============================================================================
 def generate_fig5():
-    print("Generating Figure 5: Multi-Dialect Cross-Validation Dual Heatmap...")
-    matrix_bleu = np.array([
-        [26.21, 47.59, 72.75],  # IndicBART Original
-        [48.28, 62.35, 79.57],  # mT5-Small Original
-        [52.06, 49.08, 70.27],  # IndicBART Expanded
-        [66.62, 62.72, 78.73]   # mT5-Small Expanded
-    ])
+    print("Generating Figure 5: Multi-Dialect Cross-Validation Grouped Bar & Net Impact Chart...")
+    dialects = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
+    x = np.arange(len(dialects))
+    width = 0.20
     
-    matrix_delta = np.array([
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0],
-        [25.85, 1.49, -2.48],
-        [18.34, 0.37, -0.84]
-    ])
+    ib_orig = [26.21, 47.59, 72.75]
+    mt5_orig = [48.28, 62.35, 79.57]
+    ib_exp  = [52.06, 49.08, 70.27]
+    mt5_exp  = [66.62, 62.72, 78.73]
     
-    y_labels = [
-        'IndicBART (Original)',
-        'mT5-Small (Original)',
-        'IndicBART (Expanded)',
-        'mT5-Small (Expanded)'
-    ]
-    x_labels = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
+    ib_delta  = [25.85, 1.49, -2.48]
+    mt5_delta = [18.34, 0.37, -0.84]
     
-    fig, axes = plt.subplots(1, 2, figsize=(15.5, 4.8), dpi=300)
+    fig, axes = plt.subplots(1, 2, figsize=(16.0, 4.8), dpi=300)
     
-    # Subplot A: Absolute BLEU Heatmap
-    sns.heatmap(matrix_bleu, annot=True, fmt=".2f", cmap="YlGnBu", xticklabels=x_labels, yticklabels=y_labels,
-                cbar_kws={'label': '5-Fold CV BLEU Score'}, ax=axes[0], linewidths=2.0, linecolor='white',
-                annot_kws={"size": 12, "weight": "bold"})
-    axes[0].set_title("A. Multi-Dialect Performance Heatmap (BLEU)", fontsize=13, fontweight='bold', pad=14)
-    axes[0].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=11, fontweight='bold')
-    axes[0].set_yticklabels(y_labels, rotation=0, fontsize=10.5, fontweight='bold')
+    # Subplot A: Absolute BLEU Scores across Multi-Dialect Models
+    rects1 = axes[0].bar(x - 1.5*width, ib_orig, width, label='IndicBART (Original)', color='#2b5c8f', edgecolor='black', linewidth=1.1)
+    rects2 = axes[0].bar(x - 0.5*width, mt5_orig, width, label='mT5-Small (Original)', color='#8c2d19', edgecolor='black', linewidth=1.1)
+    rects3 = axes[0].bar(x + 0.5*width, ib_exp, width, label='IndicBART (Expanded)', color='#41b6c4', edgecolor='black', linewidth=1.1)
+    rects4 = axes[0].bar(x + 1.5*width, mt5_exp, width, label='mT5-Small (Expanded)', color='#fe9929', edgecolor='black', linewidth=1.1)
     
-    # Subplot B: Net BLEU Gain Heatmap (Aligned 4 Rows)
-    annot_b = np.array([
-        ["Baseline", "Baseline", "Baseline"],
-        ["Baseline", "Baseline", "Baseline"],
-        ["+25.85", "+1.49", "-2.48"],
-        ["+18.34", "+0.37", "-0.84"]
-    ])
+    axes[0].set_ylabel('5-Fold CV BLEU Score', fontsize=12, fontweight='bold')
+    axes[0].set_title('A. Multi-Dialect Performance Matrix (BLEU)', fontsize=13, fontweight='bold', pad=15)
+    axes[0].set_xticks(x)
+    axes[0].set_xticklabels(dialects, fontsize=11, fontweight='bold')
+    axes[0].set_ylim(0, 100)
+    axes[0].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=9.5, ncol=2)
+    axes[0].grid(axis='y', linestyle='--', alpha=0.5)
     
-    sns.heatmap(matrix_delta, annot=annot_b, fmt="", cmap="PiYG", center=0, xticklabels=x_labels, yticklabels=y_labels,
-                cbar_kws={'label': 'Net BLEU Gain (Δ BLEU)'}, ax=axes[1], linewidths=2.0, linecolor='white',
-                annot_kws={"size": 11.5, "weight": "bold"})
-    axes[1].set_title("B. Synthetic Expansion Net Impact (Δ BLEU)", fontsize=13, fontweight='bold', pad=14)
-    axes[1].set_xticklabels(x_labels, rotation=0, ha='center', fontsize=11, fontweight='bold')
-    axes[1].set_yticklabels(y_labels, rotation=0, fontsize=10.5, fontweight='bold')
+    for rects in [rects1, rects2, rects3, rects4]:
+        for rect in rects:
+            h = rect.get_height()
+            axes[0].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=9.5, fontweight='bold')
+            
+    # Subplot B: Net Synthetic Expansion Gain (Δ BLEU)
+    w_b = 0.32
+    rects_b1 = axes[1].bar(x - w_b/2, ib_delta, w_b, label='IndicBART Δ BLEU', color='#2ca02c', edgecolor='black', linewidth=1.1)
+    rects_b2 = axes[1].bar(x + w_b/2, mt5_delta, w_b, label='mT5-Small Δ BLEU', color='#1f77b4', edgecolor='black', linewidth=1.1)
     
+    axes[1].axhline(0, color='black', linewidth=1.2, linestyle='-')
+    axes[1].set_ylabel('Net BLEU Gain (Δ BLEU)', fontsize=12, fontweight='bold')
+    axes[1].set_title('B. Synthetic Expansion Net Impact Across Dialects', fontsize=13, fontweight='bold', pad=15)
+    axes[1].set_xticks(x)
+    axes[1].set_xticklabels(dialects, fontsize=11, fontweight='bold')
+    axes[1].set_ylim(-6, 31)
+    axes[1].legend(loc='upper right', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10)
+    axes[1].grid(axis='y', linestyle='--', alpha=0.5)
+    
+    for rect in rects_b1:
+        h = rect.get_height()
+        va = 'bottom' if h >= 0 else 'top'
+        offset = 1.0 if h >= 0 else -1.8
+        axes[1].annotate(f'{h:+.2f}', (rect.get_x() + rect.get_width()/2, h + offset), ha='center', va=va, fontsize=10, fontweight='bold')
+        
+    for rect in rects_b2:
+        h = rect.get_height()
+        va = 'bottom' if h >= 0 else 'top'
+        offset = 1.0 if h >= 0 else -1.8
+        axes[1].annotate(f'{h:+.2f}', (rect.get_x() + rect.get_width()/2, h + offset), ha='center', va=va, fontsize=10, fontweight='bold')
+        
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig5_multidialect_heatmap.png'), bbox_inches='tight')
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig5_multidialect_heatmap.pdf'), bbox_inches='tight')
