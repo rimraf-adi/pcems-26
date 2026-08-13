@@ -104,8 +104,15 @@
 % --- Bibliography style ---
 \bibliographystyle{unsrtnat}
 
-% --- Universal Keywords Macro Support ---
-\providecommand{\keywords}[1]{{\par\vspace{12pt}\noindent{\fontsize{12pt}{15pt}\selectfont\bfseries Keywords (at least 4-5):} {\fontsize{12pt}{15pt}\selectfont #1}\par\vspace{12pt}}}
+% --- Abstract & Keywords Formatting ---
+\renewenvironment{abstract}{%
+  \par\vspace{12pt}\noindent{\fontsize{12pt}{14pt}\selectfont\bfseries Abstract\par\vspace{6pt}}%
+  \fontsize{11pt}{14pt}\selectfont
+}{%
+  \par\vspace{12pt}%
+}
+
+\providecommand{\keywords}[1]{{\par\vspace{10pt}\noindent{\fontsize{11pt}{14pt}\selectfont\bfseries Keywords (at least 4-5):} {\fontsize{11pt}{14pt}\selectfont #1}\par}}
 
 \begin{document}
 
