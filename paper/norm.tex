@@ -320,8 +320,8 @@ D4 & Varhadi (Vidarbha) & 198,873 (24.55\%) & 257.70 & 747 & 5,330 \\
 ]
 
 % Row 1: Source & LLM Generator (Left to Right)
-\node (input) [box] {{\small\bfseries RESPIN Source Corpus}\\[3pt]{\footnotesize 16,163 Original Parallel Pairs}\\[2pt]{\scriptsize (809k Utterances / 1,026 Hours)}};
-\node (gen) [engine, right=3.6cm of input] {{\small\bfseries Raw Parallel Pair Generation}\\[3pt]{\footnotesize Gemma-4 LLM Translation}\\[2pt]{\scriptsize (16,993 Raw Synthetic Pairs)}};
+\node (input) [box] {{\small\bfseries RESPIN Source Corpus}\\[3pt]{\footnotesize Audio Recordings \& Dialect Transcripts}};
+\node (gen) [engine, right=3.6cm of input] {{\small\bfseries Raw Parallel Pair Generation}\\[3pt]{\footnotesize Gemma-4 LLM Translation}};
 
 % Row 2: Verification Engine (Right to Left)
 \node (tier1) [stage, below=1.4cm of gen] {{\small\bfseries Tier 1: Rule-Based Filter}\\[3pt]{\footnotesize Script Integrity \& Length Ratio}};

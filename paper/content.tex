@@ -203,33 +203,33 @@ D4 & Varhadi (Vidarbha) & 198,873 (24.55\%) & 257.70 & 747 & 5,330 \\
 \centering
 \resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
-    node distance=1.4cm and 3.5cm,
-    font=\small\sffamily\bfseries,
-    box/.style={draw=black!80, fill=gray!12, rounded corners=5pt, thick, align=center, text width=4.5cm, inner sep=8pt},
-    stage/.style={draw=black!80, fill=green!12, rounded corners=5pt, thick, align=center, text width=4.5cm, inner sep=8pt},
-    engine/.style={draw=black!80, fill=orange!15, rounded corners=5pt, thick, align=center, text width=4.5cm, inner sep=8pt},
-    model/.style={draw=black!80, fill=blue!12, rounded corners=5pt, thick, align=center, text width=4.5cm, inner sep=8pt},
-    arrow/.style={-Latex, ultra thick, color=black!80}
+    node distance=1.4cm and 3.6cm,
+    font=\sffamily,
+    box/.style={draw=black!70, fill=black!4, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
+    stage/.style={draw=teal!75!black, fill=teal!6, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
+    engine/.style={draw=blue!75!black, fill=blue!6, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
+    model/.style={draw=indigo!75!black, fill=indigo!6, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
+    arrow/.style={-Latex, line width=1.2pt, color=black!75}
 ]
 
 % Row 1: Source & LLM Generator (Left to Right)
-\node (input) [box] {\textbf{RESPIN Source Corpus}\\[3pt]16,163 Original Parallel Pairs\\[2pt]\scriptsize(809k Utterances / 1,026 Hours)};
-\node (gen) [engine, right=3.5cm of input] {\textbf{Raw Parallel Pair Generation}\\[3pt]Gemma-4 LLM Translation\\[2pt]\scriptsize(16,993 Raw Synthetic Pairs)};
+\node (input) [box] {{\small\bfseries RESPIN Source Corpus}\\[3pt]{\footnotesize Audio Recordings \& Dialect Transcripts}};
+\node (gen) [engine, right=3.6cm of input] {{\small\bfseries Raw Parallel Pair Generation}\\[3pt]{\footnotesize Gemma-4 LLM Translation}};
 
 % Row 2: Verification Engine (Right to Left)
-\node (tier1) [stage, below=1.4cm of gen] {\textbf{Tier 1: Rule-Based Filter}\\[3pt]Script Integrity \& Length Ratio};
-\node (tier2) [stage, left=3.5cm of tier1] {\textbf{Tier 2: LLM Semantic Auditor}\\[3pt]LLaMA-3.1-8B Verification Pass};
+\node (tier1) [stage, below=1.4cm of gen] {{\small\bfseries Tier 1: Rule-Based Filter}\\[3pt]{\footnotesize Script Integrity \& Length Ratio}};
+\node (tier2) [stage, left=3.6cm of tier1] {{\small\bfseries Tier 2: LLM Semantic Auditor}\\[3pt]{\footnotesize LLaMA-3.1-8B Verification Pass}};
 
-% External Bounding Box for Multi-Tier Verification Engine
+% Bounding Box for Multi-Tier Verification Engine
 \begin{scope}[on background layer]
-\node (verbox) [draw=green!60!black, dashed, line width=1.4pt, fill=green!4, rounded corners=8pt, fit=(tier1) (tier2), inner sep=12pt] {};
-\node[font=\small\sffamily\bfseries\color{green!40!black}, anchor=south, yshift=2pt] at (verbox.north) {\textbf{Multi-Tier Verification Engine}};
+\node (verbox) [draw=teal!80!black, dashed, line width=1.2pt, fill=teal!3, rounded corners=8pt, fit=(tier1) (tier2), inner sep=10pt] {};
+\node[font=\small\sffamily\bfseries\color{teal!80!black}, anchor=south, yshift=2pt] at (verbox.north) {Multi-Tier Verification Engine};
 \end{scope}
 
 % Row 3: Seq2Seq Fine-Tuning
-\node (seq2seq) [model, below=1.5cm of tier2] {\textbf{Seq2Seq Model Training}\\[3pt]IndicBART \& mT5-Small Evaluation};
+\node (seq2seq) [model, below=1.5cm of tier2] {{\small\bfseries Seq2Seq Model Training}\\[3pt]{\footnotesize IndicBART \& mT5-Small Evaluation}};
 
-% Straight Flow Connections with Wide Spacing & Concise Scriptsize Labels
+% Flow Connections
 \draw [arrow] (input) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Dialect Text} (gen);
 \draw [arrow] (gen) -- node[right=6pt, font=\scriptsize\sffamily\bfseries] {Raw Pairs} (tier1);
 \draw [arrow] (tier1) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Filtered} (tier2);
@@ -237,7 +237,7 @@ D4 & Varhadi (Vidarbha) & 198,873 (24.55\%) & 257.70 & 747 & 5,330 \\
 
 \end{tikzpicture}%
 }
-\caption{System architecture of the given multi-dialect normalization framework.}
+\caption{System architecture of the multi-dialect normalization framework.}
 \label{fig:system_architecture}
 \end{figure}
 
