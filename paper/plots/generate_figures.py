@@ -448,34 +448,38 @@ def generate_fig7():
     width = 0.30
     
     # Panel 1: BLEU Comparison
-    axes[0].bar(x - width/2, raw_bleu, width, label='Raw Unverified Data (19,914 pairs)', color='#e74c3c', edgecolor='black', linewidth=1.2)
-    axes[0].bar(x + width/2, clean_bleu, width, label='Filtered Clean Data (32,335 pairs)', color='#2ecc71', edgecolor='black', linewidth=1.2)
+    axes[0].bar(x - width/2, raw_bleu, width, label='Raw Unverified Data', color='#e74c3c', edgecolor='black', linewidth=1.2, zorder=3)
+    axes[0].bar(x + width/2, clean_bleu, width, label='Filtered Clean Data', color='#2ecc71', edgecolor='black', linewidth=1.2, zorder=3)
     axes[0].set_ylabel('BLEU Score', fontsize=12.5, fontweight='bold')
     axes[0].set_title('A. BLEU Score Recovery via Verification', fontsize=13.5, fontweight='bold', pad=12)
     axes[0].set_xticks(x)
     axes[0].set_xticklabels(models, fontsize=12, fontweight='bold')
     axes[0].legend(fontsize=11, loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc')
     axes[0].set_ylim(0, 85)
-    axes[0].grid(axis='y', linestyle='--', alpha=0.5)
+    axes[0].grid(axis='y', linestyle='--', alpha=0.4, zorder=0)
     
     for i in range(len(models)):
-        axes[0].annotate(f'{raw_bleu[i]:.2f}', (x[i] - width/2, raw_bleu[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='black')
-        axes[0].annotate(f'{clean_bleu[i]:.2f}', (x[i] + width/2, clean_bleu[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='#006600')
+        axes[0].annotate(f'{raw_bleu[i]:.2f}', (x[i] - width/2, raw_bleu[i] + 2.0), ha='center', fontsize=11.5, fontweight='bold', color='black',
+                         bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=4)
+        axes[0].annotate(f'{clean_bleu[i]:.2f}', (x[i] + width/2, clean_bleu[i] + 2.0), ha='center', fontsize=11.5, fontweight='bold', color='#006600',
+                         bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=4)
         
     # Panel 2: chrF++ Comparison
-    axes[1].bar(x - width/2, raw_chrf, width, label='Raw Unverified Data', color='#e74c3c', edgecolor='black', linewidth=1.2)
-    axes[1].bar(x + width/2, clean_chrf, width, label='Filtered Clean Data', color='#2ecc71', edgecolor='black', linewidth=1.2)
+    axes[1].bar(x - width/2, raw_chrf, width, label='Raw Unverified Data', color='#e74c3c', edgecolor='black', linewidth=1.2, zorder=3)
+    axes[1].bar(x + width/2, clean_chrf, width, label='Filtered Clean Data', color='#2ecc71', edgecolor='black', linewidth=1.2, zorder=3)
     axes[1].set_ylabel('chrF++ Score', fontsize=12.5, fontweight='bold')
     axes[1].set_title('B. chrF++ Score Enhancement via Verification', fontsize=13.5, fontweight='bold', pad=12)
     axes[1].set_xticks(x)
     axes[1].set_xticklabels(models, fontsize=12, fontweight='bold')
     axes[1].legend(fontsize=11, loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc')
     axes[1].set_ylim(0, 98)
-    axes[1].grid(axis='y', linestyle='--', alpha=0.5)
+    axes[1].grid(axis='y', linestyle='--', alpha=0.4, zorder=0)
     
     for i in range(len(models)):
-        axes[1].annotate(f'{raw_chrf[i]:.2f}', (x[i] - width/2, raw_chrf[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='black')
-        axes[1].annotate(f'{clean_chrf[i]:.2f}', (x[i] + width/2, clean_chrf[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='#006600')
+        axes[1].annotate(f'{raw_chrf[i]:.2f}', (x[i] - width/2, raw_chrf[i] + 2.0), ha='center', fontsize=11.5, fontweight='bold', color='black',
+                         bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=4)
+        axes[1].annotate(f'{clean_chrf[i]:.2f}', (x[i] + width/2, clean_chrf[i] + 2.0), ha='center', fontsize=11.5, fontweight='bold', color='#006600',
+                         bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=4)
 
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig7_verification_ablation.png'), bbox_inches='tight')
