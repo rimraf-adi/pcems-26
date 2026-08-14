@@ -460,7 +460,7 @@ def generate_fig7():
     
     for i in range(len(models)):
         axes[0].annotate(f'{raw_bleu[i]:.2f}', (x[i] - width/2, raw_bleu[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='black')
-        axes[0].annotate(f'{clean_bleu[i]:.2f} (+{clean_bleu[i]-raw_bleu[i]:.2f})', (x[i] + width/2, clean_bleu[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='#006600')
+        axes[0].annotate(f'{clean_bleu[i]:.2f}', (x[i] + width/2, clean_bleu[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='#006600')
         
     # Panel 2: chrF++ Comparison
     axes[1].bar(x - width/2, raw_chrf, width, label='Raw Unverified Data', color='#e74c3c', edgecolor='black', linewidth=1.2)
@@ -475,7 +475,7 @@ def generate_fig7():
     
     for i in range(len(models)):
         axes[1].annotate(f'{raw_chrf[i]:.2f}', (x[i] - width/2, raw_chrf[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='black')
-        axes[1].annotate(f'{clean_chrf[i]:.2f} (+{clean_chrf[i]-raw_chrf[i]:.2f})', (x[i] + width/2, clean_chrf[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='#006600')
+        axes[1].annotate(f'{clean_chrf[i]:.2f}', (x[i] + width/2, clean_chrf[i] + 1.8), ha='center', fontsize=11.5, fontweight='bold', color='#006600')
 
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig7_verification_ablation.png'), bbox_inches='tight')
