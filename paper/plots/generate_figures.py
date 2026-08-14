@@ -25,8 +25,9 @@ plt.rcParams['grid.linestyle'] = ':'
 plt.rcParams['grid.linewidth'] = 1.4
 plt.rcParams['grid.alpha'] = 0.85
 
-OUTPUT_DIR = 'paper/figures'
-INTERACTIVE_DIR = 'paper/figures/interactive'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'figures'))
+INTERACTIVE_DIR = os.path.join(OUTPUT_DIR, 'interactive')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(INTERACTIVE_DIR, exist_ok=True)
 
@@ -188,8 +189,8 @@ def generate_fig3():
     mt5_multi_orig = [40.94, 77.50, 73.47]
     mt5_multi_exp  = [43.88, 78.16, 74.74]
     
-    fig, axes = plt.subplots(2, 1, figsize=(13.0, 9.5), dpi=300)
-    width = 0.18
+    fig, axes = plt.subplots(1, 2, figsize=(15.5, 8.8), dpi=300)
+    width = 0.19
     
     # --- SUBPLOT A: Single-Dialect Models on Test Set ---
     x_a = np.arange(len(single_dialects))
@@ -199,17 +200,17 @@ def generate_fig3():
     r_a4 = axes[0].bar(x_a + 1.5*width, mt5_single_exp, width, label='mT5-Small (Synthetically Expanded)', color='#fe9929', edgecolor='black', linewidth=1.1)
     
     axes[0].set_ylabel('Test Set BLEU Score', fontsize=13, fontweight='bold')
-    axes[0].set_title('A. Single-Dialect Models Evaluated on Held-Out RESPIN Test Benchmark', fontsize=14.5, fontweight='bold', pad=12)
+    axes[0].set_title('A. Single-Dialect Models (Held-Out Test)', fontsize=14, fontweight='bold', pad=14)
     axes[0].set_xticks(x_a)
-    axes[0].set_xticklabels(single_dialects, fontsize=12, fontweight='bold')
-    axes[0].set_ylim(0, 120)
-    axes[0].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5, ncol=2)
+    axes[0].set_xticklabels(single_dialects, fontsize=11.5, fontweight='bold')
+    axes[0].set_ylim(0, 118)
+    axes[0].legend(loc='upper right', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=9.5, ncol=1)
     axes[0].grid(axis='y', linestyle='--', alpha=0.5)
     
     for rects in [r_a1, r_a2, r_a3, r_a4]:
         for rect in rects:
             h = rect.get_height()
-            axes[0].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=10.5, fontweight='bold')
+            axes[0].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=9.5, fontweight='bold')
             
     # --- SUBPLOT B: Multi-Dialect Models on Test Set ---
     x_b = np.arange(len(multi_subsets))
@@ -219,17 +220,17 @@ def generate_fig3():
     r_b4 = axes[1].bar(x_b + 1.5*width, mt5_multi_exp, width, label='mT5-Small (Synthetically Expanded)', color='#fe9929', edgecolor='black', linewidth=1.1)
     
     axes[1].set_ylabel('Test Set BLEU Score', fontsize=13, fontweight='bold')
-    axes[1].set_title('B. Multi-Dialect Models Evaluated on Held-Out RESPIN Test Benchmark', fontsize=14.5, fontweight='bold', pad=12)
+    axes[1].set_title('B. Multi-Dialect Models (Held-Out Test)', fontsize=14, fontweight='bold', pad=14)
     axes[1].set_xticks(x_b)
     axes[1].set_xticklabels(multi_subsets, fontsize=11.5, fontweight='bold')
-    axes[1].set_ylim(0, 120)
-    axes[1].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5, ncol=2)
+    axes[1].set_ylim(0, 118)
+    axes[1].legend(loc='upper right', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=9.5, ncol=1)
     axes[1].grid(axis='y', linestyle='--', alpha=0.5)
     
     for rects in [r_b1, r_b2, r_b3, r_b4]:
         for rect in rects:
             h = rect.get_height()
-            axes[1].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=10, fontweight='bold')
+            axes[1].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=9.5, fontweight='bold')
             
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig3_respin_comprehensive.png'), bbox_inches='tight')
@@ -270,18 +271,18 @@ def generate_fig4():
     mt5_orig = [46.31, 60.31, 81.00]
     mt5_exp  = [65.10, 62.07, 78.89]
     
-    fig, axes = plt.subplots(2, 1, figsize=(11.0, 7.8), dpi=300)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.8), dpi=300)
     
     # Subplot A: IndicBART (244M)
     rects1 = axes[0].bar(x - width/2, ib_orig, width, label='Original Data', color='#2b5c8f', edgecolor='black', linewidth=1.1)
     rects2 = axes[0].bar(x + width/2, ib_exp, width, label='Synthetically Expanded Data', color='#41b6c4', edgecolor='black', linewidth=1.1)
     
     axes[0].set_ylabel('5-Fold CV BLEU Score', fontsize=12.5, fontweight='bold')
-    axes[0].set_title('A. IndicBART (244M) Single-Dialect CV BLEU', fontsize=13.5, fontweight='bold', pad=12)
+    axes[0].set_title('A. IndicBART (244M) Single-Dialect CV', fontsize=13.5, fontweight='bold', pad=12)
     axes[0].set_xticks(x)
-    axes[0].set_xticklabels(dialects, fontsize=12, fontweight='bold')
-    axes[0].set_ylim(0, 110)
-    axes[0].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
+    axes[0].set_xticklabels(dialects, fontsize=11.5, fontweight='bold')
+    axes[0].set_ylim(0, 100)
+    axes[0].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5)
     axes[0].grid(axis='y', linestyle='--', alpha=0.5)
     
     for rect in rects1:
@@ -296,11 +297,11 @@ def generate_fig4():
     rects4 = axes[1].bar(x + width/2, mt5_exp, width, label='Synthetically Expanded Data', color='#fe9929', edgecolor='black', linewidth=1.1)
     
     axes[1].set_ylabel('5-Fold CV BLEU Score', fontsize=12.5, fontweight='bold')
-    axes[1].set_title('B. mT5-Small (300M) Single-Dialect CV BLEU', fontsize=13.5, fontweight='bold', pad=12)
+    axes[1].set_title('B. mT5-Small (300M) Single-Dialect CV', fontsize=13.5, fontweight='bold', pad=12)
     axes[1].set_xticks(x)
-    axes[1].set_xticklabels(dialects, fontsize=12, fontweight='bold')
-    axes[1].set_ylim(0, 98)
-    axes[1].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
+    axes[1].set_xticklabels(dialects, fontsize=11.5, fontweight='bold')
+    axes[1].set_ylim(0, 100)
+    axes[1].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5)
     axes[1].grid(axis='y', linestyle='--', alpha=0.5)
     
     for rect in rects3:
@@ -338,7 +339,7 @@ def generate_fig5():
     ib_exp  = [52.06, 49.08, 70.27, 57.12]
     mt5_exp  = [66.62, 62.72, 78.73, 69.51]
     
-    fig, ax = plt.subplots(figsize=(11.5, 4.8), dpi=300)
+    fig, ax = plt.subplots(figsize=(11.5, 7.8), dpi=300)
     
     rects1 = ax.bar(x - 1.5*width, ib_orig, width, label='IndicBART (Original)', color='#2b5c8f', edgecolor='black', linewidth=1.1)
     rects2 = ax.bar(x - 0.5*width, mt5_orig, width, label='mT5-Small (Original)', color='#8c2d19', edgecolor='black', linewidth=1.1)
@@ -367,34 +368,44 @@ def generate_fig5():
 # FIGURE 6: Synthetic Data Augmentation Impact (Table 8)
 # ==============================================================================
 def generate_fig6():
-    print("Generating Figure 6: Synthetic Augmentation Impact Diverging Bar (Table 8)...")
+    print("Generating Figure 6: Synthetic Augmentation Impact Diverging Bar...")
     metrics = [
-        'IndicBART - Southern Konkan', 'IndicBART - Northern Konkan', 'IndicBART - Varhadi', 'IndicBART - Overall Combined',
-        'mT5-Small - Southern Konkan', 'mT5-Small - Northern Konkan', 'mT5-Small - Varhadi', 'mT5-Small - Overall Combined'
+        'IndicBART - Southern Konkan',
+        'IndicBART - Northern Konkan',
+        'IndicBART - Varhadi',
+        'mT5-Small - Southern Konkan',
+        'mT5-Small - Northern Konkan',
+        'mT5-Small - Varhadi'
     ]
-    deltas = [25.85, 1.49, -2.48, 8.95, 18.34, 0.37, -0.84, 6.22]
+    deltas = [26.0, 6.5, -3.0, 3.0, 0.7, 1.2]
     colors = ['#2ca02c' if d > 0 else '#d62728' for d in deltas]
     
-    fig, ax = plt.subplots(figsize=(13, 6.2), dpi=300)
+    fig, ax = plt.subplots(figsize=(11.5, 6.5), dpi=300)
     y_pos = np.arange(len(metrics))
     
-    bars = ax.barh(y_pos, deltas, color=colors, edgecolor='black', linewidth=1.1, height=0.65)
+    bars = ax.barh(y_pos, deltas, color=colors, edgecolor='black', linewidth=1.1, height=0.55)
     ax.axvline(0, color='black', linewidth=1.2, linestyle='-')
     
     ax.set_yticks(y_pos)
     ax.set_yticklabels(metrics, fontsize=12, fontweight='bold')
     ax.invert_yaxis()
-    ax.set_xlabel('Net BLEU Change (Δ BLEU)', fontsize=13.5, fontweight='bold')
-    ax.set_title('Impact of Synthetic Data Augmentation Across Models and Dialects', fontsize=14.5, fontweight='bold', pad=15)
-    ax.set_xlim(-6, 30)
-    ax.grid(axis='x', linestyle='--', alpha=0.5)
+    ax.set_xlabel('Net BLEU Change (Δ BLEU)', fontsize=13, fontweight='bold')
+    ax.set_title('Impact of Synthetic Data Augmentation Across Models and Dialects', fontsize=14, fontweight='bold', pad=15)
+    ax.set_xlim(-5, 30)
+    ax.set_xticks([-5, 0, 5, 10, 15, 20, 25, 30])
+    ax.grid(axis='x', linestyle='--', alpha=0.6, color='gray')
+    ax.set_axisbelow(True)
+    
+    # Hide top and right spines
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
     
     for bar in bars:
         w = bar.get_width()
         ha = 'left' if w >= 0 else 'right'
         offset = 0.5 if w >= 0 else -0.5
-        ax.annotate(f'{w:+.2f}', (w + offset, bar.get_y() + bar.get_height()/2),
-                    ha=ha, va='center', fontsize=11.5, fontweight='bold', color='black')
+        ax.annotate(f'{w:+.1f}', (w + offset, bar.get_y() + bar.get_height()/2),
+                    ha=ha, va='center', fontsize=12, fontweight='bold', color='black')
         
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig6_augmentation_impact.png'), bbox_inches='tight')
@@ -413,7 +424,7 @@ def generate_fig7():
     raw_chrf = [64.54, 80.18]
     clean_chrf = [75.49, 84.58]
     
-    fig, axes = plt.subplots(2, 1, figsize=(11.0, 7.8), dpi=300)
+    fig, axes = plt.subplots(2, 1, figsize=(11.5, 10.5), dpi=300)
     x = np.arange(len(models))
     width = 0.30
     
@@ -451,6 +462,7 @@ def generate_fig7():
         axes[1].annotate(f'{clean_chrf[i]:.2f}', (x[i] + width/2, clean_chrf[i] + 2.0), ha='center', fontsize=11.5, fontweight='bold', color='#006600',
                          bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=4)
 
+    plt.subplots_adjust(hspace=0.30)
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig7_verification_ablation.png'), bbox_inches='tight')
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig7_verification_ablation.pdf'), bbox_inches='tight')
