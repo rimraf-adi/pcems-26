@@ -39,7 +39,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds, shadows}
 \usepackage{multirow}
 \usepackage{makecell}
 \usepackage{array}
@@ -177,12 +177,14 @@ Base sentences for our task are drawn from the domain-specific transcripts of th
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{RESPIN-S1.0 Marathi Source Corpus Statistics}}
 \label{tab:respin_stats}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:c:c:c:c|}
 \hline
-\textbf{Code} & \textbf{Dialect Name} & \textbf{Utterances (\%)} & \textbf{Duration (h)} & \textbf{Speakers} & \textbf{Unique Prompts} \\
+\textbf{Code} & \textbf{Dialect Name} & \textbf{Utterances (\%)} & \textbf{Duration (h)} & \textbf{Speakers} & \textbf{Prompts} \\
 \hline
 D1 & Southern Konkan (Malvani) & 203,651 (25.14\%) & 247.31 & 732 & 5,838 \\
 D2 & Northern Konkan (Ahirani) & 198,560 (24.52\%) & 265.25 & 557 & 5,825 \\
@@ -192,7 +194,6 @@ D4 & Varhadi (Vidarbha) & 198,873 (24.55\%) & 257.70 & 747 & 5,330 \\
 \textbf{Total} & \textbf{All Dialects} & \textbf{809,934 (100\%)} & \textbf{1,026.06} & \textbf{2,644} & \textbf{23,069} \\
 \hline
 \end{tabular}
-}
 \end{table}
 
 \begin{figure}[H]
@@ -210,87 +211,82 @@ We target the following major Marathi dialects that span the primary regions of 
     \item \textbf{Varhadi (Vidarbha/Eastern Maharashtra)}: Spoken in Vidarbha, it exhibits characteristic differences and verb suffix modifications. Standard interrogative \emph{का?} (``why?'') becomes Varhadi \emph{काऊन?}; verbal forms undergo regular suffix mapping patterns. Among the three dialects, Varhadi maintains closest structural similarity to Standard Marathi as transformations are more systematic.
 \end{enumerate}
 
-\subsection{\textcolor{black}{LLM-Driven Translation and Verification Pipeline}}
-\label{subsec:pipeline}
+\subsection{\textcolor{black}{Synthetic Parallel Data Generation Pipeline}}
+
 To deal with data scarcity, we developed an automated synthetic data translation and generation pipeline powered by Gemma-4 \citep{gemma2024} with 12B parameters configuration, accessed via Ollama. The complete end-to-end normalization architecture is illustrated in Figure~\ref{fig:system_architecture}. We considered several design decisions to ensure generation quality to be maximised:
-\begin{itemize}
-    \item \textbf{1-Call-Per-Sentence Architecture}: Instead of generating batches of parallel pairs per API call which could risk contamination of context, each dialectal sentence is processed separately with a self-contained prompt.
-    \item \textbf{Detailed Prompting Strategy}: The generation prompt enforces semantic fidelity rules: the standard output must preserve exact meaning, domain terminology (agriculture/banking), named entities, and numerical values from the input. The prompt includes dialect-specific lexical mapping tables and 5-8 few-shot examples per dialect.
-\end{itemize}
+
+\begin{enumerate}
+    \item \textbf{1-Call-Per-Sentence Generation}: We observed batch generation caused hallucination and sentence alignment errors across dialect boundaries. Therefore, we used a 1-call-per-sentence translation regime.
+    \item \textbf{Preservation of Meaning and Domain Constraints}: System prompts strictly instructed the model that while colloquial grammatical markers and phonetic spellings must be transformed into standard written Marathi, the standard output must preserve exact meaning, domain terminology (agriculture/banking), and named entities without creative embellishment.
+\end{enumerate}
 
 \begin{figure}[H]
 \centering
-\vspace{6pt}
-\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
-    node distance=2.8cm and 2.2cm,
-    font=\sffamily,
-    box/.style={draw=black!70, fill=black!4, rounded corners=6pt, line width=1.1pt, align=center, text width=6.2cm, minimum height=1.6cm, inner sep=9pt},
-    stage/.style={draw=teal!80!black, fill=teal!6, rounded corners=6pt, line width=1.1pt, align=center, text width=5.6cm, minimum height=1.6cm, inner sep=9pt},
-    engine/.style={draw=blue!80!black, fill=blue!6, rounded corners=6pt, line width=1.1pt, align=center, text width=6.2cm, minimum height=1.6cm, inner sep=9pt},
-    model/.style={draw=blue!80!black, fill=blue!6, rounded corners=6pt, line width=1.1pt, align=center, text width=6.2cm, minimum height=1.6cm, inner sep=9pt},
-    arrow/.style={-Latex, line width=1.3pt, color=black!75}
+    node distance=1.1cm and 1.3cm,
+    font=\sffamily\small,
+    >=Stealth,
+    engine/.style={rectangle, rounded corners=6pt, draw=blue!70!black, fill=blue!8, line width=1.2pt, minimum width=3.8cm, minimum height=1.3cm, align=center, drop shadow={opacity=0.15}},
+    verify/.style={rectangle, rounded corners=6pt, draw=teal!70!black, fill=teal!8, line width=1.2pt, minimum width=3.8cm, minimum height=1.3cm, align=center, drop shadow={opacity=0.15}},
+    model/.style={rectangle, rounded corners=6pt, draw=orange!80!black, fill=orange!10, line width=1.2pt, minimum width=3.8cm, minimum height=1.3cm, align=center, drop shadow={opacity=0.15}},
+    data/.style={rectangle, rounded corners=4pt, draw=gray!60, fill=gray!8, line width=1pt, minimum width=3.2cm, minimum height=0.9cm, align=center},
+    arrow/.style={->, line width=1.3pt, draw=gray!70!black}
 ]
 
-% Row 1: Source & LLM Generator
-\node (input) [box] {{\bfseries RESPIN Source Corpus}\\[4pt]{\small Audio Recordings \& Dialect Transcripts}};
+% Nodes
+\node (input) [data] {{\bfseries RESPIN-S1.0 Source}\\[2pt]{\scriptsize Dialect Transcripts (D1, D2, D4)}};
 \node (gen) [engine, right=2.8cm of input] {{\bfseries Raw Parallel Pair Generation}\\[4pt]{\small Gemma-4 LLM Translation}};
+\node (tier1) [verify, below=1.2cm of gen] {{\bfseries Tier 1: Syntactic Verification}\\[3pt]{\small Script, Length \& Token Validation}};
+\node (tier2) [verify, below=1.2cm of tier1] {{\bfseries Tier 2: Semantic Verification}\\[3pt]{\small LLaMA-3.1-8B LLM Quality Audit}};
+\node (clean) [data, left=2.8cm of tier2] {{\bfseries Filtered Clean Dataset}\\[2pt]{\scriptsize 32,335 Aligned Parallel Pairs}};
+\node (train) [model, below=1.2cm of clean] {{\bfseries Sequence-to-Sequence Models}\\[4pt]{\small IndicBART (244M) \& mT5-small (300M)}};
+\node (eval) [data, right=2.8cm of train] {{\bfseries Multi-Metric Evaluation}\\[2pt]{\scriptsize BLEU, chrF++, WER, CER}};
 
-% Row 2: Verification Engine (Tier 1 on right, Tier 2 on left)
-\node (tier1) [stage, below=3.0cm of gen] {{\bfseries Tier 1: Rule-Based Filter}\\[4pt]{\small Script Integrity \& Length Ratio}};
-\node (tier2) [stage, left=2.2cm of tier1] {{\bfseries Tier 2: LLM Semantic Auditor}\\[4pt]{\small LLaMA-3.1-8B Verification Pass}};
+% Arrows
+\draw [arrow] (input) -- node[above, font=\scriptsize, color=black!70] {Transcripts} (gen);
+\draw [arrow] (gen) -- node[right, font=\scriptsize, color=black!70] {Raw Pairs} (tier1);
+\draw [arrow] (tier1) -- node[right, font=\scriptsize, color=black!70] {Passed} (tier2);
+\draw [arrow] (tier2) -- node[above, font=\scriptsize, color=black!70] {Verified Pairs} (clean);
+\draw [arrow] (clean) -- node[left, font=\scriptsize, color=black!70] {Fine-tuning} (train);
+\draw [arrow] (train) -- node[above, font=\scriptsize, color=black!70] {Inference} (eval);
 
-% Bounding Box for Verification Engine
-\begin{scope}[on background layer]
-\node (verbox) [draw=teal!80!black, dashed, line width=1.3pt, fill=teal!3, rounded corners=8pt, fit=(tier1) (tier2), inner xsep=14pt, inner ysep=16pt] {};
-\node[font=\sffamily\bfseries\color{teal!80!black}, anchor=south, yshift=6pt] at (verbox.north) {\large Multi-Tier Verification Engine};
-\end{scope}
+% Rejection annotation
+\draw [->, dashed, line width=1pt, draw=red!70!black] (tier1.east) -- ++(1.0,0) node[right, font=\scriptsize, color=red!80!black] {Invalid Script / Length};
+\draw [->, dashed, line width=1pt, draw=red!70!black] (tier2.east) -- ++(1.0,0) node[right, font=\scriptsize, color=red!80!black] {Hallucination / Low Quality};
 
-% Row 3: Seq2Seq Fine-Tuning
-\node (seq2seq) [model, below=3.0cm of tier2] {{\bfseries Seq2Seq Model Training}\\[4pt]{\small IndicBART \& mT5-Small Evaluation}};
-
-% Flow Connections with ample clearance
-\draw [arrow] (input) -- node[above=6pt, font=\small\sffamily\bfseries] {Dialect Text} (gen);
-\draw [arrow] (gen) -- node[right=10pt, font=\small\sffamily\bfseries] {Raw Pairs} (tier1);
-\draw [arrow] (tier1) -- node[above=6pt, font=\small\sffamily\bfseries] {Filtered Pairs} (tier2);
-\draw [arrow] (tier2) -- node[right=10pt, font=\small\sffamily\bfseries] {Verified Synthetic Data} (seq2seq);
-
-\end{tikzpicture}%
-}
-\vspace{6pt}
-\caption{System architecture of the multi-dialect normalization framework.}
+\end{tikzpicture}
+\caption{End-to-end multi-dialect Marathi text normalization framework: raw pair generation using Gemma-4, multi-tier syntactic/semantic verification, and conditioned sequence-to-sequence model fine-tuning.}
 \label{fig:system_architecture}
 \end{figure}
 
-All generated pairs undergo a three-tier verification and correction pipeline:
+\subsection{\textcolor{black}{Verification and Quality Filtering Engine}}
+
+LLMs can generate hallucinated texts, script corruption, or flawed target sequences when dealing with regional sub-dialects. We implemented a two-tier verification engine to purge flawed sentence pairs before model training:
+
 \begin{enumerate}
     \item \textbf{Tier 1: Rule-Based Syntactic Filter.} Automated validation checks implement Indic Abugida script normalization principles \citep{ansary2024unicode}, including:
     \begin{itemize}
-        \item \emph{Devanagari Script Integrity}: Both source and target must possess $> 90\%$ Devanagari Unicode characters within the \texttt{U+0900--U+097F} range, automatically discarding unnecessary characters.
-        \item \emph{Length Ratio Constraint}: $0.5 \le |L_{\text{dialect}}| / |L_{\text{standard}}| \le 2.0$ to avoid hallucinations.
-        \item \emph{Non-Identity Constraint}: $L_{\text{dialect}} \neq L_{\text{standard}}$ to exclude identical string copies.
+        \item \emph{Script Consistency}: Discards samples containing non-Devanagari characters (e.g., Latin script, Chinese glyphs, stray punctuation artifacts).
+        \item \emph{Length Ratio Constraint}: Discards pairs where sentence length ratio $\frac{\text{len}(\text{Target})}{\text{len}(\text{Source})} \notin [0.5, 2.0]$.
         \item \emph{Minimum Token Count}: Both source and target must contain $\ge 3$ whitespace-separated tokens.
     \end{itemize}
-    \item \textbf{Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} (accessed via Groq API) performs semantic equivalence verification. The verifier rates on a 1--5 score scale considering semantic preservation, absence of hallucinated entities, absence of Hindi/English contamination and complete standardization of dialects. Pairs scoring $< 4.0$ are rejected or routed to correction.
-    \item \textbf{Closed-Loop Correction Engine.} Pairs flagged by Tier 1 or Tier 2 enter a two-step correction loop: Step 1 generates corrected translations using specialised prompts based on the pre-defined reason of identified failure.
+    \item \textbf{Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} \citep{dubey2024llama3} grades translation accuracy on a 1--5 semantic scale under strict prompt guidelines. Pairs with semantic scores $< 3$ are purged.
 \end{enumerate}
 
-This leaves us with a total of 16,163 pairs of cleaned translations from the RESPIN Corpus itself.
-
-\subsection{\textcolor{black}{Synthetic Data Expansion}}
-
-After construction the original 16,163 verified parallel pairs through the RESPIN corpus, we applied the same pipeline to synthetically expand it. The expansion phase uses a similar system prompt, inspired from that of translation phase to generate additional pairs from scratch that almost doubles the data size. Out of the 16,993 synthetic parallel pairs generated by the LLM pipeline, our multi-tier verification engine flagged and discarded 821 flawed pairs (an overall corruption/rejection rate of 4.83\%), yielding 16,172 clean verified pairs as illustrated in Figure~\ref{fig:dataset_composition}. Combining with the 16,163 clean original pairs, the final expanded dataset consists of 32,335 verified parallel sentence pairs across all three dialects.
+Through this multi-tier verification process, 3,751 low-quality sentence pairs were purged from the unverified corpus (19,914 pairs), preventing error propagation into downstream models. The dataset composition across original, synthetic, and final clean partitions is illustrated in Figure~\ref{fig:dataset_composition}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/fig2_dataset_composition.pdf}
-\caption{Parallel dataset expansion composition per dialect partition, comparing original parallel pairs against synthetic verified pairs produced by the LLM generation and auditing pipeline.}
+\caption{Parallel dataset expansion breakdown per Marathi dialect, showing original clean pairs, synthetic verified pairs, and the final expanded corpus totals.}
 \label{fig:dataset_composition}
 \end{figure}
 
-\subsection{\textcolor{black}{Sequence-to-Sequence Model Conditioning and Fine-Tuning Setup}}
+\subsection{\textcolor{black}{Model Fine-Tuning and Conditioning}}
 
-To convert the pre-trained seq2seq language architectures into dedicated dialect normalizers, models are fine-tuned under a 5-fold cross-validation scheme on an 85/15 stratified train-test split. Models were conditioned using specific tags attached before the actual text:
+We benchmark two pre-trained sequence-to-sequence architectures across both single-dialect and multi-dialect configurations: IndicBART (244M) \citep{dabre2022indicbart} and mT5-small (300M) \citep{xue2021mt5}.
+
+To enable unified multi-dialect training where a single model normalizes all regional variants, we implement special token conditioning prefixes:
 \begin{itemize}
     \item \textbf{Task Normalization Prefixes}: A normalisation tag (\texttt{<normalize>}) is attached that instructs the encoder to perform the dialect-to-standard text transformation.
     \item \textbf{Dialect-Source Identification Tags}: Source sentences are prefixed with dialect markers, \texttt{<D1>} for Southern Konkan, \texttt{<D2>} for Northern Konkan, and \texttt{<D4>} for Varhadi for explicitly conditioning the model particularly in the multi-dialect training scenario.
@@ -302,6 +298,7 @@ Table~\ref{tab:arch_compare} details the underlying architectural properties and
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Detailed Architecture Comparison: IndicBART (244M) vs.\ mT5-small (300M)}}
 \label{tab:arch_compare}
@@ -351,10 +348,10 @@ Results are reported using metrics that are evaluated using SacreBLEU \citep{pos
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: \textbf{Single-Dialect} Models (5-Fold CV)}}
 \label{tab:results_original_single}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c|}
 \hline
 & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
@@ -366,7 +363,6 @@ Northern Konkan (D2) & \textbf{60.58} & \textbf{80.30} & 60.31 & 77.34 \\
 Varhadi (D4) & 76.63 & 90.93 & \textbf{81.00} & \textbf{91.21} \\
 \hline
 \end{tabular}
-}
 \end{table}
 
 \textcolor{red}{\textbf{Inference from Table~\ref{tab:results_original_single} (Morphological Regularity vs.\ Lexical Divergence):} Baseline performance highlights the structural disparity across Marathi dialects. Both models achieve their highest scores on Varhadi (76.63--81.00 BLEU and 90.93--91.21 chrF++), whereas coastal varieties (Southern and Northern Konkan) register lower baseline scores (46.31--60.58 BLEU). In real-world deployment, regional varieties with systematic grammatical and suffix alternations (like Vidarbha Marathi) are far easier for neural seq2seq models to normalize reliably with minimal supervision than coastal dialects that incorporate extensive vocabulary divergence, phonological shifts, and contact-language loanwords.}
@@ -376,10 +372,10 @@ Varhadi (D4) & 76.63 & 90.93 & \textbf{81.00} & \textbf{91.21} \\
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: \textbf{Multi-Dialect} Dialectwise Breakdown (5-Fold CV)}}
 \label{tab:results_original_multidialect}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c|}
 \hline
 & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
@@ -393,7 +389,6 @@ Varhadi (D4) & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
 \textbf{Overall Combined} & \textbf{48.17} & \textbf{68.58} & \textbf{63.29} & \textbf{81.37} \\
 \hline
 \end{tabular}
-}
 \end{table}
 
 \textcolor{red}{\textbf{Inference from Table~\ref{tab:results_original_multidialect} (Cross-Dialect Parameter Interference):} Pooling all dialects into a unified multi-dialect model reveals significant capacity and interference effects: IndicBART suffers catastrophic cross-dialect interference on Southern Konkan (dropping by 22.33 BLEU to 26.21 BLEU and 53.15 chrF++), whereas mT5-small’s 250k vocabulary and relative positional bias mitigate cross-dialect interference, maintaining 48.28 BLEU on Southern Konkan and achieving an overall multi-dialect average of 63.29 BLEU and 81.37 chrF++.}
@@ -403,10 +398,10 @@ Varhadi (D4) & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: \textbf{Single-Dialect} Models (5-Fold CV)}}
 \label{tab:results_expanded_single}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c|}
 \hline
 & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
@@ -418,7 +413,6 @@ Northern Konkan (D2) & 40.51 & 62.21 & \textbf{62.07} & \textbf{79.29} \\
 Varhadi (D4) & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \hline
 \end{tabular}
-}
 \end{table}
 
 \textcolor{red}{\textbf{Inference from Table~\ref{tab:results_expanded_single} (Scaling Dynamics in Isolated Dialects):} Doubling single-dialect corpora via verified synthetic data reveals contrasting scaling dynamics: IndicBART experiences slight capacity saturation across isolated dialects (47.25 BLEU on Southern Konkan and 40.51 BLEU on Northern Konkan), while mT5-small leverages the synthetic pairs effectively, surging to 65.10 BLEU (+18.79) on Southern Konkan and 62.07 BLEU on Northern Konkan with chrF++ exceeding 79.29--90.59.}
@@ -428,10 +422,10 @@ Varhadi (D4) & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: \textbf{Multi-Dialect} Dialectwise Breakdown (5-Fold CV)}}
 \label{tab:results_expanded_multidialect}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c|}
 \hline
 & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
@@ -445,7 +439,6 @@ Varhadi (D4) & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
 \textbf{Overall Combined} & \textbf{57.12} & \textbf{75.49} & \textbf{69.51} & \textbf{84.58} \\
 \hline
 \end{tabular}
-}
 \end{table}
 
 \textcolor{red}{\textbf{Inference from Table~\ref{tab:results_expanded_multidialect} (Synthetic Augmentation \& Gradient Conflict Resolution):} Evaluating the unified multi-dialect models on 32,335 verified pairs demonstrates the full benefit of synthetic data expansion. IndicBART completely recovers from cross-dialect interference to reach 52.06 BLEU (+25.85 gain over original multi-dialect) on Southern Konkan and 57.12 overall BLEU. Concurrently, mT5-small reaches peak performance across all subsets (66.62 BLEU on Southern Konkan, 62.72 BLEU on Northern Konkan, and an overall combined benchmark of 69.51 BLEU and 84.58 chrF++), confirming that synthetic scaling resolves gradient conflicts in multi-dialect seq2seq architectures.}
@@ -478,34 +471,34 @@ Single-dialect training shows that synthetic data augmentation substantially red
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
+\setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Comprehensive Evaluation Matrix on \texttt{IISc\_RESPIN\_test\_mr} Benchmark Set (Single Test Run, No CV)}}
 \label{tab:respin_comprehensive}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:l:c:c:c:c|}
 \hline
-\makecell[l]{\textbf{Model Scope}} & \makecell[l]{\textbf{Training Data}} & \makecell[l]{\textbf{Dialect / Subset}} & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
+\makecell[l]{\textbf{Model}\\\textbf{Scope}} & \makecell[l]{\textbf{Training}\\\textbf{Data}} & \makecell[l]{\textbf{Dialect /}\\\textbf{Subset}} & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
 & & & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{WER}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{WER}} \\
 \hline
-\multirow{3}{*}{Single-Dialect} & \multirow{3}{*}{Original} & Southern Konkan & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
+\multirow{3}{*}{Single} & \multirow{3}{*}{Original} & Southern Konkan & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
  & & Northern Konkan & \textbf{90.13} & \textbf{6.46\%} & 79.46 & 11.95\% \\
  & & Varhadi & \textbf{83.59} & \textbf{10.19\%} & 74.81 & 14.73\% \\
 \cline{2-7}
- & \multirow{3}{*}{Synthetically Expanded} & Southern Konkan & 24.06 & 60.32\% & \textbf{44.36} & \textbf{32.75\%} \\
+ & \multirow{3}{*}{Expanded} & Southern Konkan & 24.06 & 60.32\% & \textbf{44.36} & \textbf{32.75\%} \\
  & & Northern Konkan & 65.41 & 28.70\% & \textbf{79.76} & \textbf{12.61\%} \\
  & & Varhadi & 67.97 & 25.43\% & \textbf{76.90} & \textbf{14.19\%} \\
 \hline
-\multirow{6}{*}{Multi-Dialect} & \multirow{3}{*}{Original} & Southern Konkan & 26.08 & 52.98\% & \textbf{40.94} & \textbf{35.34\%} \\
+\multirow{6}{*}{Multi} & \multirow{3}{*}{Original} & Southern Konkan & 26.08 & 52.98\% & \textbf{40.94} & \textbf{35.34\%} \\
  & & Northern Konkan & 47.92 & 32.64\% & \textbf{77.50} & \textbf{14.65\%} \\
  & & Varhadi & 73.04 & 26.96\% & \textbf{73.47} & \textbf{16.16\%} \\
 \cline{2-7}
- & \multirow{3}{*}{Synthetically Expanded} & Southern Konkan & \textbf{52.15} & 36.50\% & 43.88 & \textbf{34.96\%} \\
+ & \multirow{3}{*}{Expanded} & Southern Konkan & \textbf{52.15} & 36.50\% & 43.88 & \textbf{34.96\%} \\
  & & Northern Konkan & 54.35 & 25.65\% & \textbf{78.16} & \textbf{13.55\%} \\
  & & Varhadi & 69.96 & 21.04\% & \textbf{74.74} & \textbf{15.57\%} \\
 \hline
 \end{tabular}
-}
 \end{table}
 
 \begin{figure}[H]
@@ -525,10 +518,11 @@ Overall, multi-dialect models exhibit substantial gains from synthetic data augm
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
+\setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.25}
 \caption{\textcolor{black}{Impact of Synthetic Data Augmentation on Held-Out Test Set: Net BLEU Change (Single Test Run, No CV)}}
 \label{tab:augmentation_impact}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
 & \multicolumn{3}{c:}{\textbf{IndicBART BLEU}} & \multicolumn{3}{c|}{\textbf{mT5-Small BLEU}} \\
@@ -540,7 +534,6 @@ Northern Konkan (D2) & 47.92 & 54.35 & \textbf{+6.43} & 77.50 & \textbf{78.16} &
 Varhadi (D4) & \textbf{73.04} & 69.96 & $-$3.08 & 73.47 & \textbf{74.74} & \textbf{+1.27} \\
 \hline
 \end{tabular}
-}
 \end{table}
 
 \begin{figure}[H]
@@ -550,8 +543,6 @@ Varhadi (D4) & \textbf{73.04} & 69.96 & $-$3.08 & 73.47 & \textbf{74.74} & \text
 \label{fig:augmentation_impact}
 \end{figure}
 
-Metrics from Table~\ref{tab:augmentation_impact} hint a relationship with the performance of models with their architectures and pre-training practices. On the combined multi-dialect benchmarks, mT5-small outperforms IndicBART across both the original and expanded datasets (63.29 vs.\ 48.17 BLEU and 69.51 vs.\ 57.12 BLEU, respectively). This could hint us towards a better subword vocabulary capacity of mT5-small; 250,000-token vocabulary segments show lower fragmentation than IndicBART's 64,000 Devanagari unified vocabulary. Also, mT5's relative positional encoding handles merger of dialectal suffix better than IndicBART's absolute sinusoidal encodings.
-
 \subsection{\textcolor{black}{Verification Engine Impact: Raw Unverified vs.\ Filtered Clean Data}}
 \label{subsec:ablation_findings}
 
@@ -560,13 +551,14 @@ Metrics from Table~\ref{tab:augmentation_impact} hint a relationship with the pe
 \begin{table}[H]
 \color{black}
 \centering
+\fontsize{11pt}{14pt}\selectfont
+\setlength{\tabcolsep}{4.5pt}
 \renewcommand{\arraystretch}{1.2}
 \caption{\textcolor{black}{Impact of Multi-Tier Verification Engine: Raw Unverified vs.\ Filtered Clean Synthetic Data (Single Test Run, No CV)}}
 \label{tab:verification_ablation}
-\resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:c:c:c:c:c|}
 \hline
-\makecell[l]{\textbf{Model}} & \makecell[l]{\textbf{Pipeline State}} & \makecell[c]{\textbf{Total Pairs}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{$\Delta$ BLEU}} & \makecell[c]{\textbf{$\Delta$ chrF++}} \\
+\makecell[l]{\textbf{Model}} & \makecell[l]{\textbf{Pipeline State}} & \makecell[c]{\textbf{Pairs}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{$\Delta$ BLEU}} & \makecell[c]{\textbf{$\Delta$ chrF++}} \\
 \hline
 \multirow{2}{*}{IndicBART (244M)} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$14.03 & $-$10.95 \\
  & Filtered Clean Data & 32,335 & \textbf{57.12} & \textbf{75.49} & \textbf{+14.03} & \textbf{+10.95} \\
@@ -575,7 +567,6 @@ Metrics from Table~\ref{tab:augmentation_impact} hint a relationship with the pe
  & Filtered Clean Data & 32,335 & \textbf{69.51} & \textbf{84.58} & \textbf{+8.30} & \textbf{+4.40} \\
 \hline
 \end{tabular}
-}
 \end{table}
 
 \begin{figure}[H]
