@@ -273,15 +273,15 @@ def generate_fig4():
     fig, axes = plt.subplots(2, 1, figsize=(11.0, 7.8), dpi=300)
     
     # Subplot A: IndicBART (244M)
-    rects1 = axes[0].bar(x - width/2, ib_orig, width, label='Original Data (Table 4)', color='#2b5c8f', edgecolor='black', linewidth=1.1)
-    rects2 = axes[0].bar(x + width/2, ib_exp, width, label='Synthetically Expanded Data (Table 6)', color='#41b6c4', edgecolor='black', linewidth=1.1)
+    rects1 = axes[0].bar(x - width/2, ib_orig, width, label='Original Data', color='#2b5c8f', edgecolor='black', linewidth=1.1)
+    rects2 = axes[0].bar(x + width/2, ib_exp, width, label='Synthetically Expanded Data', color='#41b6c4', edgecolor='black', linewidth=1.1)
     
     axes[0].set_ylabel('5-Fold CV BLEU Score', fontsize=12.5, fontweight='bold')
     axes[0].set_title('A. IndicBART (244M) Single-Dialect CV BLEU', fontsize=13.5, fontweight='bold', pad=12)
     axes[0].set_xticks(x)
     axes[0].set_xticklabels(dialects, fontsize=12, fontweight='bold')
-    axes[0].set_ylim(0, 98)
-    axes[0].legend(loc='upper right', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
+    axes[0].set_ylim(0, 110)
+    axes[0].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
     axes[0].grid(axis='y', linestyle='--', alpha=0.5)
     
     for rect in rects1:
@@ -292,8 +292,8 @@ def generate_fig4():
         axes[0].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=11, fontweight='bold')
         
     # Subplot B: mT5-Small (300M)
-    rects3 = axes[1].bar(x - width/2, mt5_orig, width, label='Original Data (Table 4)', color='#8c2d19', edgecolor='black', linewidth=1.1)
-    rects4 = axes[1].bar(x + width/2, mt5_exp, width, label='Synthetically Expanded Data (Table 6)', color='#fe9929', edgecolor='black', linewidth=1.1)
+    rects3 = axes[1].bar(x - width/2, mt5_orig, width, label='Original Data', color='#8c2d19', edgecolor='black', linewidth=1.1)
+    rects4 = axes[1].bar(x + width/2, mt5_exp, width, label='Synthetically Expanded Data', color='#fe9929', edgecolor='black', linewidth=1.1)
     
     axes[1].set_ylabel('5-Fold CV BLEU Score', fontsize=12.5, fontweight='bold')
     axes[1].set_title('B. mT5-Small (300M) Single-Dialect CV BLEU', fontsize=13.5, fontweight='bold', pad=12)
@@ -369,7 +369,7 @@ def generate_fig5():
     
     axes[1].axhline(0, color='black', linewidth=1.2, linestyle='-')
     axes[1].set_ylabel('Net BLEU Gain (Δ BLEU)', fontsize=12.5, fontweight='bold')
-    axes[1].set_title('B. Synthetic Expansion Net Impact Across Dialects & Overall (Table 8)', fontsize=13.5, fontweight='bold', pad=12)
+    axes[1].set_title('B. Synthetic Expansion Net Impact Across Dialects & Overall', fontsize=13.5, fontweight='bold', pad=12)
     axes[1].set_xticks(x)
     axes[1].set_xticklabels(subsets, fontsize=12, fontweight='bold')
     axes[1].set_ylim(-6, 32)
@@ -415,7 +415,7 @@ def generate_fig6():
     ax.set_yticklabels(metrics, fontsize=12, fontweight='bold')
     ax.invert_yaxis()
     ax.set_xlabel('Net BLEU Change (Δ BLEU)', fontsize=13.5, fontweight='bold')
-    ax.set_title('Impact of Synthetic Data Augmentation Across Models and Dialects (Table 8)', fontsize=14.5, fontweight='bold', pad=15)
+    ax.set_title('Impact of Synthetic Data Augmentation Across Models and Dialects', fontsize=14.5, fontweight='bold', pad=15)
     ax.set_xlim(-6, 30)
     ax.grid(axis='x', linestyle='--', alpha=0.5)
     
