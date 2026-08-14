@@ -50,9 +50,10 @@
 \setlength\dashlinegap{0.8pt}
 \setlength\arrayrulewidth{0.5pt}
 \arrayrulecolor{black}
-\usepackage{hyperref}
 \usepackage{enumitem}
 \setlist{noitemsep, topsep=2pt, parsep=1pt, partopsep=0pt}
+\setlist[itemize,1]{label=\textbullet}
+\setlist[itemize,2]{label=\textbullet}
 \usepackage{titlesec}
 \usepackage{caption}
 \DeclareCaptionFont{elevenpt}{\fontsize{11pt}{14pt}\selectfont\itshape}
@@ -68,6 +69,7 @@
 \AtBeginEnvironment{tabular}{\fontsize{11pt}{13.5pt}\selectfont}
 \AtBeginEnvironment{tabularx}{\fontsize{11pt}{13.5pt}\selectfont}
 
+\usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
@@ -139,12 +141,13 @@ Rapid development of deep learning architectures and self-attention mechanisms \
 
 Dialect normalization is the task of translating non-standard regional dialects into standard written language. The main challenge to be addressed while designing such systems is the preservation of the meaning of original text \citep{blaschke2024what}. It serves to be an essential layer for digital linguistic inclusion. Countries having large and diverse speech communities, such as India, which has 22 official languages and hundreds of regional dialects spoken by 1.4 billion people, regional varieties have remained unattended in computational linguistic research. An example of such linguistic disparity is Marathi, an Indo-Aryan language spoken by over 83 million people in western India \citep{kulkarni2023variation}. Development of reliable pipelines for such regional Indic dialects have faced these fundamental challenges:
 \begin{enumerate}
-    \item {\fontsize{11pt}{14pt}\selectfont\itshape Resource Scarcity}: Parallel corpora mapping the regional dialects to standard written language do not exist. Curation of such sets by experts fluent in multiple dialects is both expensive and unscalable \citep{blaschke2024what,dhasmana2026dialect}.
-    \item {\fontsize{11pt}{14pt}\selectfont\itshape Morphological and Dialectal Heterogeneity}: Marathi exhibits rich morphology where different words undergo varied complex transformations across different regions where the dialects are spoken \citep{ansary2024unicode}. Consequently, evaluations vary significantly across individual dialects---ranging from systematic suffix alternation in Varhadi to intense lexical and phonetic divergence in Northern and Southern Konkan \citep{joshi2025survey}.
-    \item {\fontsize{11pt}{14pt}\selectfont\itshape Underperformance of Multilingual Models}: Performance of pre-trained models like IndicBART \citep{dabre2022indicbart}, IndicNLP Suite \citep{kakwani2020indicnlpsuite}, and mT5 \citep{xue2021mt5} seems to drop drastically on non-standard language variants due to fragmentation during tokenisation and out-of-vocabulary phonological shifts \citep{joshi2020state,kumar2024indicdialect}.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Resource Scarcity}: Parallel corpora mapping the regional dialects to standard written language do not exist. Curation of such sets by experts fluent in multiple dialects is both expensive and cannot be scaled \citep{blaschke2024what,dhasmana2026dialect}.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Grammatical Variance}: Marathi exhibits rich morphology where different words undergo varied complex transformations across different regions where the dialects are spoken \citep{ansary2024unicode}\citep{joshi2025survey}.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Degraded performance of Multilingual Models}: Performance of pre-trained models like IndicBART \citep{dabre2022indicbart}, IndicNLP Suite \citep{kakwani2020indicnlpsuite}, and mT5 \citep{xue2021mt5} seems to drop drastically on non-standard language variants due to fragmentation during tokenisation and out-of-vocabulary phonological shifts \citep{joshi2020state,kumar2024indicdialect}.
 \end{enumerate}
 
-\textcolor{red}{In this work, we investigate the variance in normalization performance across regional Marathi dialects with differing degrees of divergence from Standard Marathi, evaluate how effectively sequence-to-sequence architectures adapt to dialect-to-standard mapping under task-specific conditioning, and assess whether automated synthetic data expansion can overcome severe data scarcity while mitigating cross-dialect hallucinations and grammatical errors \citep{degibert2024scaling,ji2023survey}. To address these objectives, we construct an end-to-end normalization framework combining LLM-based synthetic generation, multi-tier syntactic and semantic verification, and conditioned transformer fine-tuning across both single-dialect and multi-dialect settings.}
+In this work, we investigate the normalization performance of IndicBART and mt5 across regional Marathi dialects and evaluate how efficiently they adapt to dialect-to-standard mapping under task-specific conditioning, and check whether synthetic data can solve severe data while maintianing considerable performance. 
+% To address these objectives, we construct an end-to-end normalization framework combining LLM-based synthetic generation, multi-tier syntactic and semantic verification, and conditioned transformer fine-tuning across both single-dialect and multi-dialect settings.}
 
 Our core contributions are:
 \begin{itemize}
@@ -170,7 +173,7 @@ LLMs can be used to suffice for data scarcity in various tasks \citep{wang2022se
 \label{sec:methodology}
 
 \subsection{\textcolor{black}{Original Corpus Curation and Foundation in RESPIN}}
-Base sentences for our task are drawn from the domain-specific transcripts of the RESPIN-S1.0 initiative \citep{kumar2025respin}, developed at IISc Bangalore under the Gates Foundation project. While RESPIN has audio recordings and their transcripts across agriculture and banking domains for Indian languages and their dialects, it lacks aligned parallel dialect-to-target language translations required for efficient normalisation. The large speaker diversity ensures broad coverage of intra-dialect phonetic and lexical variation, while the balanced gender and domain splits reduce systematic bias in our derived parallel corpus. Detailed corpus statistics and demographic splits are summarized in Table~\ref{tab:respin_stats} and Figure~\ref{fig:respin_demographics}.
+Base sentences for our task are drawn from the domain-specific transcripts of the RESPIN-S1.0 initiative \citep{kumar2025respin}, developed at IISc Bangalore under the Gates Foundation project. While RESPIN has audio recordings and their transcripts across agriculture and banking domains for Indian languages and their dialects, it lacks aligned parallel dialect-to-target language translations required for efficient normalisation. The large speaker diversity keeps a sufficently diverse coverage of intra-dialect variations, while the balanced domain splits reduce systematic bias in our derived parallel corpus. Detailed corpus statistics are summarized in Table~\ref{tab:respin_stats} and Figure~\ref{fig:respin_demographics}.
 
 \begin{table}[H]
 \color{black}
