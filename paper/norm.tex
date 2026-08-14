@@ -64,8 +64,8 @@
 \usepackage{setspace}
 \usepackage{tcolorbox}
 \usepackage{etoolbox}
-\AtBeginEnvironment{tabular}{}
-\AtBeginEnvironment{tabularx}{}
+\AtBeginEnvironment{tabular}{\fontsize{11pt}{13.5pt}\selectfont}
+\AtBeginEnvironment{tabularx}{\fontsize{11pt}{13.5pt}\selectfont}
 
 \hypersetup{
     colorlinks=true,
@@ -413,7 +413,7 @@ Single-dialect training shows that synthetic data augmentation substantially red
 \subsection{\textcolor{black}{Single-Dialect vs.\ Multi-Dialect 5-Fold Cross-Validation Results}}
 \label{subsec:cv_findings}
 
-Table~\ref{tab:results_original_single} presents the performance matrix on original single-dialect benchmarks, and Table~\ref{tab:results_original_multidialect} explains the dialect-wise breakdown of the multi-dialect model on original data. Table~\ref{tab:results_expanded_single} presents the performance matrix on synthetically expanded single-dialect benchmarks, and Table~\ref{tab:results_expanded_multidialect} details the dialectwise evaluation breakdown of the multi-dialect model on expanded data. Comparative 5-fold cross-validation performance shifts and multi-dialect matrices are illustrated in Figure~\ref{fig:single_dialect_cv} and Figure~\ref{fig:multidialect_matrix}.
+Table~\ref{tab:results_original_single} presents the performance matrix on original single-dialect benchmarks.
 
 \begin{table}[H]
 \color{black}
@@ -435,6 +435,8 @@ Varhadi (D4) & 5,086 & 763 / 762 & 76.63 & 90.93 & \textbf{81.00} & \textbf{91.2
 \end{tabular}
 }
 \end{table}
+
+Table~\ref{tab:results_original_multidialect} explains the dialect-wise breakdown of the multi-dialect model on original data.
 
 \begin{table}[H]
 \color{black}
@@ -459,6 +461,8 @@ Varhadi (D4) & 16,163 & 763 / 790 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.
 }
 \end{table}
 
+Table~\ref{tab:results_expanded_single} presents the performance matrix on synthetically expanded single-dialect benchmarks.
+
 \begin{table}[H]
 \color{black}
 \centering
@@ -479,6 +483,8 @@ Varhadi (D4) & 10,155 & 1,524 / 1,523 & 73.62 & 86.75 & \textbf{78.89} & \textbf
 \end{tabular}
 }
 \end{table}
+
+Table~\ref{tab:results_expanded_multidialect} details the dialectwise evaluation breakdown of the multi-dialect model on expanded data.
 
 \begin{table}[H]
 \color{black}
@@ -503,12 +509,16 @@ Varhadi (D4) & 32,335 & 1,524 / 1,513 & 70.27 & 84.27 & \textbf{78.73} & \textbf
 }
 \end{table}
 
+Comparative single-dialect 5-fold cross-validation performance shifts are illustrated in Figure~\ref{fig:single_dialect_cv}.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/fig4_single_dialect_cv.pdf}
 \caption{Single-dialect 5-fold cross-validation performance shift comparing Original and Synthetically Expanded models for IndicBART (244M) and mT5-small (300M).}
 \label{fig:single_dialect_cv}
 \end{figure}
+
+The multi-dialect performance matrix is shown in Figure~\ref{fig:multidialect_matrix}.
 
 \begin{figure}[H]
 \centering
