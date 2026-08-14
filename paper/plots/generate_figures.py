@@ -100,17 +100,16 @@ def generate_fig2():
     dialects = ['Southern Konkan', 'Northern Konkan', 'Varhadi']
     orig_pairs = [5576, 5501, 5086]
     synth_verified = [5569, 5534, 5069]
-    rejected_pairs = [269, 291, 261]
-    raw_synth = [5838, 5825, 5330]
     total_clean = [11145, 11035, 10155]
-    rejection_pct = [4.61, 5.00, 4.90]
+    
+    total_orig = sum(orig_pairs)
+    total_synth = sum(synth_verified)
+    overall_total = sum(total_clean)
     
     df = pd.DataFrame({
         'Dialect': dialects,
         'Original Clean Pairs': orig_pairs,
         'Clean Synthetic Verified': synth_verified,
-        'Corrupted / Rejected': rejected_pairs,
-        'Raw Synthetic Generated': raw_synth,
         'Total Clean Expanded': total_clean
     })
     
@@ -121,12 +120,11 @@ def generate_fig2():
     # Left bar: Original Clean Pairs
     rects1 = ax.bar(x - width/2, orig_pairs, width, label='Original Clean Pairs', color='#2c3e50', edgecolor='black', linewidth=1.0)
     
-    # Right bar (Stacked): Clean Synthetic Verified + Corrupted/Rejected
-    rects2 = ax.bar(x + width/2, synth_verified, width, label='Clean Synthetic Verified (Passed)', color='#27ae60', edgecolor='black', linewidth=1.0)
-    rects3 = ax.bar(x + width/2, rejected_pairs, width, bottom=synth_verified, label='Corrupted / Rejected (Filtered)', color='#c0392b', edgecolor='black', linewidth=1.0)
+    # Right bar: Clean Synthetic Verified
+    rects2 = ax.bar(x + width/2, synth_verified, width, label='Clean Synthetic Verified', color='#27ae60', edgecolor='black', linewidth=1.0)
     
     ax.set_ylabel('Parallel Sentence Pairs', fontsize=14.5, fontweight='bold')
-    ax.set_title('Parallel Dataset Expansion, Synthetic Yield & Verification Filtering per Dialect', fontsize=15.5, fontweight='bold', pad=14)
+    ax.set_title('Parallel Dataset Expansion & Synthetic Yield per Dialect', fontsize=15.5, fontweight='bold', pad=14)
     ax.set_xticks(x)
     ax.set_xticklabels(dialects, fontsize=13, fontweight='bold')
     ax.legend(loc='upper left', frameon=True, fontsize=12)
@@ -135,23 +133,38 @@ def generate_fig2():
         # Annotate Original bar
         ax.text(x[i] - width/2, orig_pairs[i] + 120, f"{orig_pairs[i]:,}", ha='center', va='bottom', fontsize=11, fontweight='bold', color='#2c3e50')
         
-        # Annotate Raw Synthetic bar total (verified + rejected)
-        tot_raw = synth_verified[i] + rejected_pairs[i]
-        ax.text(x[i] + width/2, tot_raw + 120, f"{tot_raw:,}\n({rejection_pct[i]:.2f}% rej)", ha='center', va='bottom', fontsize=11, fontweight='bold', color='#c0392b')
+        # Annotate Synthetic Verified bar
+        ax.text(x[i] + width/2, synth_verified[i] + 120, f"{synth_verified[i]:,}", ha='center', va='bottom', fontsize=11, fontweight='bold', color='#1e8449')
         
         # Overall annotation on top of cluster
-        ax.annotate(f"Total Clean: {total_clean[i]:,}", (x[i], max(orig_pairs[i], tot_raw) + 1100), ha='center', fontsize=12, fontweight='bold', color='#1e8449',
+        ax.annotate(f"Total Clean: {total_clean[i]:,}", (x[i], max(orig_pairs[i], synth_verified[i]) + 1000), ha='center', fontsize=12, fontweight='bold', color='#1e8449',
                     bbox=dict(boxstyle='round,pad=0.3', facecolor='#e8f8f5', edgecolor='#27ae60', linewidth=1.2))
         
-    ax.set_ylim(0, 7800)
+    # Overall Dataset Summary Box
+    summary_text = (
+        f"Overall Dataset Totals\n"
+        f"• Total Original Clean: {total_orig:,}\n"
+        f"• Total Synthetic Verified: {total_synth:,}\n"
+        f"• Overall Clean Dataset: {overall_total:,}"
+    )
+    ax.text(
+        0.98, 0.96, summary_text,
+        transform=ax.transAxes,
+        fontsize=11.5, fontweight='bold',
+        va='top', ha='right', multialignment='left',
+        color='#2c3e50',
+        bbox=dict(boxstyle='round,pad=0.5', facecolor='#f8f9f9', edgecolor='#2c3e50', linewidth=1.5)
+    )
+    
+    ax.set_ylim(0, 8200)
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig2_dataset_composition.png'), bbox_inches='tight')
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig2_dataset_composition.pdf'), bbox_inches='tight')
     plt.close()
     
     # Plotly Interactive
-    fig_px = px.bar(df, x='Dialect', y=['Original Clean Pairs', 'Clean Synthetic Verified', 'Corrupted / Rejected'],
-                    title='Parallel Dataset Expansion & Verification Filtering per Dialect', barmode='group', text_auto=True)
+    fig_px = px.bar(df, x='Dialect', y=['Original Clean Pairs', 'Clean Synthetic Verified'],
+                    title='Parallel Dataset Expansion per Dialect', barmode='group', text_auto=True)
     fig_px.update_layout(font=dict(size=16))
     fig_px.write_html(os.path.join(INTERACTIVE_DIR, 'fig2_dataset_composition.html'))
 
