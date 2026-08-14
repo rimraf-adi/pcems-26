@@ -354,7 +354,12 @@ Results are reported using metrics that are evaluated using SacreBLEU \citep{pos
 \section{\textcolor{black}{Findings}}
 \label{sec:findings}
 
+\textcolor{red}{To ensure transparent analysis, our findings are reported across two distinct evaluation protocols:
+(1) \textbf{Held-Out RESPIN Test Benchmark} (Section~\ref{subsec:heldout_findings}, Table~\ref{tab:respin_comprehensive}, Figure~\ref{fig:respin_comprehensive}): Evaluates true unseen generalization on the official held-out test dataset comprising 2,170 utterances (\texttt{IISc\_RESPIN\_test\_mr}) after training models on the complete dataset; and
+(2) \textbf{Mean 5-Fold Cross-Validation} (Sections~\ref{subsec:cv_findings}--\ref{subsec:ablation_findings}, Tables~\ref{tab:results_original_single}--\ref{tab:verification_ablation}, Figures~\ref{fig:single_dialect_cv}--\ref{fig:verification_ablation}): Evaluates in-domain model stability and dialectwise synthetic augmentation gains across 5 stratified train/test folds.}
+
 \subsection{\textcolor{black}{Comprehensive Benchmark on the Held-Out Test Set}}
+\label{subsec:heldout_findings}
 
 Single-dialect training shows that synthetic data augmentation substantially reduces IndicBART performance across all three dialects, while mT5-small remains comparatively stable and shows slight improvements on Northern Konkan and Varhadi. Multi-dialect training produces substantial gains for IndicBART on Southern Konkan (+26.0 BLEU) and Northern Konkan (+6.5 BLEU), while Varhadi decreases slightly (−3.0 BLEU). mT5-small shows smaller but consistently positive gains across all three dialects: +3.0, +0.7, and +1.2 BLEU for Southern Konkan, Northern Konkan, and Varhadi, respectively. The full performance evaluation matrix on the held-out test set is detailed in Table~\ref{tab:respin_comprehensive} and Figure~\ref{fig:respin_comprehensive}.
 
@@ -403,6 +408,7 @@ Single-dialect training shows that synthetic data augmentation substantially red
 \end{figure}
 
 \subsection{\textcolor{black}{Single-Dialect vs.\ Multi-Dialect 5-Fold Cross-Validation Results}}
+\label{subsec:cv_findings}
 
 Table~\ref{tab:results_original_single} presents the performance matrix on original single-dialect benchmarks, and Table~\ref{tab:results_original_multidialect} explains the dialect-wise breakdown of the multi-dialect model on original data. Table~\ref{tab:results_expanded_single} presents the performance matrix on synthetically expanded single-dialect benchmarks, and Table~\ref{tab:results_expanded_multidialect} details the dialectwise evaluation breakdown of the multi-dialect model on expanded data. Comparative 5-fold cross-validation performance shifts and multi-dialect matrices are illustrated in Figure~\ref{fig:single_dialect_cv} and Figure~\ref{fig:multidialect_matrix}.
 
@@ -509,6 +515,7 @@ Varhadi (D4) & 32,335 & 1,524 / 1,513 & 70.27 & 84.27 & \textbf{78.73} & \textbf
 \end{figure}
 
 \subsection{\textcolor{black}{Impact of Synthetic Data Augmentation}}
+\label{subsec:augmentation_findings}
 
 Table~\ref{tab:augmentation_impact} shows the effect of dataset scaling by comparing performance across original and synthetically expanded corpora for each model architecture. Overall, multi-dialect models exhibit substantial gains from synthetic data augmentation for most dialects. IndicBART shows particularly large improvements for Southern Konkan (+26.0 BLEU) and Northern Konkan (+6.5 BLEU), although its Varhadi performance decreases by 3.0 BLEU. mT5-small shows smaller but consistently positive gains across all three dialects. Visual representation of net BLEU score changes is provided in Figure~\ref{fig:augmentation_impact}.
 
@@ -545,6 +552,7 @@ Varhadi (D4) & \textbf{72.75} & 70.27 & $-$2.48 & \textbf{79.57} & 78.73 & $-$0.
 Metrics from Table~\ref{tab:augmentation_impact} hint a relationship with the performance of models with their architectures and pre-training practices. On the combined multi-dialect benchmarks, mT5-small outperforms IndicBART across both the original and expanded datasets (63.29 vs.\ 48.17 BLEU and 69.51 vs.\ 57.12 BLEU, respectively). This could hint us towards a better subword vocabulary capacity of mT5-small; 250,000-token vocabulary segments show lower fragmentation than IndicBART's 64,000 Devanagari unified vocabulary. Also, mT5's relative positional encoding handles merger of dialectal suffix better than IndicBART's absolute sinusoidal encodings.
 
 \subsection{\textcolor{black}{Verification Engine Impact: Raw Unverified vs.\ Filtered Clean Data}}
+\label{subsec:ablation_findings}
 We analysed the performance of our verification and filtering engine by conducting a detailed comparative analysis with models trained on the Unverified dataset. It had around 19,914 pairs that included the 3,751 rejected pairs that contained contaminated translations. Table~\ref{tab:verification_ablation} and Figure~\ref{fig:verification_ablation} demonstrate the BLEU and chrF++ score recovery provided by multi-tier verification.
 
 \begin{table}[H]
