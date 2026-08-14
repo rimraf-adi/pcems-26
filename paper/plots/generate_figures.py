@@ -182,11 +182,11 @@ def generate_fig3():
     mt5_single_exp  = [44.36, 79.76, 76.90]
     
     # Panel B: Multi-Dialect Models on Test Set
-    multi_subsets = ['Southern Konkan\n(559 utts)', 'Northern Konkan\n(540 utts)', 'Varhadi\n(516 utts)', 'Standard Benchmark\n(555 utts)', 'Overall Benchmark\n(2,170 utts)']
-    ib_multi_orig = [26.08, 47.92, 73.04, 96.12, 62.98]
-    ib_multi_exp  = [52.15, 54.35, 69.96, 96.80, 76.50]
-    mt5_multi_orig = [40.94, 77.50, 73.47, 96.65, 72.18]
-    mt5_multi_exp  = [43.88, 78.16, 74.74, 97.39, 73.48]
+    multi_subsets = ['Southern Konkan\n(559 utts)', 'Northern Konkan\n(540 utts)', 'Varhadi\n(516 utts)']
+    ib_multi_orig = [26.08, 47.92, 73.04]
+    ib_multi_exp  = [52.15, 54.35, 69.96]
+    mt5_multi_orig = [40.94, 77.50, 73.47]
+    mt5_multi_exp  = [43.88, 78.16, 74.74]
     
     fig, axes = plt.subplots(2, 1, figsize=(13.0, 9.5), dpi=300)
     width = 0.18
@@ -222,7 +222,7 @@ def generate_fig3():
     axes[1].set_title('B. Multi-Dialect Models Evaluated on Held-Out RESPIN Test Benchmark', fontsize=14.5, fontweight='bold', pad=12)
     axes[1].set_xticks(x_b)
     axes[1].set_xticklabels(multi_subsets, fontsize=11.5, fontweight='bold')
-    axes[1].set_ylim(0, 125)
+    axes[1].set_ylim(0, 120)
     axes[1].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5, ncol=2)
     axes[1].grid(axis='y', linestyle='--', alpha=0.5)
     
@@ -245,9 +245,9 @@ def generate_fig3():
     })
     df_multi = pd.DataFrame({
         'Dialect': multi_subsets * 4,
-        'Model & Setup': ['IndicBART (Orig)']*5 + ['IndicBART (Exp)']*5 + ['mT5-Small (Orig)']*5 + ['mT5-Small (Exp)']*5,
+        'Model & Setup': ['IndicBART (Orig)']*3 + ['IndicBART (Exp)']*3 + ['mT5-Small (Orig)']*3 + ['mT5-Small (Exp)']*3,
         'BLEU': ib_multi_orig + ib_multi_exp + mt5_multi_orig + mt5_multi_exp,
-        'Type': ['Multi-Dialect'] * 20
+        'Type': ['Multi-Dialect'] * 12
     })
     df_comb = pd.concat([df_single, df_multi])
     fig_px = px.bar(df_comb, x='Dialect', y='BLEU', color='Model & Setup', facet_col='Type', barmode='group',
