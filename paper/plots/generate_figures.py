@@ -339,7 +339,7 @@ def generate_fig5():
     ib_exp  = [52.06, 49.08, 70.27, 57.12]
     mt5_exp  = [66.62, 62.72, 78.73, 69.51]
     
-    fig, ax = plt.subplots(figsize=(11.5, 7.8), dpi=300)
+    fig, ax = plt.subplots(figsize=(12.5, 8.5), dpi=300)
     
     rects1 = ax.bar(x - 1.5*width, ib_orig, width, label='IndicBART (Original)', color='#2b5c8f', edgecolor='black', linewidth=1.1)
     rects2 = ax.bar(x - 0.5*width, mt5_orig, width, label='mT5-Small (Original)', color='#8c2d19', edgecolor='black', linewidth=1.1)
