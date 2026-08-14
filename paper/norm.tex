@@ -355,15 +355,15 @@ Results are reported using metrics that are evaluated using SacreBLEU \citep{pos
 \caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: \textbf{Single-Dialect} Models (5-Fold CV)}}
 \label{tab:results_original_single}
 \resizebox{\textwidth}{!}{
-\begin{tabular}{|l:c:c:c:c:c|}
+\begin{tabular}{|l:c:c:c:c|}
 \hline
-& & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
-\cline{3-6}
-\makecell[l]{\textbf{Dialect Name}} & \makecell[c]{\textbf{Total Pairs}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
+& \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
+\cline{2-5}
+\makecell[l]{\textbf{Dialect Name}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
 \hline
-Southern Konkan (D1) & 5,576 & \textbf{48.54} & \textbf{78.35} & 46.31 & 74.43 \\
-Northern Konkan (D2) & 5,501 & \textbf{60.58} & \textbf{80.30} & 60.31 & 77.34 \\
-Varhadi (D4) & 5,086 & 76.63 & 90.93 & \textbf{81.00} & \textbf{91.21} \\
+Southern Konkan (D1) & \textbf{48.54} & \textbf{78.35} & 46.31 & 74.43 \\
+Northern Konkan (D2) & \textbf{60.58} & \textbf{80.30} & 60.31 & 77.34 \\
+Varhadi (D4) & 76.63 & 90.93 & \textbf{81.00} & \textbf{91.21} \\
 \hline
 \end{tabular}
 }
@@ -380,17 +380,17 @@ Varhadi (D4) & 5,086 & 76.63 & 90.93 & \textbf{81.00} & \textbf{91.21} \\
 \caption{\textcolor{black}{Benchmark Performance Matrix on Original Datasets: \textbf{Multi-Dialect} Dialectwise Breakdown (5-Fold CV)}}
 \label{tab:results_original_multidialect}
 \resizebox{\textwidth}{!}{
-\begin{tabular}{|l:c:c:c:c:c|}
+\begin{tabular}{|l:c:c:c:c|}
 \hline
-& & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
-\cline{3-6}
-\makecell[l]{\textbf{Evaluated Subset}} & \makecell[c]{\textbf{Total Pairs}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
+& \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
+\cline{2-5}
+\makecell[l]{\textbf{Evaluated Subset}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
 \hline
-Southern Konkan (D1) & 16,163 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
-Northern Konkan (D2) & 16,163 & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
-Varhadi (D4) & 16,163 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
+Southern Konkan (D1) & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
+Northern Konkan (D2) & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
+Varhadi (D4) & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
 \hline
-\textbf{Overall Combined} & \textbf{16,163} & \textbf{48.17} & \textbf{68.58} & \textbf{63.29} & \textbf{81.37} \\
+\textbf{Overall Combined} & \textbf{48.17} & \textbf{68.58} & \textbf{63.29} & \textbf{81.37} \\
 \hline
 \end{tabular}
 }
@@ -407,15 +407,15 @@ Varhadi (D4) & 16,163 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
 \caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: \textbf{Single-Dialect} Models (5-Fold CV)}}
 \label{tab:results_expanded_single}
 \resizebox{\textwidth}{!}{
-\begin{tabular}{|l:c:c:c:c:c|}
+\begin{tabular}{|l:c:c:c:c|}
 \hline
-& & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
-\cline{3-6}
-\makecell[l]{\textbf{Dialect Name}} & \makecell[c]{\textbf{Total Pairs}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
+& \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
+\cline{2-5}
+\makecell[l]{\textbf{Dialect Name}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
 \hline
-Southern Konkan (D1) & 11,145 & 47.25 & 64.69 & \textbf{65.10} & \textbf{82.88} \\
-Northern Konkan (D2) & 11,035 & 40.51 & 62.21 & \textbf{62.07} & \textbf{79.29} \\
-Varhadi (D4) & 10,155 & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
+Southern Konkan (D1) & 47.25 & 64.69 & \textbf{65.10} & \textbf{82.88} \\
+Northern Konkan (D2) & 40.51 & 62.21 & \textbf{62.07} & \textbf{79.29} \\
+Varhadi (D4) & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \hline
 \end{tabular}
 }
@@ -432,17 +432,17 @@ Varhadi (D4) & 10,155 & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \caption{\textcolor{black}{Benchmark Performance Matrix on Synthetically Expanded Datasets: \textbf{Multi-Dialect} Dialectwise Breakdown (5-Fold CV)}}
 \label{tab:results_expanded_multidialect}
 \resizebox{\textwidth}{!}{
-\begin{tabular}{|l:c:c:c:c:c|}
+\begin{tabular}{|l:c:c:c:c|}
 \hline
-& & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
-\cline{3-6}
-\makecell[l]{\textbf{Evaluated Subset}} & \makecell[c]{\textbf{Total Pairs}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
+& \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
+\cline{2-5}
+\makecell[l]{\textbf{Evaluated Subset}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
 \hline
-Southern Konkan (D1) & 32,335 & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
-Northern Konkan (D2) & 32,335 & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
-Varhadi (D4) & 32,335 & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
+Southern Konkan (D1) & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
+Northern Konkan (D2) & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
+Varhadi (D4) & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
 \hline
-\textbf{Overall Combined} & \textbf{32,335} & \textbf{57.12} & \textbf{75.49} & \textbf{69.51} & \textbf{84.58} \\
+\textbf{Overall Combined} & \textbf{57.12} & \textbf{75.49} & \textbf{69.51} & \textbf{84.58} \\
 \hline
 \end{tabular}
 }
