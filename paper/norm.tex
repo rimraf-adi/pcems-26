@@ -315,6 +315,8 @@ Learning Rate & $5 \times 10^{-5}$ (linear warmup) & $5 \times 10^{-4}$ (AdaFact
 \end{tabularx}
 \end{table}
 
+\textcolor{red}{\textbf{Inference from Table~\ref{tab:arch_compare} (Architectural Trade-Offs in Dialect Normalization):} The two model architectures present fundamental trade-offs for dialect-to-standard mapping. IndicBART is tailored for Indic scripts with a unified 64k Devanagari vocabulary and language-specific target tokens (\texttt{<2mr>}), providing strong baseline performance in isolated single-dialect tasks. However, mT5-small features a substantially larger 250k multilingual vocabulary (reducing subword fragmentation on rare dialectal morphemes) and relative positional embeddings (which better capture local suffix and verb-boundary shifts). These structural advantages allow mT5-small to effectively mitigate cross-dialect parameter interference and scale more robustly when exposed to multi-dialect datasets.}
+
 \subsection{\textcolor{black}{Evaluation Protocol}}
 
 \textcolor{red}{We report model performance across two distinct evaluation settings:
