@@ -328,7 +328,7 @@ def generate_fig4_radar():
 # FIGURE 5: Multi-Dialect 5-Fold CV Performance Matrix & Net Impact (Table 5 & 7 & 8)
 # ==============================================================================
 def generate_fig5():
-    print("Generating Figure 5: Multi-Dialect Cross-Validation Vertical Grouped Bar & Net Impact Chart...")
+    print("Generating Figure 5: Multi-Dialect Cross-Validation Performance Matrix...")
     subsets = ['Southern Konkan', 'Northern Konkan', 'Varhadi', 'Overall Combined']
     x = np.arange(len(subsets))
     width = 0.18
@@ -338,56 +338,26 @@ def generate_fig5():
     ib_exp  = [52.06, 49.08, 70.27, 57.12]
     mt5_exp  = [66.62, 62.72, 78.73, 69.51]
     
-    ib_delta  = [25.85, 1.49, -2.48, 8.95]
-    mt5_delta = [18.34, 0.37, -0.84, 6.22]
+    fig, ax = plt.subplots(figsize=(11.5, 4.8), dpi=300)
     
-    fig, axes = plt.subplots(2, 1, figsize=(12.0, 8.5), dpi=300)
+    rects1 = ax.bar(x - 1.5*width, ib_orig, width, label='IndicBART (Original)', color='#2b5c8f', edgecolor='black', linewidth=1.1)
+    rects2 = ax.bar(x - 0.5*width, mt5_orig, width, label='mT5-Small (Original)', color='#8c2d19', edgecolor='black', linewidth=1.1)
+    rects3 = ax.bar(x + 0.5*width, ib_exp, width, label='IndicBART (Expanded)', color='#41b6c4', edgecolor='black', linewidth=1.1)
+    rects4 = ax.bar(x + 1.5*width, mt5_exp, width, label='mT5-Small (Expanded)', color='#fe9929', edgecolor='black', linewidth=1.1)
     
-    # Subplot A: Absolute BLEU Scores across Multi-Dialect Models
-    rects1 = axes[0].bar(x - 1.5*width, ib_orig, width, label='IndicBART (Original)', color='#2b5c8f', edgecolor='black', linewidth=1.1)
-    rects2 = axes[0].bar(x - 0.5*width, mt5_orig, width, label='mT5-Small (Original)', color='#8c2d19', edgecolor='black', linewidth=1.1)
-    rects3 = axes[0].bar(x + 0.5*width, ib_exp, width, label='IndicBART (Expanded)', color='#41b6c4', edgecolor='black', linewidth=1.1)
-    rects4 = axes[0].bar(x + 1.5*width, mt5_exp, width, label='mT5-Small (Expanded)', color='#fe9929', edgecolor='black', linewidth=1.1)
-    
-    axes[0].set_ylabel('5-Fold CV BLEU Score', fontsize=12.5, fontweight='bold')
-    axes[0].set_title('A. Multi-Dialect Performance Matrix (5-Fold CV BLEU)', fontsize=13.5, fontweight='bold', pad=12)
-    axes[0].set_xticks(x)
-    axes[0].set_xticklabels(subsets, fontsize=12, fontweight='bold')
-    axes[0].set_ylim(0, 98)
-    axes[0].legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5, ncol=2)
-    axes[0].grid(axis='y', linestyle='--', alpha=0.5)
+    ax.set_ylabel('5-Fold CV BLEU Score', fontsize=12.5, fontweight='bold')
+    ax.set_title('Multi-Dialect Performance Matrix (5-Fold CV BLEU)', fontsize=13.5, fontweight='bold', pad=12)
+    ax.set_xticks(x)
+    ax.set_xticklabels(subsets, fontsize=12, fontweight='bold')
+    ax.set_ylim(0, 98)
+    ax.legend(loc='upper left', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=10.5, ncol=2)
+    ax.grid(axis='y', linestyle='--', alpha=0.5)
     
     for rects in [rects1, rects2, rects3, rects4]:
         for rect in rects:
             h = rect.get_height()
-            axes[0].annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=10.5, fontweight='bold')
+            ax.annotate(f'{h:.1f}', (rect.get_x() + rect.get_width()/2, h + 1.8), ha='center', va='bottom', fontsize=10.5, fontweight='bold')
             
-    # Subplot B: Net Synthetic Expansion Gain (Δ BLEU)
-    w_b = 0.28
-    rects_b1 = axes[1].bar(x - w_b/2, ib_delta, w_b, label='IndicBART Δ BLEU', color='#2ca02c', edgecolor='black', linewidth=1.1)
-    rects_b2 = axes[1].bar(x + w_b/2, mt5_delta, w_b, label='mT5-Small Δ BLEU', color='#1f77b4', edgecolor='black', linewidth=1.1)
-    
-    axes[1].axhline(0, color='black', linewidth=1.2, linestyle='-')
-    axes[1].set_ylabel('Net BLEU Gain (Δ BLEU)', fontsize=12.5, fontweight='bold')
-    axes[1].set_title('B. Synthetic Expansion Net Impact Across Dialects & Overall', fontsize=13.5, fontweight='bold', pad=12)
-    axes[1].set_xticks(x)
-    axes[1].set_xticklabels(subsets, fontsize=12, fontweight='bold')
-    axes[1].set_ylim(-6, 32)
-    axes[1].legend(loc='upper right', frameon=True, facecolor='white', edgecolor='#cccccc', fontsize=11)
-    axes[1].grid(axis='y', linestyle='--', alpha=0.5)
-    
-    for rect in rects_b1:
-        h = rect.get_height()
-        va = 'bottom' if h >= 0 else 'top'
-        offset = 1.0 if h >= 0 else -1.8
-        axes[1].annotate(f'{h:+.2f}', (rect.get_x() + rect.get_width()/2, h + offset), ha='center', va=va, fontsize=11, fontweight='bold')
-        
-    for rect in rects_b2:
-        h = rect.get_height()
-        va = 'bottom' if h >= 0 else 'top'
-        offset = 1.0 if h >= 0 else -1.8
-        axes[1].annotate(f'{h:+.2f}', (rect.get_x() + rect.get_width()/2, h + offset), ha='center', va=va, fontsize=11, fontweight='bold')
-        
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig5_multidialect_heatmap.png'), bbox_inches='tight')
     plt.savefig(os.path.join(OUTPUT_DIR, 'fig5_multidialect_heatmap.pdf'), bbox_inches='tight')
