@@ -127,9 +127,9 @@
 \vspace{12pt}
 
 \begin{abstract}
-\textcolor{red}{Regional sub-dialects of Indic languages face severe shortage of data and limited results for text normalization. We investigate dialect normalization for Marathi texts by converting non-standard text from three regional dialects into Standard Written Marathi. We introduce an automated synthetic parallel data expansion pipeline that combines LLM-based translation with a multi-tier verification engine. We fine-tune mT5-small and IndicBART using a 5-fold cross-validation and evaluate their performance under varied configurations. Results show that the expanded multi-dialect dataset improves model performance, with mT5-small achieving 69.51 BLEU and 84.58 chrF++, that surpasses IndicBART by 12.39 BLEU. These findings demonstrate the effectiveness of verified synthetic data augmentation for improving Marathi dialect normalization in low-resource settings.}
+Regional sub-dialects of Indic languages face severe shortage of data and limited results for text normalization. We investigate dialect normalization for Marathi texts by converting non-standard text from three regional dialects into Standard Written Marathi. We introduce an automated synthetic parallel data expansion pipeline that combines LLM-based translation with a multi-tier verification engine. We fine-tune mT5-small and IndicBART using a 5-fold cross-validation and evaluate their performance under varied configurations. Results show that the expanded multi-dialect dataset improves model performance, with mT5-small achieving 69.51 BLEU and 84.58 chrF++, that surpasses IndicBART by 12.39 BLEU. These findings demonstrate the effectiveness of verified synthetic data augmentation for improving Marathi dialect normalization in low-resource settings.
 
-\keywords{\textcolor{red}{Dialect Normalization, Low-Resource NLP, Marathi Dialects, Sequence-to-Sequence Modelling, Synthetic Data Augmentation, mT5, IndicBART.}}
+\keywords{Dialect Normalization, Low-Resource NLP, Marathi Dialects, Sequence-to-Sequence Modelling, Synthetic Data Augmentation, mT5, IndicBART.}
 \end{abstract}
 
 \section{\textcolor{black}{Introduction}}
@@ -143,7 +143,7 @@ Dialect normalization is the task of translating non-standard regional dialects 
     \item \textbf{Underperformance of Multilingual Models}: Performance of pre-trained models like IndicBART \citep{dabre2022indicbart}, IndicNLP Suite \citep{kakwani2020indicnlpsuite}, and mT5 \citep{xue2021mt5} seems to drop drastically on non-standard language variants due to fragmentation during tokenisation and out-of-vocabulary phonological shifts \citep{joshi2020state,kumar2024indicdialect}.
 \end{enumerate}
 
-\textcolor{red}{Our work mainly tries to investigate and conclude (a) how do normalisation scores vary across regional Marathi dialects which have different degrees of variations as compared to standard Marathi; (b) how effectively can existing sequence-to-sequence architectures adapt to dialect-to-standard mapping under task-specific conditioning; and (c) whether automated synthetic data expansion can accurately solve the problem of data scarcity and eliminate cross-dialect hallucinations and grammatical errors \citep{degibert2024scaling,ji2023survey}. To address these questions, we construct an end-to-end normalization framework combining LLM-based synthetic generation, multi-tier syntactic and semantic verification, and conditioned transformer fine-tuning across both single-dialect and multi-dialect settings.}
+Our work mainly tries to investigate and conclude (a) how do normalisation scores vary across regional Marathi dialects which have different degrees of variations as compared to standard Marathi; (b) how effectively can existing sequence-to-sequence architectures adapt to dialect-to-standard mapping under task-specific conditioning; and (c) whether automated synthetic data expansion can accurately solve the problem of data scarcity and eliminate cross-dialect hallucinations and grammatical errors \citep{degibert2024scaling,ji2023survey}. To address these questions, we construct an end-to-end normalization framework combining LLM-based synthetic generation, multi-tier syntactic and semantic verification, and conditioned transformer fine-tuning across both single-dialect and multi-dialect settings.
 
 Our core contributions are:
 \begin{itemize}
@@ -312,7 +312,7 @@ To convert the pre-trained seq2seq language architectures into dedicated dialect
     \item \textbf{Target Standardization Tags}: Decoder target conditioning is done using standard language tags (\texttt{<standard\_mr>}), enforcing the output alignment into formal Standard Written Marathi.
 \end{itemize}
 
-\textcolor{red}{Table~\ref{tab:arch_compare} details the underlying architectural properties and hyperparameter configurations for IndicBART (244M) and mT5-small (300M).}
+Table~\ref{tab:arch_compare} details the underlying architectural properties and hyperparameter configurations for IndicBART (244M) and mT5-small (300M).
 
 \begin{table}[H]
 \color{black}
@@ -337,7 +337,13 @@ Learning Rate & $5 \times 10^{-5}$ (linear warmup) & $5 \times 10^{-4}$ (AdaFact
 
 \subsection{\textcolor{black}{Evaluation Protocol}}
 
-Even though we follow a standard train/test split strategy for stable performance evaluations, the final reports were generated on the official held-out test set provided by RESPIN which had around 2,170 utterances across target dialects after training the model on the complete train set. This setup is applied across all dialects on the original transcript-based data and their synthetically expanded versions. Results are reported using metrics that are evaluated using SacreBLEU \citep{post2018sacrebleu} and Word Error Rate (WER) scripts:
+\textcolor{red}{We report model performance across two distinct evaluation settings:
+\begin{enumerate}
+    \item \textbf{Mean 5-Fold Cross-Validation}: To evaluate model stability and in-domain generalization across the curated parallel datasets, models are trained and evaluated under an 85/15 stratified 5-fold cross-validation scheme (reported in Tables~\ref{tab:results_original_single}--\ref{tab:verification_ablation} and Figures~\ref{fig:single_dialect_cv}--\ref{fig:verification_ablation}).
+    \item \textbf{Held-Out RESPIN Test Benchmark}: To measure true zero-shot/unseen generalization, models trained on the complete dataset are evaluated on the official held-out benchmark set (\texttt{IISc\_RESPIN\_test\_mr}), consisting of 2,170 unseen utterances across all target sub-dialects (reported in Table~\ref{tab:respin_comprehensive} and Figure~\ref{fig:respin_comprehensive}).
+\end{enumerate}}
+
+Results are reported using metrics that are evaluated using SacreBLEU \citep{post2018sacrebleu} and Word Error Rate (WER) scripts:
 \begin{itemize}
     \item \textbf{BLEU} (Bilingual Evaluation Understudy): BLEU-4 with 4-gram precision, brevity penalty, with an exponential smoothing method.
     \item \textbf{chrF++}: Character n-gram F-score combined with word unigrams and bigrams.
@@ -576,7 +582,7 @@ IndicBART shows sensitivity to noise, suffering a 24.6\% relative BLEU drop on u
 % ===================================================================
 \section{\textcolor{black}{Conclusion}}
 
-\textcolor{red}{This study presents a scalable, reproducible framework for multi-dialect Marathi text normalization, addressing the critical scarcity of parallel corpora for low-resource Indic varieties. By replacing expensive manual annotations with a synthetic parallel generation pipeline combining Gemma-4 translation with a multi-tier verification engine (rule-based script filtering and LLaMA-3.1-8B semantic auditing), we successfully expanded the clean parallel corpus from 16,163 to 32,335 verified pairs across Southern Konkan, Northern Konkan, and Varhadi dialects. Empirical evaluations demonstrate that mT5-small achieves 69.51 BLEU and 84.58 chrF++ on the expanded multi-dialect benchmark, outperforming IndicBART by 12.39 BLEU. Crucially, multi-tier verification prevented synthetic quality collapse (+14.03 BLEU recovery over unverified data), while dataset expansion mitigated cross-dialect parameter competition and maintained near-perfect Standard Marathi normalization (97.39 BLEU, 1.37\% WER) on held-out RESPIN benchmarks. While these findings establish a strong blueprint for Indic sub-dialect normalization, minor constraints remain: LLM-driven verification pipelines introduce computational and latency overheads, synthetic expansion can occasionally yield slight precision dilution on already high-performing dialects like Varhadi, and intrinsic text metrics should be complemented by downstream task evaluations (e.g., ASR post-processing) in future work. Overall, our verified synthetic pipeline provides a scalable foundation for expanding digital linguistic inclusion across low-resource regional dialects.}
+This study presents a scalable, reproducible framework for multi-dialect Marathi text normalization, addressing the critical scarcity of parallel corpora for low-resource Indic varieties. By replacing expensive manual annotations with a synthetic parallel generation pipeline combining Gemma-4 translation with a multi-tier verification engine (rule-based script filtering and LLaMA-3.1-8B semantic auditing), we successfully expanded the clean parallel corpus from 16,163 to 32,335 verified pairs across Southern Konkan, Northern Konkan, and Varhadi dialects. Empirical evaluations demonstrate that mT5-small achieves 69.51 BLEU and 84.58 chrF++ on the expanded multi-dialect benchmark, outperforming IndicBART by 12.39 BLEU. Crucially, multi-tier verification prevented synthetic quality collapse (+14.03 BLEU recovery over unverified data), while dataset expansion mitigated cross-dialect parameter competition and maintained near-perfect Standard Marathi normalization (97.39 BLEU, 1.37\% WER) on held-out RESPIN benchmarks. While these findings establish a strong blueprint for Indic sub-dialect normalization, minor constraints remain: LLM-driven verification pipelines introduce computational and latency overheads, synthetic expansion can occasionally yield slight precision dilution on already high-performing dialects like Varhadi, and intrinsic text metrics should be complemented by downstream task evaluations (e.g., ASR post-processing) in future work. Overall, our verified synthetic pipeline provides a scalable foundation for expanding digital linguistic inclusion across low-resource regional dialects.
 
 % --- Modular BibTeX Bibliography ---
 \begingroup
