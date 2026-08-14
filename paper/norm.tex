@@ -63,6 +63,9 @@
 \usepackage[authoryear,round]{natbib}
 \usepackage{setspace}
 \usepackage{tcolorbox}
+\usepackage{etoolbox}
+\AtBeginEnvironment{tabular}{}
+\AtBeginEnvironment{tabularx}{}
 
 \hypersetup{
     colorlinks=true,
@@ -179,7 +182,7 @@ Base sentences for our task are drawn from the domain-specific transcripts of th
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:c:c:c:c|}
 \hline
-\small\textbf{Code} & \small\textbf{Dialect Name} & \small\textbf{Utterances (\%)} & \small\textbf{Duration (h)} & \small\textbf{Speakers} & \small\textbf{Unique Prompts} \\
+\textbf{Code} & \textbf{Dialect Name} & \textbf{Utterances (\%)} & \textbf{Duration (h)} & \textbf{Speakers} & \textbf{Unique Prompts} \\
 \hline
 D1 & Southern Konkan (Malvani) & 203,651 (25.14\%) & 247.31 & 732 & 5,838 \\
 D2 & Northern Konkan (Ahirani) & 198,560 (24.52\%) & 265.25 & 557 & 5,825 \\
@@ -229,21 +232,21 @@ To deal with data scarcity, we developed an automated synthetic data translation
 ]
 
 % Row 1: Source & LLM Generator
-\node (input) [box] {{\small\bfseries RESPIN Source Corpus}\\[3pt]{\footnotesize Audio Recordings \& Dialect Transcripts}};
-\node (gen) [engine, right=3.6cm of input] {{\small\bfseries Raw Parallel Pair Generation}\\[3pt]{\footnotesize Gemma-4 LLM Translation}};
+\node (input) [box] {{ \bfseries RESPIN Source Corpus}\\[3pt]{\footnotesize Audio Recordings \& Dialect Transcripts}};
+\node (gen) [engine, right=3.6cm of input] {{ \bfseries Raw Parallel Pair Generation}\\[3pt]{\footnotesize Gemma-4 LLM Translation}};
 
 % Row 2: Verification Engine
-\node (tier1) [stage, below=1.4cm of gen] {{\small\bfseries Tier 1: Rule-Based Filter}\\[3pt]{\footnotesize Script Integrity \& Length Ratio}};
-\node (tier2) [stage, left=3.6cm of tier1] {{\small\bfseries Tier 2: LLM Semantic Auditor}\\[3pt]{\footnotesize LLaMA-3.1-8B Verification Pass}};
+\node (tier1) [stage, below=1.4cm of gen] {{ \bfseries Tier 1: Rule-Based Filter}\\[3pt]{\footnotesize Script Integrity \& Length Ratio}};
+\node (tier2) [stage, left=3.6cm of tier1] {{ \bfseries Tier 2: LLM Semantic Auditor}\\[3pt]{\footnotesize LLaMA-3.1-8B Verification Pass}};
 
 % Bounding Box for Verification Engine
 \begin{scope}[on background layer]
 \node (verbox) [draw=teal!80!black, dashed, line width=1.2pt, fill=teal!3, rounded corners=8pt, fit=(tier1) (tier2), inner sep=10pt] {};
-\node[font=\small\sffamily\bfseries\color{teal!80!black}, anchor=south, yshift=2pt] at (verbox.north) {Multi-Tier Verification Engine};
+\node[font= \sffamily\bfseries\color{teal!80!black}, anchor=south, yshift=2pt] at (verbox.north) {Multi-Tier Verification Engine};
 \end{scope}
 
 % Row 3: Seq2Seq Fine-Tuning
-\node (seq2seq) [model, below=1.5cm of tier2] {{\small\bfseries Seq2Seq Model Training}\\[3pt]{\footnotesize IndicBART \& mT5-Small Evaluation}};
+\node (seq2seq) [model, below=1.5cm of tier2] {{ \bfseries Seq2Seq Model Training}\\[3pt]{\footnotesize IndicBART \& mT5-Small Evaluation}};
 
 % Flow Connections
 \draw [arrow] (input) -- node[above=4pt, font=\scriptsize\sffamily\bfseries] {Dialect Text} (gen);
@@ -284,7 +287,7 @@ After construction the original 16,163 verified parallel pairs through the RESPI
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c|}
 \hline
-\makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Original Clean}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Raw Synthetic}\\\small\textbf{Generated}} & \makecell[c]{\small\textbf{Clean Synthetic}\\\small\textbf{Verified}} & \makecell[c]{\small\textbf{Corrupted / Rejected}\\\small\textbf{Pairs (\%)}} & \makecell[c]{\small\textbf{Total Clean}\\\small\textbf{Expanded Pairs}} \\
+\makecell[l]{\textbf{Dialect Name}} & \makecell[c]{\textbf{Original Clean}\\\textbf{Pairs}} & \makecell[c]{\textbf{Raw Synthetic}\\\textbf{Generated}} & \makecell[c]{\textbf{Clean Synthetic}\\\textbf{Verified}} & \makecell[c]{\textbf{Corrupted / Rejected}\\\textbf{Pairs (\%)}} & \makecell[c]{\textbf{Total Clean}\\\textbf{Expanded Pairs}} \\
 \hline
 Southern Konkan & 5,576 & 5,838 & 5,569 & 269 (4.61\%) & \textbf{11,145} \\
 Northern Konkan & 5,501 & 5,825 & 5,534 & 291 (5.00\%) & \textbf{11,035} \\
@@ -372,9 +375,9 @@ Single-dialect training shows that synthetic data augmentation substantially red
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:l:c:c:c:c:c|}
 \hline
-\makecell[l]{\small\textbf{Model Scope}} & \makecell[l]{\small\textbf{Training Data}} & \makecell[l]{\small\textbf{Dialect / Subset}} & \makecell[c]{\small\textbf{Utts}} & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
+\makecell[l]{\textbf{Model Scope}} & \makecell[l]{\textbf{Training Data}} & \makecell[l]{\textbf{Dialect / Subset}} & \makecell[c]{\textbf{Utts}} & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
 \cline{5-8}
-& & & & \makecell[c]{\small\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\small\textbf{WER ($\downarrow$)}} & \makecell[c]{\small\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\small\textbf{WER ($\downarrow$)}} \\
+& & & & \makecell[c]{\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\textbf{WER ($\downarrow$)}} & \makecell[c]{\textbf{BLEU ($\uparrow$)}} & \makecell[c]{\textbf{WER ($\downarrow$)}} \\
 \hline
 \multirow{3}{*}{Single-Dialect} & \multirow{3}{*}{Original} & Southern Konkan & 559 & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
  & & Northern Konkan & 540 & \textbf{90.13} & \textbf{6.46\%} & 79.46 & 11.95\% \\
@@ -421,9 +424,9 @@ Table~\ref{tab:results_original_single} presents the performance matrix on origi
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
-& & & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
+& & & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
-\makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test Set}\\\small\textbf{(IB / mT5)}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
+\makecell[l]{\textbf{Dialect Name}} & \makecell[c]{\textbf{Total}\\\textbf{Pairs}} & \makecell[c]{\textbf{Test Set}\\\textbf{(IB / mT5)}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
 \hline
 Southern Konkan (D1) & 5,576 & 837 / 836 & \textbf{48.54} & \textbf{78.35} & 46.31 & 74.43 \\
 Northern Konkan (D2) & 5,501 & 826 / 825 & \textbf{60.58} & \textbf{80.30} & 60.31 & 77.34 \\
@@ -442,9 +445,9 @@ Varhadi (D4) & 5,086 & 763 / 762 & 76.63 & 90.93 & \textbf{81.00} & \textbf{91.2
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
-& & & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
+& & & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
-\makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test Set}\\\small\textbf{(IB / mT5)}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
+\makecell[l]{\textbf{Evaluated}\\\textbf{Subset}} & \makecell[c]{\textbf{Total}\\\textbf{Pairs}} & \makecell[c]{\textbf{Test Set}\\\textbf{(IB / mT5)}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
 \hline
 Southern Konkan (D1) & 16,163 & 837 / 836 & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
 Northern Konkan (D2) & 16,163 & 826 / 798 & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
@@ -465,9 +468,9 @@ Varhadi (D4) & 16,163 & 763 / 790 & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
-& & & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
+& & & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
-\makecell[l]{\small\textbf{Dialect Name}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test Set}\\\small\textbf{(IB / mT5)}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
+\makecell[l]{\textbf{Dialect Name}} & \makecell[c]{\textbf{Total}\\\textbf{Pairs}} & \makecell[c]{\textbf{Test Set}\\\textbf{(IB / mT5)}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
 \hline
 Southern Konkan (D1) & 11,145 & 1,672 / 1,671 & 47.25 & 64.69 & \textbf{65.10} & \textbf{82.88} \\
 Northern Konkan (D2) & 11,035 & 1,656 / 1,655 & 40.51 & 62.21 & \textbf{62.07} & \textbf{79.29} \\
@@ -486,9 +489,9 @@ Varhadi (D4) & 10,155 & 1,524 / 1,523 & 73.62 & 86.75 & \textbf{78.89} & \textbf
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
-& & & \multicolumn{2}{c:}{\small\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\small\textbf{mT5-Small (300M)}} \\
+& & & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
 \cline{4-7}
-\makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Total}\\\small\textbf{Pairs}} & \makecell[c]{\small\textbf{Test Set}\\\small\textbf{(IB / mT5)}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} \\
+\makecell[l]{\textbf{Evaluated}\\\textbf{Subset}} & \makecell[c]{\textbf{Total}\\\textbf{Pairs}} & \makecell[c]{\textbf{Test Set}\\\textbf{(IB / mT5)}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} \\
 \hline
 Southern Konkan (D1) & 32,335 & 1,672 / 1,710 & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
 Northern Konkan (D2) & 32,335 & 1,656 / 1,627 & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
@@ -530,7 +533,7 @@ Table~\ref{tab:augmentation_impact} shows the effect of dataset scaling by compa
 \hline
 & \multicolumn{3}{c:}{\textbf{IndicBART BLEU}} & \multicolumn{3}{c|}{\textbf{mT5-Small BLEU}} \\
 \cline{2-7}
-\makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ \\
+\makecell[l]{\textbf{Evaluated}\\\textbf{Subset}} & \makecell[c]{\textbf{Original}} & \makecell[c]{\textbf{Expanded}} & $\boldsymbol{\Delta}$ & \makecell[c]{\textbf{Original}} & \makecell[c]{\textbf{Expanded}} & $\boldsymbol{\Delta}$ \\
 \hline
 Southern Konkan (D1) & 26.21 & 52.06 & \textbf{+25.85} & 48.28 & \textbf{66.62} & \textbf{+18.34} \\
 Northern Konkan (D2) & 47.59 & 49.08 & \textbf{+1.49} & 62.35 & \textbf{62.72} & \textbf{+0.37} \\
@@ -564,7 +567,7 @@ We analysed the performance of our verification and filtering engine by conducti
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:l:c:c:c:c:c|}
 \hline
-\makecell[l]{\small\textbf{Model}} & \makecell[l]{\small\textbf{Pipeline State}} & \makecell[c]{\small\textbf{Total Pairs}} & \makecell[c]{\small\textbf{BLEU}} & \makecell[c]{\small\textbf{chrF++}} & \makecell[c]{\small\textbf{$\Delta$ BLEU}} & \makecell[c]{\small\textbf{$\Delta$ chrF++}} \\
+\makecell[l]{\textbf{Model}} & \makecell[l]{\textbf{Pipeline State}} & \makecell[c]{\textbf{Total Pairs}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{$\Delta$ BLEU}} & \makecell[c]{\textbf{$\Delta$ chrF++}} \\
 \hline
 \multirow{2}{*}{IndicBART (244M)} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$14.03 & $-$10.95 \\
  & Filtered Clean Data & 32,335 & \textbf{57.12} & \textbf{75.49} & \textbf{+14.03} & \textbf{+10.95} \\
