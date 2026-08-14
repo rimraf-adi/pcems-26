@@ -1,0 +1,352 @@
+<?xml version="1.0" ?>
+<bibtex>
+  <entry id="ansary2024unicode" type="inproceedings">
+    <title>Unicode Normalization and Grapheme Parsing of Indic Languages</title>
+    <author>Ansary, Nazmuddoha and Adib, Quazi Adibur Rahman and Reasat, Tahsin and Sushmit, Asif Shahriyar and Humayun, Ahmed Imtiaz and Mehnaz, Sazia and Fatema, Kanij and Or Rashid, Mohammad Mamun and Sadeque, Farig</author>
+    <booktitle>Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)</booktitle>
+    <pages>17019--17030</pages>
+    <year>2024</year>
+    <publisher>ELRA Language Resource Association</publisher>
+  </entry>
+  <entry id="blaschke2024what" type="article">
+    <title>What do dialect speakers want? A survey of attitudes towards language technology for German dialects</title>
+    <author>Blaschke, Verena and Purschke, Christoph and Sch{\"u}tze, Hinrich and Plank, Barbara</author>
+    <journal>arXiv preprint arXiv:2402.11968</journal>
+    <year>2024</year>
+    <url>https://arxiv.org/abs/2402.11968</url>
+  </entry>
+  <entry id="dabre2022indicbart" type="inproceedings">
+    <title>IndicBART: A Pre-trained Model for Indic Natural Language Generation</title>
+    <author>Dabre, Raj and Shrotriya, Himani and Kunchukuttan, Anoop and Puduppully, Ratish and Khapra, Mitesh M. and Kumar, Pratyush</author>
+    <booktitle>Findings of the Association for Computational Linguistics: ACL 2022</booktitle>
+    <pages>1849--1863</pages>
+    <year>2022</year>
+    <url>https://doi.org/10.18653/v1/2022.findings-acl.145</url>
+  </entry>
+  <entry id="degibert2024scaling" type="inproceedings">
+    <title>Scaling Low-Resource MT via Synthetic Data Generation with LLMs</title>
+    <author>de Gibert, Ona and others</author>
+    <booktitle>Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing</booktitle>
+    <year>2024</year>
+  </entry>
+  <entry id="dhasmana2026dialect" type="inproceedings">
+    <title>Dialect Matters: Cross-Lingual ASR Transfer for Low-Resource Indic Language Varieties</title>
+    <author>Dhasmana, Akriti and Srivastava, Aarohi and Chiang, David</author>
+    <booktitle>Proceedings of the Thirteenth Workshop on NLP for Similar Languages, Varieties and Dialects (VarDial @ ACL 2026)</booktitle>
+    <pages>145--156</pages>
+    <year>2026</year>
+    <organization>Association for Computational Linguistics</organization>
+  </entry>
+  <entry id="dimakis2025dialect" type="inproceedings">
+    <title>Dialect Normalization using Large Language Models and Morphological Rules</title>
+    <author>Dimakis, Antonios and Pavlopoulos, John and Anastasopoulos, Antonios</author>
+    <booktitle>Findings of the Association for Computational Linguistics: ACL 2025</booktitle>
+    <pages>23696--23714</pages>
+    <year>2025</year>
+    <publisher>Association for Computational Linguistics</publisher>
+  </entry>
+  <entry id="dubey2024llama3" type="article">
+    <title>The Llama 3 Herd of Models</title>
+    <author>Dubey, Abhimanyu and Jauhri, Abhinav and Pandey, Abhinav and Kadian, Abhishek and Al-Dahle, Ahmad and Letman, Aiesha and Mathur, Akhil and Schelten, Alan and Yang, Amy and Fan, Angela and et al.</author>
+    <journal>arXiv preprint arXiv:2407.21783</journal>
+    <year>2024</year>
+    <url>https://arxiv.org/abs/2407.21783</url>
+  </entry>
+  <entry id="gaikwad2025marathi" type="article">
+    <title>Marathi Dialect to Pure Marathi using RAG \&amp; AI</title>
+    <author>Gaikwad, Gaurav and Panchal, Deepak and Deshmukh, Omprasad and Patil, Sonali</author>
+    <journal>International Research Journal of Engineering and Technology (IRJET)</journal>
+    <volume>12</volume>
+    <number>11</number>
+    <pages>787--791</pages>
+    <year>2025</year>
+    <issn>2395-0056</issn>
+  </entry>
+  <entry id="gemma2024" type="article">
+    <title>Gemma 4: Open Language Models</title>
+    <author>{Google DeepMind Gemma Team}</author>
+    <journal>arXiv preprint arXiv:2408.00118</journal>
+    <year>2024</year>
+    <url>https://arxiv.org/abs/2408.00118</url>
+  </entry>
+  <entry id="habash2012coda" type="inproceedings">
+    <title>Conventional Orthography for Dialectal Arabic</title>
+    <author>Habash, Nizar and Diab, Mona and Rambow, Owen</author>
+    <booktitle>Proceedings of the Eighth International Conference on Language Resources and Evaluation (LREC '12)</booktitle>
+    <pages>711--718</pages>
+    <year>2012</year>
+  </entry>
+  <entry id="ho2023distilling" type="article">
+    <title>Distilling step-by-step! outperforming larger language models with less training data and smaller model sizes</title>
+    <author>Hsieh, Cheng-Yu and others</author>
+    <journal>arXiv preprint arXiv:2305.02301</journal>
+    <year>2023</year>
+  </entry>
+  <entry id="joshi2020state" type="inproceedings">
+    <title>The State and Fate of Linguistic Diversity and Inclusion in the {NLP} World</title>
+    <author>Joshi, Pratik and Santy, Sebastin and Budhiraja, Amar and Bali, Kalika and Choudhury, Monojit</author>
+    <booktitle>Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL)</booktitle>
+    <pages>6282--6293</pages>
+    <year>2020</year>
+    <doi>10.18653/v1/2020.acl-main.560</doi>
+  </entry>
+  <entry id="joshi2022l3cube" type="inproceedings">
+    <title>L3Cube-MahaNLP: Marathi Natural Language Processing Datasets, Models, and Library</title>
+    <author>Joshi, Raviraj and Goel, Parth and Joshi, Rucha</author>
+    <booktitle>Proceedings of the WILDRE-6 Workshop, LREC 2022</booktitle>
+    <pages>10--17</pages>
+    <year>2022</year>
+    <url>https://aclanthology.org/2022.wildre-1.2</url>
+  </entry>
+  <entry id="joshi2025survey" type="article">
+    <title>Natural Language Processing for Dialects of a Language: A Survey</title>
+    <author>Joshi, Aditya and Dabre, Raj and Kanojia, Diptesh and Li, Zhuang and Zhan, Haolan and Haffari, Gholamreza and Dippold, Doris</author>
+    <journal>ACM Computing Surveys</journal>
+    <volume>57</volume>
+    <number>6</number>
+    <pages>1--37</pages>
+    <year>2025</year>
+    <publisher>ACM New York, NY, USA</publisher>
+    <url>https://doi.org/10.1145/3712060</url>
+  </entry>
+  <entry id="kakwani2020indicnlpsuite" type="inproceedings">
+    <title>IndicNLPSuite: Monolingual Corpora, Evaluation Benchmarks and Pre-trained Multilingual Language Models for Indic Languages</title>
+    <author>Kakwani, Divyanshu and Kunchukuttan, Anoop and Golla, Satish and Gokul, N. C. and Bhattacharyya, Pushpak and Khapra, Mitesh M. and Kumar, Pratyush</author>
+    <booktitle>Findings of the Association for Computational Linguistics: EMNLP 2020</booktitle>
+    <pages>4948--4961</pages>
+    <year>2020</year>
+    <publisher>Association for Computational Linguistics</publisher>
+  </entry>
+  <entry id="koenecke2020racial" type="article">
+    <title>Racial disparities in automated speech recognition</title>
+    <author>Koenecke, Allison and Nam, Andrew and Lake, Emily and Nudell, Joe and Quartey, Minnie and Mengesha, Zion and Toups, Connor and Rickford, John R and Jurafsky, Dan and Goel, Sharad</author>
+    <journal>Proceedings of the National Academy of Sciences</journal>
+    <volume>117</volume>
+    <number>14</number>
+    <pages>7684--7689</pages>
+    <year>2020</year>
+    <publisher>National Acad Sciences</publisher>
+  </entry>
+  <entry id="kresic2024normalizing" type="article">
+    <title>Normalizing Swiss German Dialects with the Power of Large Language Models</title>
+    <author>Kresic, Mihael and Abbas, Noorhan</author>
+    <journal>Procedia Computer Science</journal>
+    <volume>244</volume>
+    <pages>287--295</pages>
+    <year>2024</year>
+    <publisher>Elsevier</publisher>
+  </entry>
+  <entry id="kulkarni2023variation" type="incollection">
+    <title>Variation and Change in Dialects of Marathi: A Social-Dialectological Approach</title>
+    <author>Kulkarni-Joshi, Sonal</author>
+    <booktitle>Variation in South Asian Languages: From Macro to Micro-Differences</booktitle>
+    <editor>Chandra, Pritha</editor>
+    <pages>207--236</pages>
+    <year>2023</year>
+    <publisher>Springer</publisher>
+    <doi>10.1007/978-981-99-1149-3_9</doi>
+  </entry>
+  <entry id="kumar2024indicdialect" type="inproceedings">
+    <title>INDIC-DIALECT: Benchmark Dataset for Indic Dialect Classification and Translation</title>
+    <author>Kumar, Aman and Shrivastava, Manish and Bhattacharyya, Pushpak</author>
+    <booktitle>Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)</booktitle>
+    <pages>15201--15212</pages>
+    <year>2024</year>
+    <publisher>ELRA Language Resource Association</publisher>
+  </entry>
+  <entry id="kumar2025respin" type="inproceedings">
+    <title>{RESPIN-S1.0}: A Read Speech Corpus of 10000+ Hours in Dialects of Nine Indian Languages</title>
+    <author>Kumar, Saurabh and Singh, Abhayjeet and G, Deekshitha and Amartyaveer and Bandekar, Jesuraja and Murthy, Savitha and Sharma, Sumit and Badiger, Sandhya and Udupa, Sathvik and Nagireddi, Amala and Raghavan, Srinivasa K. M. and Saxena, Rohan and Nanavati, Jai and Nanavati, Raoul and Sridharan, Janani and Mehta, Arjun and Khuraishi, Ashish K. S. and Mora, Sai Praneeth Reddy and Venkataramakrishnan, Prashanthi and Date, Gauri and P, Karthika and Ghosh, Prasanta Kumar</author>
+    <booktitle>Advances in Neural Information Processing Systems (NeurIPS 2025) Track on Datasets and Benchmarks</booktitle>
+    <pages>1--13</pages>
+    <year>2025</year>
+  </entry>
+  <entry id="kuparinen2023dialect" type="inproceedings">
+    <title>Dialect-to-Standard Normalization: A Large-Scale Multilingual Evaluation</title>
+    <author>Kuparinen, Olli and Mileti{\'c}, Aleksandra and Scherrer, Yves</author>
+    <booktitle>Findings of the Association for Computational Linguistics: EMNLP 2023</booktitle>
+    <pages>13814--13828</pages>
+    <year>2023</year>
+    <publisher>Association for Computational Linguistics</publisher>
+  </entry>
+  <entry id="mukherjee2023orca" type="misc">
+    <title>Orca: Progressive Learning from Complex Explanation Traces of GPT-4</title>
+    <author>Subhabrata Mukherjee and Arindam Mitra and Ganesh Jawahar and Sahaj Agarwal and Hamid Palangi and Ahmed Awadallah</author>
+    <year>2023</year>
+    <eprint>2306.02707</eprint>
+    <archiveprefix>arXiv</archiveprefix>
+    <primaryclass>cs.CL</primaryclass>
+  </entry>
+  <entry id="mulla2022text" type="article">
+    <title>Text-Independent Automatic Dialect Recognition of Marathi Language using Spectro-Temporal Characteristics of Voice</title>
+    <author>Mulla, Rahesha and Kumar, B. Suresh</author>
+    <journal>International Journal on Recent and Innovation Trends in Computing and Communication (IJRITCC)</journal>
+    <volume>10</volume>
+    <number>2s</number>
+    <pages>313--321</pages>
+    <year>2022</year>
+    <doi>10.17762/ijritcc.v10i2s.5949</doi>
+  </entry>
+  <entry id="partanen2019dialect" type="inproceedings">
+    <title>Dialect Text Normalization to Normative Standard Finnish</title>
+    <author>Partanen, Niko and H{\"a}m{\"a}l{\"a}inen, Mika and Alnajjar, Khalid</author>
+    <booktitle>Proceedings of the 5th Workshop on Noisy User-generated Text (W-NUT @ EMNLP 2019)</booktitle>
+    <pages>141--146</pages>
+    <year>2019</year>
+    <organization>Association for Computational Linguistics</organization>
+  </entry>
+  <entry id="pawar2026automatic" type="article">
+    <title>Automatic Marathi Dialect Classification in Noisy and Non-Noisy Environments</title>
+    <author>Pawar, Poonam S. and Saini, Jatinderkumar R. and Vaidya, Shraddha</author>
+    <journal>Procedia Computer Science</journal>
+    <volume>282</volume>
+    <pages>288--303</pages>
+    <year>2026</year>
+    <publisher>Elsevier</publisher>
+  </entry>
+  <entry id="pecher2023better" type="inproceedings">
+    <title>Better as Generators than Classifiers: Leveraging LLMs and Synthetic Data for Low-Resource Multilingual Classification</title>
+    <author>Pecher, Branislav and others</author>
+    <booktitle>Findings of the Association for Computational Linguistics: EACL 2024</booktitle>
+    <year>2024</year>
+  </entry>
+  <entry id="post2018sacrebleu" type="inproceedings">
+    <title>A Call for Clarity in Reporting BLEU Scores</title>
+    <author>Post, Matt</author>
+    <booktitle>Proceedings of WMT 2018</booktitle>
+    <pages>186--191</pages>
+    <year>2018</year>
+    <url>https://doi.org/10.18653/v1/W18-6319</url>
+  </entry>
+  <entry id="pratap2024wfst" type="inproceedings">
+    <title>WFST-Guided Neural Text Normalization for Indic Languages</title>
+    <author>Pratap, Vineel and Saraf, Ankit and Kumar, Pratyush</author>
+    <booktitle>Proceedings of Interspeech 2024</booktitle>
+    <pages>3120--3124</pages>
+    <year>2024</year>
+  </entry>
+  <entry id="taori2023alpaca" type="article">
+    <title>Alpaca: A strong, replicable instruction-following model</title>
+    <author>Taori, Rohan and Gulrajani, Ishaan and Zhang, Tianyi and Dubois, Yann and Li, Xuechen and Guestrin, Carlos and Liang, Percy and Hashimoto, Tatsunori B</author>
+    <journal>Stanford Center for Research on Foundation Models</journal>
+    <year>2023</year>
+  </entry>
+  <entry id="vaswani2017attention" type="inproceedings">
+    <title>Attention Is All You Need</title>
+    <author>Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\L}ukasz and Polosukhin, Illia</author>
+    <booktitle>Advances in Neural Information Processing Systems (NeurIPS 2017)</booktitle>
+    <pages>5998--6008</pages>
+    <year>2017</year>
+    <url>https://arxiv.org/abs/1706.03762</url>
+  </entry>
+  <entry id="vyavhare2026marathi" type="article">
+    <title>Marathi Dialect Translator</title>
+    <author>Vyavhare, V. A. and Divekar, S. N. and Pawar, Harshada and Kale, Karan and Jagtap, Subhash</author>
+    <journal>International Journal of Scientific Research in Science, Engineering and Technology (IJSRSET)</journal>
+    <volume>13</volume>
+    <number>3</number>
+    <pages>254--261</pages>
+    <year>2026</year>
+    <doi>10.32628/IJSRSET2613331</doi>
+  </entry>
+  <entry id="wang2022selfinstruct" type="misc">
+    <title>Self-Instruct: Aligning Language Models with Self-Generated Instructions</title>
+    <author>Yizhong Wang and Yeganeh Kordi and Swaroop Mishra and Alisa Liu and Noah A. Smith and Daniel Khashabi and Hannaneh Hajishirzi</author>
+    <year>2022</year>
+    <eprint>2212.10560</eprint>
+    <archiveprefix>arXiv</archiveprefix>
+    <primaryclass>cs.CL</primaryclass>
+  </entry>
+  <entry id="xue2021mt5" type="inproceedings">
+    <title>mT5: A Massively Multilingual Pre-trained Text-to-Text Transformer</title>
+    <author>Xue, Linting and Constant, Noah and Roberts, Adam and Kale, Mihir and Al-Rfou, Rami and Siddhant, Aditya and Barua, Aditya and Raffel, Colin</author>
+    <booktitle>Proceedings of NAACL-HLT 2021</booktitle>
+    <pages>483--498</pages>
+    <year>2021</year>
+    <url>https://doi.org/10.18653/v1/2021.naacl-main.41</url>
+  </entry>
+  <entry id="zampieri2020nlp" type="article">
+    <title>Natural Language Processing for Similar Languages, Varieties, and Dialects: A Survey</title>
+    <author>Zampieri, Marcos and Nakov, Preslav and Scherrer, Yves</author>
+    <journal>Natural Language Engineering</journal>
+    <volume>26</volume>
+    <number>6</number>
+    <pages>605--637</pages>
+    <year>2020</year>
+    <publisher>Cambridge University Press</publisher>
+  </entry>
+  <entry id="scherrer2016swiss" type="inproceedings">
+    <title>Normalising Swiss German Dialect Text using Character-level Machine Translation</title>
+    <author>Scherrer, Yves and Ljube{\v{s}}i{\'c}, Nikola</author>
+    <booktitle>Proceedings of the 3rd Workshop on NLP for Similar Languages, Varieties and Dialects (VarDial @ COLING 2016)</booktitle>
+    <pages>117--126</pages>
+    <year>2016</year>
+  </entry>
+  <entry id="lusetti2018impact" type="inproceedings">
+    <title>Impact of Target Language Models on Swiss German Dialect Normalization</title>
+    <author>Lusetti, Mathilde and Ruzsics, Tsetsu and Samard{\v{z}}i{\'c}, Tanja and Scherrer, Yves</author>
+    <booktitle>Proceedings of the 5th Workshop on NLP for Similar Languages, Varieties and Dialects (VarDial @ COLING 2018)</booktitle>
+    <pages>133--141</pages>
+    <year>2018</year>
+  </entry>
+  <entry id="abe2018multi" type="inproceedings">
+    <title>Multi-Dialect Neural Machine Translation for Japanese Dialects</title>
+    <author>Abe, Kaori and Inui, Kentaro and Matsumoto, Yuji</author>
+    <booktitle>Proceedings of the 27th International Conference on Computational Linguistics (COLING 2018)</booktitle>
+    <pages>2105--2116</pages>
+    <year>2018</year>
+  </entry>
+  <entry id="hamalainen2020normalizing" type="inproceedings">
+    <title>Normalizing Swedish Dialects Spoken in Finland</title>
+    <author>H{\"a}m{\"a}l{\"a}inen, Mika and Partanen, Niko and Alnajjar, Khalid</author>
+    <booktitle>Proceedings of the 7th Workshop on NLP for Similar Languages, Varieties and Dialects (VarDial @ COLING 2020)</booktitle>
+    <pages>55--62</pages>
+    <year>2020</year>
+  </entry>
+  <entry id="hamalainen2022generating" type="inproceedings">
+    <title>Generating Dialectal Finnish for Dialect Normalization of Estonian Dialects</title>
+    <author>H{\"a}m{\"a}l{\"a}inen, Mika and Partanen, Niko and Rueter, Jack</author>
+    <booktitle>Proceedings of the 9th Workshop on NLP for Similar Languages, Varieties and Dialects (VarDial @ COLING 2022)</booktitle>
+    <pages>71--79</pages>
+    <year>2022</year>
+  </entry>
+  <entry id="abdulmageed2023nadi" type="inproceedings">
+    <title>NADI 2023: The Fourth Nuanced Arabic Dialect Identification and Translation Shared Task</title>
+    <author>Abdul-Mageed, Muhammad and Zhang, Chunsheng and Elmadany, AbdelRahim and Nagoudi, Ebrahim Mohamed</author>
+    <booktitle>Proceedings of the Arabic NLP Conference (ArabicNLP @ EMNLP 2023)</booktitle>
+    <pages>512--528</pages>
+    <year>2023</year>
+  </entry>
+  <entry id="bouamor2018madar" type="inproceedings">
+    <title>The MADAR Parallel Corpus of Arabic Dialects</title>
+    <author>Bouamor, Houda and Habash, Nizar and Salameh, Mohammad and others</author>
+    <booktitle>Proceedings of the 11th Language Resources and Evaluation Conference (LREC 2018)</booktitle>
+    <pages>3375--3381</pages>
+    <year>2018</year>
+  </entry>
+  <entry id="eryani2020arabic" type="inproceedings">
+    <title>A Normalization Corpus for Five Arabic Dialects</title>
+    <author>Eryani, Fadhl and Habash, Nizar and Al-Shargi, Faisal and others</author>
+    <booktitle>Proceedings of the 12th Language Resources and Evaluation Conference (LREC 2020)</booktitle>
+    <pages>5750--5757</pages>
+    <year>2020</year>
+  </entry>
+  <entry id="zhao2022mandarin" type="article">
+    <title>Acoustic-Phonetic Variation in Mandarin Dialect Corpora</title>
+    <author>Zhao, Yuan and Chodroff, Eleanor</author>
+    <journal>Journal of Phonetics</journal>
+    <volume>94</volume>
+    <pages>101172</pages>
+    <year>2022</year>
+  </entry>
+  <entry id="ji2023survey" type="article">
+    <title>Survey of Hallucination in Natural Language Generation</title>
+    <author>Ji, Ziwei and Lee, Nayeon and Frieske, Rita and Yu, Tiezheng and Su, Dan and Xu, Yan and Ishii, Etsuko and Bang, Ye Jin and Madotto, Andrea and Fung, Pascale</author>
+    <journal>ACM Computing Surveys</journal>
+    <volume>55</volume>
+    <number>12</number>
+    <pages>1--38</pages>
+    <year>2023</year>
+    <publisher>ACM New York, NY, USA</publisher>
+  </entry>
+</bibtex>
