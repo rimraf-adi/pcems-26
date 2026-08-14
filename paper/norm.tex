@@ -55,8 +55,8 @@
 \setlist{noitemsep, topsep=2pt, parsep=1pt, partopsep=0pt}
 \usepackage{titlesec}
 \usepackage{caption}
-\DeclareCaptionFont{twelvept}{\fontsize{12pt}{15pt}\selectfont\itshape}
-\captionsetup{font=twelvept, labelfont=twelvept, textfont=twelvept}
+\DeclareCaptionFont{elevenpt}{\fontsize{11pt}{14pt}\selectfont\itshape}
+\captionsetup{font=elevenpt, labelfont=elevenpt, textfont=elevenpt, skip=4pt}
 \usepackage{float}
 \setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
 \setlength{\floatsep}{6pt plus 2pt minus 2pt}
@@ -84,8 +84,8 @@
 \titleformat{\subsection}{\color{black}\fontsize{12pt}{14pt}\selectfont}{\thesubsection}{1em}{}
 \titlespacing{\subsection}{0pt}{9pt}{3pt}
 
-% Heading 3: Arial 12pt italic (black)
-\titleformat{\subsubsection}{\color{black}\fontsize{12pt}{14pt}\selectfont\itshape}{\thesubsubsection}{1em}{}
+% Heading 3: Arial 11pt italic (black)
+\titleformat{\subsubsection}{\color{black}\fontsize{11pt}{14pt}\selectfont\itshape}{\thesubsubsection}{1em}{}
 \titlespacing{\subsubsection}{0pt}{7pt}{2pt}
 
 % --- Table helper ---
@@ -139,17 +139,17 @@ Rapid development of deep learning architectures and self-attention mechanisms \
 
 Dialect normalization is the task of translating non-standard regional dialects into standard written language. The main challenge to be addressed while designing such systems is the preservation of the meaning of original text \citep{blaschke2024what}. It serves to be an essential layer for digital linguistic inclusion. Countries having large and diverse speech communities, such as India, which has 22 official languages and hundreds of regional dialects spoken by 1.4 billion people, regional varieties have remained unattended in computational linguistic research. An example of such linguistic disparity is Marathi, an Indo-Aryan language spoken by over 83 million people in western India \citep{kulkarni2023variation}. Development of reliable pipelines for regional Indic dialects have faced these fundamental challenges:
 \begin{enumerate}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Resource Scarcity}: Parallel corpora mapping the regional dialects to standard written language do not exist. Curation of such sets by experts fluent in multiple dialects is both expensive and unscalable \citep{blaschke2024what,dhasmana2026dialect}.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Morphological and Dialectal Heterogeneity}: Marathi exhibits rich morphology where different words undergo varied complex transformations across different regions where the dialects are spoken \citep{ansary2024unicode}. Consequently, evaluations vary significantly across individual dialects---ranging from systematic suffix alternation in Varhadi to intense lexical and phonetic divergence in Northern and Southern Konkan \citep{joshi2025survey}.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Underperformance of Multilingual Models}: Performance of pre-trained models like IndicBART \citep{dabre2022indicbart}, IndicNLP Suite \citep{kakwani2020indicnlpsuite}, and mT5 \citep{xue2021mt5} seems to drop drastically on non-standard language variants due to fragmentation during tokenisation and out-of-vocabulary phonological shifts \citep{joshi2020state,kumar2024indicdialect}.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Resource Scarcity}: Parallel corpora mapping the regional dialects to standard written language do not exist. Curation of such sets by experts fluent in multiple dialects is both expensive and unscalable \citep{blaschke2024what,dhasmana2026dialect}.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Morphological and Dialectal Heterogeneity}: Marathi exhibits rich morphology where different words undergo varied complex transformations across different regions where the dialects are spoken \citep{ansary2024unicode}. Consequently, evaluations vary significantly across individual dialects---ranging from systematic suffix alternation in Varhadi to intense lexical and phonetic divergence in Northern and Southern Konkan \citep{joshi2025survey}.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Underperformance of Multilingual Models}: Performance of pre-trained models like IndicBART \citep{dabre2022indicbart}, IndicNLP Suite \citep{kakwani2020indicnlpsuite}, and mT5 \citep{xue2021mt5} seems to drop drastically on non-standard language variants due to fragmentation during tokenisation and out-of-vocabulary phonological shifts \citep{joshi2020state,kumar2024indicdialect}.
 \end{enumerate}
 
 Our work mainly tries to investigate and conclude (a) how do normalisation scores vary across regional Marathi dialects which have different degrees of variations as compared to standard Marathi; (b) how effectively can existing sequence-to-sequence architectures adapt to dialect-to-standard mapping under task-specific conditioning; and (c) whether automated synthetic data expansion can accurately solve the problem of data scarcity and eliminate cross-dialect hallucinations and grammatical errors \citep{degibert2024scaling,ji2023survey}. To address these questions, we construct an end-to-end normalization framework combining LLM-based synthetic generation, multi-tier syntactic and semantic verification, and conditioned transformer fine-tuning across both single-dialect and multi-dialect settings.
 
 Our core contributions are:
 \begin{itemize}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Parallel Corpus Generation}: Based on transcripts from the RESPIN dataset \citep{kumar2025respin}, we construct a parallel corpus for three of the Marathi dialects (Southern Konkan, Northern Konkan, and Varhadi) mapped to Standard Marathi.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Automated Synthetic Augmentation with Verification}: We design a data expansion pipeline paired with a multi-tier verification engine, which has rule-based script filtration and LLM-based semantic inspection.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Parallel Corpus Generation}: Based on transcripts from the RESPIN dataset \citep{kumar2025respin}, we construct a parallel corpus for three of the Marathi dialects (Southern Konkan, Northern Konkan, and Varhadi) mapped to Standard Marathi.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Automated Synthetic Augmentation with Verification}: We design a data expansion pipeline paired with a multi-tier verification engine, which has rule-based script filtration and LLM-based semantic inspection.
 \end{itemize}
 
 % ===================================================================
@@ -204,9 +204,9 @@ D4 & Varhadi (Vidarbha) & 198,873 (24.55\%) & 257.70 & 747 & 5,330 \\
 \subsection{\textcolor{black}{Target Dialects and Linguistic Properties}}
 We target the following major Marathi dialects that span the primary regions of Maharashtra and exhibit distinct linguistic and phonetic patterns based on the RESPIN corpus:
 \begin{enumerate}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Southern Konkan (Konkan Coast)}: Characterized by shortening of final-word vowels, softening of dental consonants, and different auxiliary verb forms. Lexical differences include systematic vowel shifts: standard \emph{जातो} (``he goes'') becomes Southern Konkan \emph{जातां}; standard \emph{कुठे} (``where'') becomes \emph{कुठंय}. Domain-specific terminology generally remains untouched but often accompanied by Konkani words.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Northern Konkan (Khandesh Region)}: Heavily influenced by neighbouring Gujarati and Bhili language families, thus it exhibits significant consonant simplification and dental consonant shifts. Notable transformations include: standard \emph{कशाला} (``why'') $\rightarrow$ Northern Konkan \emph{कसाले}; standard \emph{मुलगा} (``boy'') $\rightarrow$ Northern Konkan \emph{पोर}. Northern Konkan possesses the highest degree of lexical divergence among the three target dialects.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Varhadi (Vidarbha/Eastern Maharashtra)}: Spoken in Vidarbha, it exhibits characteristic differences and verb suffix modifications. Standard interrogative \emph{का?} (``why?'') becomes Varhadi \emph{काऊन?}; verbal forms undergo regular suffix mapping patterns. Among the three dialects, Varhadi maintains closest structural similarity to Standard Marathi as transformations are more systematic.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Southern Konkan (Konkan Coast)}: Characterized by shortening of final-word vowels, softening of dental consonants, and different auxiliary verb forms. Lexical differences include systematic vowel shifts: standard \emph{जातो} (``he goes'') becomes Southern Konkan \emph{जातां}; standard \emph{कुठे} (``where'') becomes \emph{कुठंय}. Domain-specific terminology generally remains untouched but often accompanied by Konkani words.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Northern Konkan (Khandesh Region)}: Heavily influenced by neighbouring Gujarati and Bhili language families, thus it exhibits significant consonant simplification and dental consonant shifts. Notable transformations include: standard \emph{कशाला} (``why'') $\rightarrow$ Northern Konkan \emph{कसाले}; standard \emph{मुलगा} (``boy'') $\rightarrow$ Northern Konkan \emph{पोर}. Northern Konkan possesses the highest degree of lexical divergence among the three target dialects.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Varhadi (Vidarbha/Eastern Maharashtra)}: Spoken in Vidarbha, it exhibits characteristic differences and verb suffix modifications. Standard interrogative \emph{का?} (``why?'') becomes Varhadi \emph{काऊन?}; verbal forms undergo regular suffix mapping patterns. Among the three dialects, Varhadi maintains closest structural similarity to Standard Marathi as transformations are more systematic.
 \end{enumerate}
 
 \subsection{\textcolor{black}{Synthetic Parallel Data Generation Pipeline}}
@@ -214,8 +214,8 @@ We target the following major Marathi dialects that span the primary regions of 
 To deal with data scarcity, we developed an automated synthetic data translation and generation pipeline powered by Gemma-4 \citep{gemma2024} with 12B parameters configuration, accessed via Ollama. The complete end-to-end normalization architecture is illustrated in Figure~\ref{fig:system_architecture}. We considered several design decisions to ensure generation quality to be maximised:
 
 \begin{enumerate}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape 1-Call-Per-Sentence Generation}: We observed batch generation caused hallucination and sentence alignment errors across dialect boundaries. Therefore, we used a 1-call-per-sentence translation regime.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Preservation of Meaning and Domain Constraints}: System prompts strictly instructed the model that while colloquial grammatical markers and phonetic spellings must be transformed into standard written Marathi, the standard output must preserve exact meaning, domain terminology (agriculture/banking), and named entities without creative embellishment.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape 1-Call-Per-Sentence Generation}: We observed batch generation caused hallucination and sentence alignment errors across dialect boundaries. Therefore, we used a 1-call-per-sentence translation regime.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Preservation of Meaning and Domain Constraints}: System prompts strictly instructed the model that while colloquial grammatical markers and phonetic spellings must be transformed into standard written Marathi, the standard output must preserve exact meaning, domain terminology (agriculture/banking), and named entities without creative embellishment.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -262,13 +262,13 @@ To deal with data scarcity, we developed an automated synthetic data translation
 LLMs can generate hallucinated texts, script corruption, or flawed target sequences when dealing with regional sub-dialects. We implemented a two-tier verification engine to purge flawed sentence pairs before model training:
 
 \begin{enumerate}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Tier 1: Rule-Based Syntactic Filter.} Automated validation checks implement Indic Abugida script normalization principles \citep{ansary2024unicode}, including:
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Tier 1: Rule-Based Syntactic Filter.} Automated validation checks implement Indic Abugida script normalization principles \citep{ansary2024unicode}, including:
     \begin{itemize}
         \item \emph{Script Consistency}: Discards samples containing non-Devanagari characters (e.g., Latin script, Chinese glyphs, stray punctuation artifacts).
         \item \emph{Length Ratio Constraint}: Discards pairs where sentence length ratio $\frac{\text{len}(\text{Target})}{\text{len}(\text{Source})} \notin [0.5, 2.0]$.
         \item \emph{Minimum Token Count}: Both source and target must contain $\ge 3$ whitespace-separated tokens.
     \end{itemize}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} \citep{dubey2024llama3} grades translation accuracy on a 1--5 semantic scale under strict prompt guidelines. Pairs with semantic scores $< 3$ are purged.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} \citep{dubey2024llama3} grades translation accuracy on a 1--5 semantic scale under strict prompt guidelines. Pairs with semantic scores $< 3$ are purged.
 \end{enumerate}
 
 Through this multi-tier verification process, 3,751 low-quality sentence pairs were purged from the unverified corpus (19,914 pairs), preventing error propagation into downstream models. The dataset composition across original, synthetic, and final clean partitions is illustrated in Figure~\ref{fig:dataset_composition}.
@@ -286,9 +286,9 @@ We benchmark two pre-trained sequence-to-sequence architectures across both sing
 
 To enable unified multi-dialect training where a single model normalizes all regional variants, we implement special token conditioning prefixes:
 \begin{itemize}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Task Normalization Prefixes}: A normalisation tag (\texttt{<normalize>}) is attached that instructs the encoder to perform the dialect-to-standard text transformation.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Dialect-Source Identification Tags}: Source sentences are prefixed with dialect markers, \texttt{<D1>} for Southern Konkan, \texttt{<D2>} for Northern Konkan, and \texttt{<D4>} for Varhadi for explicitly conditioning the model particularly in the multi-dialect training scenario.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Target Standardization Tags}: Decoder target conditioning is done using standard language tags (\texttt{<standard\_mr>}), enforcing the output alignment into formal Standard Written Marathi.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Task Normalization Prefixes}: A normalisation tag (\texttt{<normalize>}) is attached that instructs the encoder to perform the dialect-to-standard text transformation.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Dialect-Source Identification Tags}: Source sentences are prefixed with dialect markers, \texttt{<D1>} for Southern Konkan, \texttt{<D2>} for Northern Konkan, and \texttt{<D4>} for Varhadi for explicitly conditioning the model particularly in the multi-dialect training scenario.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Target Standardization Tags}: Decoder target conditioning is done using standard language tags (\texttt{<standard\_mr>}), enforcing the output alignment into formal Standard Written Marathi.
 \end{itemize}
 
 Table~\ref{tab:arch_compare} details the underlying architectural properties and hyperparameter configurations for IndicBART (244M) and mT5-small (300M).
@@ -321,15 +321,15 @@ Learning Rate & $5 \times 10^{-5}$ (linear warmup) & $5 \times 10^{-4}$ (AdaFact
 
 \textcolor{red}{We report model performance across two distinct evaluation settings:
 \begin{enumerate}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Mean 5-Fold Cross-Validation}: To evaluate model stability and in-domain generalization across the curated parallel datasets, models are trained and evaluated under an 85/15 stratified 5-fold cross-validation scheme (reported in Section~\ref{subsec:cv_findings}--\ref{subsec:ablation_findings}, Tables~\ref{tab:results_original_single}--\ref{tab:verification_ablation}, and Figures~\ref{fig:single_dialect_cv}--\ref{fig:verification_ablation}).
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Held-Out RESPIN Test Benchmark}: To measure true zero-shot/unseen generalization, models trained on the complete dataset are evaluated on the official held-out benchmark set (\texttt{IISc\_RESPIN\_test\_mr}), consisting of 2,170 unseen utterances across all target sub-dialects (reported in Section~\ref{subsec:heldout_findings}, Table~\ref{tab:respin_comprehensive}, and Figure~\ref{fig:respin_comprehensive}).
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Mean 5-Fold Cross-Validation}: To evaluate model stability and in-domain generalization across the curated parallel datasets, models are trained and evaluated under an 85/15 stratified 5-fold cross-validation scheme (reported in Section~\ref{subsec:cv_findings}--\ref{subsec:ablation_findings}, Tables~\ref{tab:results_original_single}--\ref{tab:verification_ablation}, and Figures~\ref{fig:single_dialect_cv}--\ref{fig:verification_ablation}).
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Held-Out RESPIN Test Benchmark}: To measure true zero-shot/unseen generalization, models trained on the complete dataset are evaluated on the official held-out benchmark set (\texttt{IISc\_RESPIN\_test\_mr}), consisting of 2,170 unseen utterances across all target sub-dialects (reported in Section~\ref{subsec:heldout_findings}, Table~\ref{tab:respin_comprehensive}, and Figure~\ref{fig:respin_comprehensive}).
 \end{enumerate}}
 
 Results are reported using metrics that are evaluated using SacreBLEU \citep{post2018sacrebleu} and Word Error Rate (WER) scripts:
 \begin{itemize}
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape BLEU} (Bilingual Evaluation Understudy): BLEU-4 with 4-gram precision, brevity penalty, with an exponential smoothing method.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape chrF++}: Character n-gram F-score combined with word unigrams and bigrams.
-    \item {\fontsize{12pt}{14pt}\selectfont\itshape Normalized WER / CER}: Word Error Rate and Character Error Rate after Devanagari Unicode script standardization.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape BLEU} (Bilingual Evaluation Understudy): BLEU-4 with 4-gram precision, brevity penalty, with an exponential smoothing method.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape chrF++}: Character n-gram F-score combined with word unigrams and bigrams.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Normalized WER / CER}: Word Error Rate and Character Error Rate after Devanagari Unicode script standardization.
 \end{itemize}
 
 % ===================================================================
