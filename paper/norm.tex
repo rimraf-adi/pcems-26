@@ -256,8 +256,8 @@ To deal with data scarcity, we developed an automated synthetic data translation
 \draw [arrow] (train) -- node[above, font=\scriptsize, color=black!70] {Inference} (eval);
 
 % Rejection annotation
-\draw [->, dashed, line width=1pt, draw=red!70!black] (tier1.east) -- ++(1.0,0) node[right, font=\scriptsize, color=red!80!black] {Invalid Script / Length};
-\draw [->, dashed, line width=1pt, draw=red!70!black] (tier2.east) -- ++(1.0,0) node[right, font=\scriptsize, color=red!80!black] {Hallucination / Low Quality};
+\draw [->, dashed, line width=1pt, draw=black!60] (tier1.east) -- ++(1.0,0) node[right, font=\scriptsize, color=black!80] {Invalid Script / Length};
+\draw [->, dashed, line width=1pt, draw=black!60] (tier2.east) -- ++(1.0,0) node[right, font=\scriptsize, color=black!80] {Hallucination / Low Quality};
 
 \end{tikzpicture}
 \caption{Dialect normalization pipeline: synthetic data generation, two-tier verification, and model training.}
