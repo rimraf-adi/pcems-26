@@ -132,10 +132,10 @@
 \begin{abstract}
 Scarcity of resources and absence of benchmarks for regional dialects of Indic languages is an established problem.
 In this work, we present an end-to-end neural fine-tuning pipeline for normalization of dialectal transcripts from the Marathi dialects of Southern Konkan, Northern Konkan, and Varhadi into Standard Marathi. 
-To address the issues regarding data , we introduce a synthetic data generation pipeline with a multi-tier verification engine for generating the aligned corpus and expanding it further. 
+To address the issues regarding data, we introduce a synthetic data generation pipeline with a multi-tier verification engine for generating the aligned corpus and expanding it further. 
 We evaluate IndicBART (244M) and mT5-small (300M) across varied configurations. 
 Experimental metrics show that mT5-small achieves 69.51 BLEU and 84.58 chrF++ on the expanded multi-dialect benchmark, outperforming IndicBART by 12.39 BLEU. 
-Also the multi-tier verification prevents the quality drop (+14.03 BLEU recovery over unverified data), suggesting the importance of verificaiton of data during synthetic augmentation for dialect normalization.
+Also, the multi-tier verification prevents the quality drop (+14.03 BLEU recovery over unverified data), suggesting the importance of verification of data during synthetic augmentation for dialect normalization.
 
 \keywords{Dialect Normalization, Low-Resource NLP, Marathi Dialects, Sequence-to-Sequence Modelling, Synthetic Data Augmentation, mT5, IndicBART.}
 \end{abstract}
@@ -587,7 +587,7 @@ This highlights the importance of the quality audit of data while using LLMs for
 \section{\textcolor{black}{Conclusion}}
 
 
-This study builds and presents a reproducible framework for text normalization across three Marathi dialects 
+This study builds and presents a reproducible framework for text normalization across three Marathi dialects. 
 By the efficient use of LLMs, it solves the problem of not having enough parallel data for low-resource Indic language varieties instead of relying on manual annotations.
 Also, the verification engine proves to be effective since its correction ability prevented the models from performance degradation.
 
@@ -596,7 +596,7 @@ Also, our multi-tier verification step stopped synthetic data quality from colla
 
 These results offer a decent starting point for normalizing other Indic sub-dialects, but a few limitations remain. 
 Firstly, LLMs add up to the extra cost of infrastructure and compute. 
-Also, synthetic expansioin comes at a cost of degraded performance for dialects that already perform well (Varhadi dialect in this case).
+Also, synthetic expansion comes at a cost of degraded performance for dialects that already perform well (Varhadi dialect in this case).
 Future work should test the performance around speech-based systems, not just text-based metrics. 
 Overall, our verified pipeline offers a scalable way to expand digital language support for low-resource regional dialects.
 
