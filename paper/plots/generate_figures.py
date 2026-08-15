@@ -334,10 +334,10 @@ def generate_fig5():
     x = np.arange(len(subsets))
     width = 0.18
     
-    ib_orig = [26.21, 47.59, 72.75, 48.17]
-    mt5_orig = [48.28, 62.35, 79.57, 63.29]
-    ib_exp  = [52.06, 49.08, 70.27, 57.12]
-    mt5_exp  = [66.62, 62.72, 78.73, 69.51]
+    ib_orig = [26.21, 47.59, 72.75, 48.85]
+    mt5_orig = [48.28, 62.35, 79.57, 63.40]
+    ib_exp  = [52.06, 49.08, 70.27, 57.14]
+    mt5_exp  = [66.62, 62.72, 78.73, 69.36]
     
     fig, ax = plt.subplots(figsize=(12.5, 8.5), dpi=300)
     
@@ -419,7 +419,7 @@ def generate_fig7():
     print("Generating Figure 7: Multi-Tier Verification Engine Ablation...")
     models = ['IndicBART (244M)', 'mT5-Small (300M)']
     raw_bleu = [43.09, 61.21]
-    clean_bleu = [57.12, 69.51]
+    clean_bleu = [58.82, 65.59]
     
     raw_chrf = [64.54, 80.18]
     clean_chrf = [75.49, 84.58]

@@ -42,7 +42,7 @@ Our core contributions are:
 \begin{itemize}
     \item \textbf{Parallel Corpus Generation}: Based on the transcripts of RESPIN dataset \cite{kumar2025respin}, we construct a parallel corpus of three Marathi dialects (Southern Konkan, Northern Konkan, and Varhadi) mapped to Standard Marathi across agricultural and banking domains.
     \item \textbf{Automated Synthetic Augmentation with Verification}: We implement a synthetic data expansion pipeline using Gemma-4 \cite{gemma2024} with a verification step that flags and removes corrupted pairs, proving that \textcolor{blue}{verified synthetic augmentation consistently provides higher accuracy of results}.
-    \item \textcolor{blue}{\textbf{Cross-Dialect \& Multilingual Model Benchmarks}: We provide a comprehensive empirical evaluation of existing multilingual models (mT5-small vs. IndicBART), demonstrating that evaluation results vary significantly across individual dialects (e.g., up to 80.99 BLEU on Varhadi) and establishing benchmark standards for Indic dialect normalization.}
+    \item \textcolor{blue}{\textbf{Cross-Dialect \& Multilingual Model Benchmarks}: We provide a comprehensive empirical evaluation of existing multilingual models (mT5-small vs. IndicBART), demonstrating that evaluation results vary significantly across individual dialects (e.g., up to 81.00 BLEU on Varhadi) and establishing benchmark standards for Indic dialect normalization.}
 \end{itemize}
 
 % \subsection{\textcolor{black}{Linguistic Background and Devanagari Orthographic Heterogeneity}}
@@ -208,7 +208,7 @@ D4 & Varhadi (Vidarbha) & 198,873 (24.55\%) & 257.70 & 747 & 5,330 \\
     box/.style={draw=black!70, fill=black!4, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
     stage/.style={draw=teal!75!black, fill=teal!6, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
     engine/.style={draw=blue!75!black, fill=blue!6, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
-    model/.style={draw=indigo!75!black, fill=indigo!6, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
+    model/.style={draw=blue!60!purple!75!black, fill=blue!60!purple!6, rounded corners=6pt, line width=1pt, align=center, text width=5.2cm, inner sep=7pt},
     arrow/.style={-Latex, line width=1.2pt, color=black!75}
 ]
 
@@ -338,15 +338,15 @@ Results are reported using metrics that are evaluated using SacreBLEU \cite{post
  & & Northern Konkan & 540 & 65.41 & 28.70\% & \textbf{79.76} & \textbf{12.61\%} \\
  & & Varhadi & 516 & 67.97 & 25.43\% & \textbf{76.90} & \textbf{14.19\%} \\
 \hline
-\multirow{8}{*}{Multi-Dialect} & \multirow{4}{*}{Original} & Southern Konkan & 559 & 26.21 & 53.15\% & \textbf{40.94} & \textbf{35.34\%} \\
- & & Northern Konkan & 540 & 47.59 & 32.84\% & \textbf{77.50} & \textbf{14.65\%} \\
+\multirow{8}{*}{Multi-Dialect} & \multirow{4}{*}{Original} & Southern Konkan & 559 & 26.08 & 52.98\% & \textbf{40.94} & \textbf{35.34\%} \\
+ & & Northern Konkan & 540 & 47.92 & 32.64\% & \textbf{77.50} & \textbf{14.65\%} \\
  & & Standard Benchmark & 555 & 96.12 & 3.12\% & \textbf{96.65} & \textbf{1.91\%} \\
- & & Varhadi & 516 & 72.75 & 25.30\% & \textbf{73.47} & \textbf{16.16\%} \\
+ & & Varhadi & 516 & 73.04 & 26.96\% & \textbf{73.47} & \textbf{16.16\%} \\
 \cline{2-8}
- & \multirow{4}{*}{Synthetically Expanded} & Southern Konkan & 559 & \textbf{52.06} & 36.80\% & 43.88 & \textbf{34.96\%} \\
- & & Northern Konkan & 540 & 49.08 & 28.70\% & \textbf{78.16} & \textbf{13.55\%} \\
+ & \multirow{4}{*}{Synthetically Expanded} & Southern Konkan & 559 & \textbf{52.15} & 36.50\% & 43.88 & \textbf{34.96\%} \\
+ & & Northern Konkan & 540 & 54.35 & 25.65\% & \textbf{78.16} & \textbf{13.55\%} \\
  & & Standard Benchmark & 555 & 96.80 & 1.65\% & \textbf{97.39} & \textbf{1.37\%} \\
- & & Varhadi & 516 & 70.27 & 21.40\% & \textbf{74.74} & \textbf{15.57\%} \\
+ & & Varhadi & 516 & 69.96 & 21.04\% & \textbf{74.74} & \textbf{15.57\%} \\
 \hline
 \end{tabular}
 }
@@ -478,45 +478,38 @@ Varhadi (D4) & 32,335 & 1,524 / 1,513 & 70.27 & 84.27 & \textbf{78.73} & \textbf
 \end{figure}
 
 
-\subsection{\textcolor{black}{Impact of Synthetic Data Augmentation}}
+\subsection{\textcolor{black}{Impact of Synthetic Data Augmentation on Test Set}}
+\label{subsec:augmentation_findings}
 
-Table~\ref{tab:augmentation_impact} isolates the effect of dataset scaling by comparing performance across original and synthetically expanded corpora for each model architecture. Overall, multi-dialect models exhibit significant net gains (+8.95 BLEU for IndicBART, +6.22 BLEU for mT5-small), confirming that data scarcity was a primary performance bottleneck. 
+Table~\ref{tab:augmentation_impact} and Figure~\ref{fig:augmentation_impact} show the overall impact on metrics by synthetic data augmentation directly on the held-out test set under multi-dialect training schemes.
+IndicBART showed improvement for Southern Konkan (+26.07 BLEU) and Northern Konkan (+6.43 BLEU), but its Varhadi score dropped by 3.08 BLEU. 
+mT5-small showed consistent improvements: +2.94 BLEU for Southern Konkan, +0.66 BLEU for Northern Konkan, and +1.27 BLEU for Varhadi.
 
 \begin{table}[t]
 \color{black}
 \centering
 \renewcommand{\arraystretch}{1.25}
-\caption{\textcolor{black}{Impact of Synthetic Data Augmentation: Original vs.\ Synthetically Expanded Data BLEU Change (5-Fold CV)}}
+\caption{\textcolor{black}{Effect of Data Augmentation on Held-Out Test BLEU}}
 \label{tab:augmentation_impact}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{|l:c:c:c:c:c:c|}
 \hline
 & \multicolumn{3}{c:}{\textbf{IndicBART BLEU}} & \multicolumn{3}{c|}{\textbf{mT5-Small BLEU}} \\
 \cline{2-7}
-\makecell[l]{\small\textbf{Evaluated}\\\small\textbf{Subset}} & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ \\
+\makecell[l]{\small\textbf{Evaluated Subset}} & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ & \makecell[c]{\small\textbf{Original}} & \makecell[c]{\small\textbf{Expanded}} & $\boldsymbol{\Delta}$ \\
 \hline
-Southern Konkan (D1) & 26.21 & 52.06 & \textbf{+25.85} & 48.28 & \textbf{66.62} & \textbf{+18.34} \\
-Northern Konkan (D2) & 47.59 & 49.08 & \textbf{+1.49} & 62.35 & \textbf{62.72} & \textbf{+0.37} \\
-Varhadi (D4) & \textbf{72.75} & 70.27 & $-$2.48 & \textbf{79.57} & 78.73 & $-$0.84 \\
-\hline
-\textbf{Overall Combined} & \textbf{48.17} & \textbf{57.12} & \textbf{+8.95} & \textbf{63.29} & \textbf{69.51} & \textbf{+6.22} \\
+Southern Konkan (D1) & 26.08 & 52.15 & \textbf{+26.07} & 40.94 & \textbf{43.88} & \textbf{+2.94} \\
+Northern Konkan (D2) & 47.92 & 54.35 & \textbf{+6.43} & 77.50 & \textbf{78.16} & \textbf{+0.66} \\
+Varhadi (D4) & \textbf{73.04} & 69.96 & $-$3.08 & 73.47 & \textbf{74.74} & \textbf{+1.27} \\
 \hline
 \end{tabular}
 }
 \end{table}
-But a dialect-wise breakdown suggests notable variance across the corpora. 
-Southern Konkan showed extreme upside due to expansion (+25.85 BLEU for IndicBART, +18.34 BLEU for mT5-small) while Northern Konkan sees decent gains (+1.49 BLEU for IndicBART, +0.37 BLEU for mT5-small) due to its already high original baseline performance.
-Following are our estimates that could justify the given performance:
-\begin{enumerate}
-    \item \textbf{Baseline Saturation and Precision Dilution}: Varhadi already had better performance on original non-expanded set (72.75-79.57 BLEU). 
-    We estimate that LLM-generated synthetic pairs may introduce suffix rules which were over-generalized that slightly degraded the exact N-gram matching against the original reference texts.
-    \item \textbf{Cross-Dialect Parameter Competition}: In shared dialect training, we estimate that appending synthetic data across distinct sub-dialects may have caused performance competition in shared attention weights, which could have considered prioritizing recovery on severely sparse dialects (Southern Konkan) over saturated ones.
-\end{enumerate}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig6_augmentation_impact.pdf}
-\caption{Impact of LLM synthetic data expansion ($\Delta$ BLEU score comparing synthetically expanded vs.\ original 5-fold cross-validation benchmarks).}
+\caption{Impact of LLM synthetic data expansion ($\Delta$ BLEU score comparing synthetically expanded vs.\ original benchmarks on the held-out test set).}
 \label{fig:augmentation_impact}
 \end{figure}
 
@@ -524,7 +517,7 @@ Following are our estimates that could justify the given performance:
 
 \subsection{\textcolor{black}{Verification Engine Impact: Raw Unverified vs.\ Filtered Clean Data}}
 Performance of our verification and filtering engine is measured by conducting a comparative analysis on models trained on \textit{Raw Unverified Synthetic Data} versus \textit{Filtered Clean Synthetic Data} (the expanded suite).
-The raw unverified dataset contains 19,914 parallel pairs, that included 3,742 rejected pairs that contained garbage translations.
+The raw unverified dataset contains 19,914 parallel pairs, that included 3,751 rejected pairs that contained garbage translations.
 Table~\ref{tab:verification_ablation} presents the quantitative comparison on the benchmark suite.
 
 \begin{table}[t]
@@ -558,7 +551,7 @@ Table~\ref{tab:verification_ablation} presents the quantitative comparison on th
 Key findings and insights from this evaluation include:
 \begin{enumerate}
     \item \textbf{Quality Collapse on Unverified Data}: Training IndicBART on unverified outputs causes a significant drop of 14.03 BLEU points, collapsing from 57.12 to 43.09 due to compounded error propagation from uncorrected dialect residue and wrong syntax with other errors.
-    \item \textbf{mT5-Small Resilience}: While google/mT5-small showed resilience due to its 250,000-token multilingual capacity, training on unverified data still suffers a 8.30 BLEU point drop ,falling from 69f.51 to 61.21 and a 4.40 chrF++ drop.
+    \item \textbf{mT5-Small Resilience}: While google/mT5-small showed resilience due to its 250,000-token multilingual capacity, training on unverified data still suffers a 8.30 BLEU point drop ,falling from 69.51 to 61.21 and a 4.40 chrF++ drop.
     \item \textbf{Essential Role of Multi-Tier Auditing}: Removal of flawed ones and correcting the possible set of pairs is directly responsible for better performance that eliminated subsequent errors.
 \end{enumerate}
 
@@ -661,7 +654,7 @@ This study presents a comprehensive, reproducible framework for multi-dialect Ma
 
 Our LLM-driven synthetic data augmentation pipeline, powered by Gemma-4 with multi-tier verification (Devanagari script filtering and LLaMA-3.1-8B semantic auditing), successfully doubled the clean parallel corpus through synthetic expansion while maintaining strict semantic fidelity---a scalable paradigm for other low-resource dialect pairs.
 Fine-tuning sequence-to-sequence transformers on the expanded benchmark established state-of-the-art performance: google/mT5-small (300M) achieved 69.51 BLEU and 84.58 chrF++ on the synthetically expanded multi-dialect dataset, outperforming IndicBART (244M) by +12.39 BLEU.
-Individual dialect performance reached 80.99 BLEU and 91.21 chrF++ for Varhadi, demonstrating that compact pre-trained sequence-to-sequence transformers can achieve high-accuracy dialect normalization.
+Individual dialect performance reached 81.00 BLEU and 91.21 chrF++ for Varhadi, demonstrating that compact pre-trained sequence-to-sequence transformers can achieve high-accuracy dialect normalization.
 
 \subsection{\textcolor{black}{Limitations}}
 

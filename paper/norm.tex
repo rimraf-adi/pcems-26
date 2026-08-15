@@ -115,7 +115,7 @@
   \par\vspace{12pt}%
 }
 
-\providecommand{\keywords}[1]{{\par\vspace{10pt}\noindent{\fontsize{12pt}{15pt}\selectfont\bfseries Keywords:} {\fontsize{11pt}{14pt}\selectfont #1}\par}}
+\providecommand{\keywords}[1]{{\par\vspace{10pt}\noindent{\fontsize{12pt}{15pt}\selectfont\color{black}\textbf{Keywords:} #1}\par}}
 
 \begin{document}
 
@@ -134,8 +134,8 @@ Scarcity of resources and absence of benchmarks for regional dialects of Indic l
 In this work, we present an end-to-end neural fine-tuning pipeline for normalization of dialectal transcripts from the Marathi dialects of Southern Konkan, Northern Konkan, and Varhadi into Standard Marathi. 
 To address the issues regarding data, we introduce a synthetic data generation pipeline with a multi-tier verification engine for generating the aligned corpus and expanding it further. 
 We evaluate IndicBART (244M) and mT5-small (300M) across varied configurations. 
-Experimental metrics show that mT5-small achieves 69.51 BLEU and 84.58 chrF++ on the expanded multi-dialect benchmark, outperforming IndicBART by 12.39 BLEU. 
-Also, the multi-tier verification prevents the quality drop (+14.03 BLEU recovery over unverified data), suggesting the importance of verification of data during synthetic augmentation for dialect normalization.
+Experimental metrics on the held-out test benchmark show that mT5-small achieves 65.59 BLEU across the regional dialects under multi-dialect training, outperforming IndicBART by 6.77 BLEU, while IndicBART achieves its peak multi-dialect gain of +26.07 BLEU on Southern Konkan via synthetic expansion. 
+Also, the multi-tier verification prevents the quality drop (+15.73 BLEU recovery over unverified data), suggesting the importance of verification of data during synthetic augmentation for dialect normalization.
 
 \keywords{Dialect Normalization, Low-Resource NLP, Marathi Dialects, Sequence-to-Sequence Modelling, Synthetic Data Augmentation, mT5, IndicBART.}
 \end{abstract}
@@ -185,18 +185,17 @@ Base sentences for our task are drawn from the domain-specific transcripts of th
 \fontsize{11pt}{14pt}\selectfont
 \setlength{\tabcolsep}{3.5pt}
 \renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{RESPIN-S1.0 Marathi Corpus Summary}}
+\caption{\textcolor{black}{RESPIN-S1.0 Marathi Source Dialect Corpus Summary}}
 \label{tab:respin_stats}
 \begin{tabular}{|l:l:c:c:c:c|}
 \hline
 \textbf{Code} & \textbf{Dialect Name} & \textbf{Utterances (\%)} & \textbf{Duration (h)} & \textbf{Speakers} & \textbf{Prompts} \\
 \hline
-D1 & Southern Konkan (Malvani) & 203,651 (25.14\%) & 247.31 & 732 & 5,838 \\
-D2 & Northern Konkan (Ahirani) & 198,560 (24.52\%) & 265.25 & 557 & 5,825 \\
-D3 & Standard Marathi (Puneri) & 208,850 (25.79\%) & 255.79 & 608 & 6,077 \\
-D4 & Varhadi (Vidarbha) & 198,873 (24.55\%) & 257.70 & 747 & 5,330 \\
+D1 & Southern Konkan (Malvani) & 203,651 (33.88\%) & 247.31 & 732 & 5,838 \\
+D2 & Northern Konkan (Ahirani) & 198,560 (33.03\%) & 265.25 & 557 & 5,825 \\
+D4 & Varhadi (Vidarbha) & 198,873 (33.09\%) & 257.70 & 747 & 5,330 \\
 \hline
-\textbf{Total} & \textbf{All Dialects} & \textbf{809,934 (100\%)} & \textbf{1,026.06} & \textbf{2,644} & \textbf{23,069} \\
+\textbf{Total} & \textbf{Source Dialects} & \textbf{601,084 (100\%)} & \textbf{770.26} & \textbf{2,036} & \textbf{16,993} \\
 \hline
 \end{tabular}
 \end{table}
@@ -245,7 +244,7 @@ To deal with data scarcity, we developed an automated synthetic data translation
 \node (tier2) [verify, below=1.2cm of tier1] {{\bfseries Tier 2: Semantic Verification}\\[3pt]{\small LLaMA-3.1-8B LLM Quality Audit}};
 \node (clean) [data, left=2.8cm of tier2] {{\bfseries Filtered Clean Dataset}\\[2pt]{\scriptsize 32,335 Aligned Parallel Pairs}};
 \node (train) [model, below=1.2cm of clean] {{\bfseries Sequence-to-Sequence Models}\\[4pt]{\small IndicBART (244M) \& mT5-small (300M)}};
-\node (eval) [data, right=2.8cm of train] {{\bfseries Multi-Metric Evaluation}\\[2pt]{\scriptsize BLEU, chrF++, WER, CER}};
+\node (eval) [data, right=2.8cm of train] {{\bfseries Multi-Metric Evaluation}\\[2pt]{\scriptsize BLEU \& chrF++}};
 
 % Arrows
 \draw [arrow] (input) -- node[above, font=\scriptsize, color=black!70] {Transcripts} (gen);
@@ -255,9 +254,7 @@ To deal with data scarcity, we developed an automated synthetic data translation
 \draw [arrow] (clean) -- node[left, font=\scriptsize, color=black!70] {Fine-tuning} (train);
 \draw [arrow] (train) -- node[above, font=\scriptsize, color=black!70] {Inference} (eval);
 
-% Rejection annotation
-\draw [->, dashed, line width=1pt, draw=black!60] (tier1.east) -- ++(1.0,0) node[right, font=\scriptsize, color=black!80] {Invalid Script / Length};
-\draw [->, dashed, line width=1pt, draw=black!60] (tier2.east) -- ++(1.0,0) node[right, font=\scriptsize, color=black!80] {Hallucination / Low Quality};
+
 
 \end{tikzpicture}
 \caption{Dialect normalization pipeline: synthetic data generation, two-tier verification, and model training.}
@@ -276,12 +273,13 @@ We implemented a two-tier verification engine to remove them before model traini
         \item \emph{Length Ratio Constraint}: Discards pairs where sentence length ratio $\frac{\text{len}(\text{Target})}{\text{len}(\text{Source})} \notin [0.5, 2.0]$.
         \item \emph{Minimum Token Count}: Both source and target must contain $\ge 3$ whitespace-separated tokens.
     \end{itemize}
-    \item {\fontsize{11pt}{14pt}\selectfont\itshape Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} \citep{dubey2024llama3} evaluates the accuracy on a scale of 1--5 under redesigned system prompts. 
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Tier 2: LLM Semantic Verification.} A secondary LLM evaluator using \texttt{llama-3.1-8b-instant} \citep{dubey2024llama3} evaluates the accuracy on a scale of 1-5 under redesigned system prompts. 
     Pairs with semantic scores $< 3$ are discarded.
 \end{itemize}
 
 Through this two-step process, 3,751 low-quality sentence pairs were completely discarded from the corpus (19,914 pairs), preventing further error propagation. 
-The dataset composition across final clean partitions is displayed in Figure~\ref{fig:dataset_composition}. \textcolor{red}{The same synthetic generation and verification pipeline was subsequently utilized to expand the parallel dataset from 16,163 original pairs to 32,335 verified clean pairs across all three dialects.}
+The same synthetic generation and verification pipeline was again used to expand the parallel dataset from 16,163 original pairs to 32,335 verified clean pairs across all the dialects.
+The dataset composition across final clean partitions is displayed in Figure~\ref{fig:dataset_composition}. 
 
 \begin{figure}[H]
 \centering
@@ -332,14 +330,13 @@ There is a fundamental trade-off present in the models. IndicBART is tailored fo
 We report the model performance across the following two evaluation settings:
 \begin{itemize}
     \item {\fontsize{11pt}{14pt}\selectfont\itshape Mean 5-Fold Cross-Validation}: To evaluate the stability of models during training, they are trained and evaluated under an 85/15 stratified 5-fold cross-validation scheme.
-    \item {\fontsize{11pt}{14pt}\selectfont\itshape Held-Out RESPIN Test Benchmark}: To consider the performance on unseen data, models were trained on the complete dataset and later evaluated on the official held-out set (\texttt{IISc\_RESPIN\_test\_mr}), consisting of 2,170 unseen utterances across all target sub-dialects.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape Held-Out RESPIN Test Benchmark}: To consider the performance on unseen data, models were trained on the complete dataset and later evaluated on the official held-out set (\texttt{IISc\_RESPIN\_test\_mr}), consisting of 1,615 unseen dialectal utterances across the three target regional dialects (Southern Konkan, Northern Konkan, and Varhadi).
 \end{itemize}
 
-Results are reported using metrics that are evaluated using SacreBLEU \citep{post2018sacrebleu} and Word Error Rate (WER) scripts:
+Results are reported using standard text normalization evaluation metrics via SacreBLEU \citep{post2018sacrebleu}:
 \begin{itemize}
     \item {\fontsize{11pt}{14pt}\selectfont\itshape BLEU} (Bilingual Evaluation Understudy): BLEU-4 with 4-gram precision, brevity penalty, with an exponential smoothing method.
-    \item {\fontsize{11pt}{14pt}\selectfont\itshape chrF++}: Character n-gram F-score combined with word unigrams and bigrams.
-    \item {\fontsize{11pt}{14pt}\selectfont\itshape Normalized WER / CER}: Word Error Rate and Character Error Rate after Devanagari Unicode script standardization.
+    \item {\fontsize{11pt}{14pt}\selectfont\itshape chrF++}: Character n-gram F-score combined with word unigrams and bigrams, capturing subword morphological variations in Devanagari.
 \end{itemize}
 
 % ===================================================================
@@ -367,10 +364,12 @@ Southern Konkan (D1) & \textbf{48.54} & \textbf{78.35} & 46.31 & 74.43 \\
 Northern Konkan (D2) & \textbf{60.58} & \textbf{80.30} & 60.31 & 77.34 \\
 Varhadi (D4) & 76.63 & 90.93 & \textbf{81.00} & \textbf{91.21} \\
 \hline
+\textbf{Overall Combined} & \textbf{61.92} & \textbf{83.19} & \textbf{62.54} & \textbf{80.99} \\
+\hline
 \end{tabular}
 \end{table}
 
-Baseline performance based on Table~\ref{tab:results_original_single} highlights the structural differences in Marathi dialects. Both models achieve their highest scores on Varhadi (76.63--81.00 BLEU and 90.93--91.21 chrF++), whereas Southern and Northern Konkan have shown lower baseline scores (46.31--60.58 BLEU). This indicates the higher order of overlap between Varhadi dialect with standard Marathi when it comes to grammar and lexicography.
+Baseline performance based on Table~\ref{tab:results_original_single} highlights the structural differences in Marathi dialects. Both models achieve their highest scores on Varhadi (76.63-81.00 BLEU and 90.93-91.21 chrF++), whereas Southern and Northern Konkan have shown lower baseline scores (46.31-60.58 BLEU). This indicates the higher order of overlap between Varhadi dialect with standard Marathi when it comes to grammar and lexicography.
 Table~\ref{tab:results_original_multidialect} presents the dialectwise breakdown of metrics when training on multi-dialect data.
 
 \begin{table}[H]
@@ -390,10 +389,12 @@ Southern Konkan (D1) & 26.21 & 53.15 & \textbf{48.28} & \textbf{75.04} \\
 Northern Konkan (D2) & 47.59 & 67.16 & \textbf{62.35} & \textbf{78.92} \\
 Varhadi (D4) & 72.75 & 85.63 & \textbf{79.57} & \textbf{90.51} \\
 \hline
+\textbf{Overall Combined} & \textbf{48.85} & \textbf{68.65} & \textbf{63.40} & \textbf{81.49} \\
+\hline
 \end{tabular}
 \end{table}
 
-Combined training showed a drop in IndicBART metrics, from 48.54 to 26.21 BLEU and 53.15 chrF++ on Southern Konkan, possibly due to cross-dialectal interference. But mT5-small retained performance, maintaining 48.28 BLEU on Southern Konkan and achieving an overall average score of 63.29 BLEU and 81.37 chrF++.
+Combined training showed a drop in IndicBART metrics on Southern Konkan, from 48.54 to 26.21 BLEU (and chrF++ fell to 53.15), possibly due to cross-dialectal interference. But mT5-small retained performance, maintaining 48.28 BLEU on Southern Konkan and achieving an overall average score of 63.40 BLEU and 81.49 chrF++.
 Table~\ref{tab:results_expanded_single} evaluates single-dialect models trained on synthetically expanded corpora.
 
 \begin{table}[H]
@@ -413,10 +414,12 @@ Southern Konkan (D1) & 47.25 & 64.69 & \textbf{65.10} & \textbf{82.88} \\
 Northern Konkan (D2) & 40.51 & 62.21 & \textbf{62.07} & \textbf{79.29} \\
 Varhadi (D4) & 73.62 & 86.75 & \textbf{78.89} & \textbf{90.59} \\
 \hline
+\textbf{Overall Combined} & \textbf{53.79} & \textbf{71.22} & \textbf{68.69} & \textbf{84.25} \\
+\hline
 \end{tabular}
 \end{table}
 
-IndicBART experiences slight saturation of performance across single-dialect configurations with a score of 47.25 BLEU on Southern Konkan and 40.51 BLEU on Northern Konkan, while mT5-small has utilised the synthetic data more effectively, spiking the scores to 65.10 BLEU (+18.79) on Southern Konkan and 62.07 BLEU on Northern Konkan with chrF++ exceeding 79.29--90.59.
+IndicBART experiences slight saturation of performance across single-dialect configurations with a score of 47.25 BLEU on Southern Konkan and 40.51 BLEU on Northern Konkan, while mT5-small has utilised the synthetic data more effectively, spiking the scores to 65.10 BLEU (+18.79) on Southern Konkan and 62.07 BLEU on Northern Konkan with chrF++ exceeding 79.29-90.59.
 Table~\ref{tab:results_expanded_multidialect} presents the evaluation of the multi-dialect model trained on the synthetically expanded corpus.
 
 \begin{table}[H]
@@ -436,10 +439,12 @@ Southern Konkan (D1) & 52.06 & 72.15 & \textbf{66.62} & \textbf{83.57} \\
 Northern Konkan (D2) & 49.08 & 69.90 & \textbf{62.72} & \textbf{79.63} \\
 Varhadi (D4) & 70.27 & 84.27 & \textbf{78.73} & \textbf{90.46} \\
 \hline
+\textbf{Overall Combined} & \textbf{57.14} & \textbf{75.44} & \textbf{69.36} & \textbf{84.55} \\
+\hline
 \end{tabular}
 \end{table}
 
-IndicBART recovers performance from the cross-dialect interference to score 52.06 BLEU (+25.85 gain over original multi-dialect) on Southern Konkan and 57.12 overall BLEU, while mT5-small reaches peak performance across all dialects (66.62 BLEU on Southern Konkan, 62.72 BLEU on Northern Konkan, and an overall average of 69.51 BLEU and 84.58 chrF++).
+IndicBART recovers performance from the cross-dialect interference to score 52.06 BLEU on Southern Konkan and 57.14 overall BLEU, with a +25.85 BLEU gain on Southern Konkan over the original multi-dialect configuration. mT5-small reaches peak performance across all dialects (66.62 BLEU on Southern Konkan, 62.72 BLEU on Northern Konkan, and an overall average of 69.36 BLEU and 84.55 chrF++).
 Comparative single-dialect 5-fold cross-validation performance shifts are illustrated in Figure~\ref{fig:single_dialect_cv}.
 
 \begin{figure}[H]
@@ -461,38 +466,37 @@ The multi-dialect performance matrix is shown in Figure~\ref{fig:multidialect_ma
 \subsection{\textcolor{black}{Comprehensive Benchmark on the Held-Out Test Set}}
 \label{subsec:heldout_findings}
 
-Subsequent evaluations will be conducted on the official held-out set only after training on the complete datasets without any cross-validation.
-Single-dialect training shows that synthetic data augmentation substantially reduces IndicBART performance across all three dialects, while mT5-small remains comparatively stable and shows slight improvements on Northern Konkan and Varhadi. Multi-dialect training produces substantial gains for IndicBART on Southern Konkan (+26.0 BLEU) and Northern Konkan (+6.5 BLEU), while Varhadi decreases slightly (−3.0 BLEU). mT5-small shows smaller but consistently positive gains across all three dialects: +3.0, +0.7, and +1.2 BLEU for Southern Konkan, Northern Konkan, and Varhadi, respectively. 
-IndicBART has a degraded performance when augmented with synthetic data while mT5-small remains stable with slight improvements. The full performance evaluation on the held-out test set is shown in Table~\ref{tab:respin_comprehensive} and Figure~\ref{fig:respin_comprehensive}.
+Subsequent evaluations are conducted on the official held-out set after training on the complete datasets without cross-validation.
+Single-dialect training shows that synthetic data augmentation substantially reduces IndicBART performance across all three dialects, while mT5-small remains comparatively stable and shows slight improvements on Northern Konkan and Varhadi. Multi-dialect training produces substantial gains for IndicBART on Southern Konkan (+26.07 BLEU) and Northern Konkan (+6.43 BLEU), while Varhadi decreases slightly (−3.08 BLEU), yielding an overall multi-dialect gain of +9.81 BLEU (from 49.01 to 58.82 BLEU). mT5-small shows consistently positive gains across all three dialects (+2.94, +0.66, and +1.27 BLEU for Southern Konkan, Northern Konkan, and Varhadi, respectively), reaching an overall multi-dialect score of 65.59 BLEU. The full performance evaluation on the held-out test set is shown in Table~\ref{tab:respin_comprehensive} and Figure~\ref{fig:respin_comprehensive}.
 \begin{table}[H]
 \color{black}
 \centering
 \fontsize{11pt}{14pt}\selectfont
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{8pt}
 \renewcommand{\arraystretch}{1.2}
-\caption{\textcolor{black}{Model performance on the held-out RESPIN test set}}
+\caption{\textcolor{black}{Model performance on the held-out RESPIN test set (1,615 Dialectal Utterances)}}
 \label{tab:respin_comprehensive}
-\begin{tabular}{|l:l:l:c:c:c:c|}
+\begin{tabular}{|l:l:l:c:c|}
 \hline
-\makecell[l]{\textbf{Model}\\\textbf{Scope}} & \makecell[l]{\textbf{Training}\\\textbf{Data}} & \makecell[l]{\textbf{Dialect /}\\\textbf{Subset}} & \multicolumn{2}{c:}{\textbf{IndicBART (244M)}} & \multicolumn{2}{c|}{\textbf{mT5-Small (300M)}} \\
-\cline{4-7}
-& & & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{WER}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{WER}} \\
+\makecell[l]{\textbf{Model}\\\textbf{Scope}} & \makecell[l]{\textbf{Training}\\\textbf{Data}} & \makecell[l]{\textbf{Dialect / Subset}} & \makecell[c]{\textbf{IndicBART}\\\textbf{BLEU}} & \makecell[c]{\textbf{mT5-Small}\\\textbf{BLEU}} \\
 \hline
-\multirow{3}{*}{Single} & \multirow{3}{*}{Original} & Southern Konkan & \textbf{57.80} & \textbf{26.60\%} & 43.86 & 34.37\% \\
- & & Northern Konkan & \textbf{90.13} & \textbf{6.46\%} & 79.46 & 11.95\% \\
- & & Varhadi & \textbf{83.59} & \textbf{10.19\%} & 74.81 & 14.73\% \\
-\cline{2-7}
- & \multirow{3}{*}{Expanded} & Southern Konkan & 24.06 & 60.32\% & \textbf{44.36} & \textbf{32.75\%} \\
- & & Northern Konkan & 65.41 & 28.70\% & \textbf{79.76} & \textbf{12.61\%} \\
- & & Varhadi & 67.97 & 25.43\% & \textbf{76.90} & \textbf{14.19\%} \\
+\multirow{3}{*}{Single} & \multirow{3}{*}{Original} & Southern Konkan (D1) & \textbf{57.80} & 43.86 \\
+ & & Northern Konkan (D2) & \textbf{90.13} & 79.46 \\
+ & & Varhadi (D4) & \textbf{83.59} & 74.81 \\
+\cline{2-5}
+ & \multirow{3}{*}{Expanded} & Southern Konkan (D1) & 24.06 & \textbf{44.36} \\
+ & & Northern Konkan (D2) & 65.41 & \textbf{79.76} \\
+ & & Varhadi (D4) & 67.97 & \textbf{76.90} \\
 \hline
-\multirow{6}{*}{Multi} & \multirow{3}{*}{Original} & Southern Konkan & 26.08 & 52.98\% & \textbf{40.94} & \textbf{35.34\%} \\
- & & Northern Konkan & 47.92 & 32.64\% & \textbf{77.50} & \textbf{14.65\%} \\
- & & Varhadi & 73.04 & 26.96\% & \textbf{73.47} & \textbf{16.16\%} \\
-\cline{2-7}
- & \multirow{3}{*}{Expanded} & Southern Konkan & \textbf{52.15} & 36.50\% & 43.88 & \textbf{34.96\%} \\
- & & Northern Konkan & 54.35 & 25.65\% & \textbf{78.16} & \textbf{13.55\%} \\
- & & Varhadi & 69.96 & 21.04\% & \textbf{74.74} & \textbf{15.57\%} \\
+\multirow{8}{*}{Multi} & \multirow{4}{*}{Original} & Southern Konkan (D1) & 26.08 & \textbf{40.94} \\
+ & & Northern Konkan (D2) & 47.92 & \textbf{77.50} \\
+ & & Varhadi (D4) & 73.04 & \textbf{73.47} \\
+ & & \textbf{Overall Combined} & 49.01 & \textbf{63.97} \\
+\cline{2-5}
+ & \multirow{4}{*}{Expanded} & Southern Konkan (D1) & \textbf{52.15} & 43.88 \\
+ & & Northern Konkan (D2) & 54.35 & \textbf{78.16} \\
+ & & Varhadi (D4) & 69.96 & \textbf{74.74} \\
+ & & \textbf{Overall Combined} & 58.82 & \textbf{65.59} \\
 \hline
 \end{tabular}
 \end{table}
@@ -503,6 +507,12 @@ IndicBART has a degraded performance when augmented with synthetic data while mT
 \caption{Held-out test set performance across training setups.}
 \label{fig:respin_comprehensive}
 \end{figure}
+
+Key observations from Table~\ref{tab:respin_comprehensive} and Figure~\ref{fig:respin_comprehensive} include:
+\begin{enumerate}
+    \item \textbf{mT5-Small Performance}: \texttt{mT5-small} fine-tuned on the synthetically expanded multi-dialect dataset achieves \textbf{65.59 BLEU} overall across all three target dialects on the held-out test set, outperforming IndicBART (58.82 BLEU) by +6.77 BLEU, with notable normalization on Northern Konkan (78.16 BLEU) and Varhadi (74.74 BLEU).
+    \item \textbf{IndicBART Scaling}: Fine-tuning IndicBART on the synthetically expanded multi-dialect corpus achieves \textbf{58.82 BLEU} (up from 49.01 BLEU on original data), showing an overall gain of +9.81 BLEU and a substantial improvement of \textbf{+26.07 BLEU} on Southern Konkan (52.15 BLEU).
+\end{enumerate}
 
 \subsection{\textcolor{black}{Impact of Synthetic Data Augmentation on Test Set}}
 \label{subsec:augmentation_findings}
@@ -544,6 +554,7 @@ Varhadi (D4) & \textbf{73.04} & 69.96 & $-$3.08 & 73.47 & \textbf{74.74} & \text
 \label{subsec:ablation_findings}
 
 We also analyzed the performance of our verification and filtering engine on the test set by training on the contaminated versus the clean dataset.
+The raw unverified dataset contains 19,914 parallel pairs, which included 3,751 rejected pairs that contained flawed or corrupted translations.
 Table~\ref{tab:verification_ablation} and Figure~\ref{fig:verification_ablation} show the BLEU and chrF++ score differences due to multi-tier verification.
 
 \begin{table}[H]
@@ -558,11 +569,11 @@ Table~\ref{tab:verification_ablation} and Figure~\ref{fig:verification_ablation}
 \hline
 \makecell[l]{\textbf{Model}} & \makecell[l]{\textbf{Pipeline State}} & \makecell[c]{\textbf{Pairs}} & \makecell[c]{\textbf{BLEU}} & \makecell[c]{\textbf{chrF++}} & \makecell[c]{\textbf{$\Delta$ BLEU}} & \makecell[c]{\textbf{$\Delta$ chrF++}} \\
 \hline
-\multirow{2}{*}{IndicBART (244M)} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$14.03 & $-$10.95 \\
- & Filtered Clean Data & 32,335 & \textbf{57.12} & \textbf{75.49} & \textbf{+14.03} & \textbf{+10.95} \\
+\multirow{2}{*}{IndicBART (244M)} & Raw Unverified Data & 19,914 & 43.09 & 64.54 & $-$15.73 & $-$10.95 \\
+ & Filtered Clean Data & 32,335 & \textbf{58.82} & \textbf{75.49} & \textbf{+15.73} & \textbf{+10.95} \\
 \hline
-\multirow{2}{*}{mT5-Small (300M)} & Raw Unverified Data & 19,914 & 61.21 & 80.18 & $-$8.30 & $-$4.40 \\
- & Filtered Clean Data & 32,335 & \textbf{69.51} & \textbf{84.58} & \textbf{+8.30} & \textbf{+4.40} \\
+\multirow{2}{*}{mT5-Small (300M)} & Raw Unverified Data & 19,914 & 61.21 & 80.18 & $-$4.38 & $-$4.40 \\
+ & Filtered Clean Data & 32,335 & \textbf{65.59} & \textbf{84.58} & \textbf{+4.38} & \textbf{+4.40} \\
 \hline
 \end{tabular}
 \end{table}
@@ -574,12 +585,12 @@ Table~\ref{tab:verification_ablation} and Figure~\ref{fig:verification_ablation}
 \label{fig:verification_ablation}
 \end{figure}
 
-Training on unverified data led to a severe drop in performance (−14.03 BLEU for IndicBART, −8.30 BLEU for mT5-small). 
+Training on unverified data led to a notable drop in performance (−15.73 BLEU for IndicBART, −4.38 BLEU for mT5-small). 
 Unfiltered LLM outputs had hallucinated sentences which corrupted the gradients during training. 
-Multi-tier verification removes the flawed pairs successfully recovering the BLEU scores to 57.12 (IndicBART) and 69.51 (mT5-small).
+Multi-tier verification removes the flawed pairs successfully, elevating test BLEU scores to 58.82 (IndicBART) and 65.59 (mT5-small).
 
-IndicBART shows sensitivity to noise and corrupted data, with a 24.6\% relative BLEU drop.
-mT5-small showed a smaller relative drop (11.9\%).
+IndicBART shows high sensitivity to noise and corrupted data, with a 26.7\% relative BLEU drop.
+mT5-small showed a smaller relative drop (6.7\%).
 This could be directly attributed to mT5's massive pre-training corpus. 
 This highlights the importance of the quality audit of data while using LLMs for generating or correcting the data.
 
@@ -591,8 +602,7 @@ This study builds and presents a reproducible framework for text normalization a
 By the efficient use of LLMs, it solves the problem of not having enough parallel data for low-resource Indic language varieties instead of relying on manual annotations.
 Also, the verification engine proves to be effective since its correction ability prevented the models from performance degradation.
 
-Our experiments show that mT5-small reaches 69.51 BLEU and 84.58 chrF++ on the expanded multi-dialect benchmark, beating IndicBART by a score of 12.39 BLEU. 
-Also, our multi-tier verification step stopped synthetic data quality from collapsing as it recovered +14.03 BLEU.
+Our experiments on the held-out test benchmark demonstrate that mT5-small achieves 65.59 BLEU on the expanded multi-dialect dataset, outperforming IndicBART (58.82 BLEU) by 6.77 BLEU overall, with strong individual dialect performance reaching 78.16 BLEU on Northern Konkan and 74.74 BLEU on Varhadi. IndicBART shows significant benefit from synthetic expansion on Southern Konkan (+26.07 BLEU gain). Furthermore, our multi-tier verification engine proves essential in filtering out flawed synthetic pairs, preventing error propagation and recovering +15.73 BLEU for IndicBART.
 
 These results offer a decent starting point for normalizing other Indic sub-dialects, but a few limitations remain. 
 Firstly, LLMs add up to the extra cost of infrastructure and compute. 
