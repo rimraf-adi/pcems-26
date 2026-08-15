@@ -330,7 +330,7 @@ def generate_fig4_radar():
 # ==============================================================================
 def generate_fig5():
     print("Generating Figure 5: Multi-Dialect Cross-Validation Performance Matrix...")
-    subsets = ['Southern Konkan', 'Northern Konkan', 'Varhadi', 'Overall Combined']
+    subsets = ['Southern Konkan', 'Northern Konkan', 'Varhadi', 'Average']
     x = np.arange(len(subsets))
     width = 0.18
     
