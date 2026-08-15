@@ -377,7 +377,7 @@ def generate_fig6():
         'mT5-Small - Northern Konkan',
         'mT5-Small - Varhadi'
     ]
-    deltas = [26.0, 6.5, -3.0, 3.0, 0.7, 1.2]
+    deltas = [26.07, 6.43, -3.08, 2.94, 0.66, 1.27]
     colors = ['#2ca02c' if d > 0 else '#d62728' for d in deltas]
     
     fig, ax = plt.subplots(figsize=(11.5, 6.5), dpi=300)
@@ -391,7 +391,7 @@ def generate_fig6():
     ax.invert_yaxis()
     ax.set_xlabel('Net BLEU Change (Δ BLEU)', fontsize=13, fontweight='bold')
     ax.set_title('Impact of Synthetic Data Augmentation Across Models and Dialects', fontsize=14, fontweight='bold', pad=15)
-    ax.set_xlim(-5, 30)
+    ax.set_xlim(-6, 30)
     ax.set_xticks([-5, 0, 5, 10, 15, 20, 25, 30])
     ax.grid(axis='x', linestyle='--', alpha=0.6, color='gray')
     ax.set_axisbelow(True)
@@ -404,7 +404,7 @@ def generate_fig6():
         w = bar.get_width()
         ha = 'left' if w >= 0 else 'right'
         offset = 0.5 if w >= 0 else -0.5
-        ax.annotate(f'{w:+.1f}', (w + offset, bar.get_y() + bar.get_height()/2),
+        ax.annotate(f'{w:+.2f}', (w + offset, bar.get_y() + bar.get_height()/2),
                     ha=ha, va='center', fontsize=12, fontweight='bold', color='black')
         
     plt.tight_layout()
