@@ -177,17 +177,17 @@ def generate_fig3():
     
     # Panel A: Single-Dialect Models on Test Set
     single_dialects = ['Southern Konkan\n(559 utts)', 'Northern Konkan\n(540 utts)', 'Varhadi\n(516 utts)']
-    ib_single_orig = [57.80, 90.13, 83.59]
-    ib_single_exp  = [24.06, 65.41, 67.97]
-    mt5_single_orig = [43.86, 79.46, 74.81]
-    mt5_single_exp  = [44.36, 79.76, 76.90]
+    ib_single_orig = [45.95, 84.26, 80.17]
+    ib_single_exp  = [13.46, 59.37, 63.30]
+    mt5_single_orig = [43.81, 81.79, 76.40]
+    mt5_single_exp  = [44.10, 82.09, 77.94]
     
     # Panel B: Multi-Dialect Models on Test Set
     multi_subsets = ['Southern Konkan\n(559 utts)', 'Northern Konkan\n(540 utts)', 'Varhadi\n(516 utts)']
-    ib_multi_orig = [26.08, 47.92, 73.04]
-    ib_multi_exp  = [52.15, 54.35, 69.96]
-    mt5_multi_orig = [40.94, 77.50, 73.47]
-    mt5_multi_exp  = [43.88, 78.16, 74.74]
+    ib_multi_orig = [16.92, 59.17, 57.78]
+    ib_multi_exp  = [34.50, 62.06, 58.46]
+    mt5_multi_orig = [41.22, 78.43, 74.65]
+    mt5_multi_exp  = [44.83, 78.88, 76.00]
     
     fig, axes = plt.subplots(1, 2, figsize=(15.5, 8.8), dpi=300)
     width = 0.19
@@ -377,7 +377,7 @@ def generate_fig6():
         'mT5-Small - Northern Konkan',
         'mT5-Small - Varhadi'
     ]
-    deltas = [26.07, 6.43, -3.08, 2.94, 0.66, 1.27]
+    deltas = [17.58, 2.89, 0.68, 3.61, 0.45, 1.35]
     colors = ['#2ca02c' if d > 0 else '#d62728' for d in deltas]
     
     fig, ax = plt.subplots(figsize=(11.5, 6.5), dpi=300)
@@ -391,8 +391,8 @@ def generate_fig6():
     ax.invert_yaxis()
     ax.set_xlabel('Net BLEU Change (Δ BLEU)', fontsize=13, fontweight='bold')
     ax.set_title('Impact of Synthetic Data Augmentation Across Models and Dialects', fontsize=14, fontweight='bold', pad=15)
-    ax.set_xlim(-6, 30)
-    ax.set_xticks([-5, 0, 5, 10, 15, 20, 25, 30])
+    ax.set_xlim(-6, 25)
+    ax.set_xticks([-5, 0, 5, 10, 15, 20, 25])
     ax.grid(axis='x', linestyle='--', alpha=0.6, color='gray')
     ax.set_axisbelow(True)
     
@@ -419,7 +419,7 @@ def generate_fig7():
     print("Generating Figure 7: Multi-Tier Verification Engine Ablation...")
     models = ['IndicBART (244M)', 'mT5-Small (300M)']
     raw_bleu = [43.09, 61.21]
-    clean_bleu = [58.82, 65.59]
+    clean_bleu = [57.12, 69.51]
     
     raw_chrf = [64.54, 80.18]
     clean_chrf = [75.49, 84.58]
